@@ -1,4 +1,4 @@
-# Waifu Go Bot
+# Waifu Bot
 
 This is a waifu / husbando bot in developpement.
 
