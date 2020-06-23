@@ -1,3 +1,4 @@
-**.json
-**.sum
 **.mod
+**.sum
+/token.json
+*test.go
