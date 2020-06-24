@@ -34,8 +34,8 @@ This will open vi. if you do not have vi either install it or follow the [SETUP]
 Paste your token with `Ctrl+Maj+V` in the terminal. Quit & save it by typing `:wq`
 
 ```sh
-git clone https://github.com/Karitham/WaifuGoBot
-cd WaifuGoBot
+git clone https://github.com/Karitham/WaifuBot
+cd WaifuBot
 touch token.json
 vi token.json
 go mod init bot
