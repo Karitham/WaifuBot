@@ -12,20 +12,20 @@ import (
 type ResponseChar struct {
 	Page struct {
 		Characters []struct {
-			ID    int64 `json:"id"`
+			ID    int
 			Image struct {
-				Large  string `json:"large"`
-				Medium string `json:"medium"`
+				Large  string
+				Medium string
 			}
 			Name struct {
-				First  string `json:"first"`
-				Full   string `json:"full"`
-				Last   string `json:"last"`
-				Native string `json:"native"`
+				First  string
+				Full   string
+				Last   string
+				Native string
 			}
 		}
 		PageInfo struct {
-			LastPage int64 `json:"lastPage"`
+			LastPage int
 		}
 	}
 }
@@ -60,9 +60,9 @@ func Char(id int) ResponseChar {
 	`)
 	req.Var("pageNumber", 5849)
 	ctx := context.Background()
-	var RespChar ResponseChar
-	if err := client.Run(ctx, req, &RespChar); err != nil {
+	var res ResponseChar
+	if err := client.Run(ctx, req, &res); err != nil {
 		fmt.Println(err)
 	}
-	return RespChar
+	return res
 }

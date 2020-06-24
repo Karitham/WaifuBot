@@ -21,7 +21,7 @@ var pageTotal int
 func main() {
 	res := q.Char(random())
 	pageTotal = res.Page.PageInfo.LastPage
-	fmt.Println(res.Character.Name.Full)
+	fmt.Println(res.Page.Characters[0].Name.Full)
 }
 
 // random : search the char by ID entered in discord
