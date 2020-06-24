@@ -3,66 +3,39 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
+	"math/rand"
 	"os"
+	"time"
+
+	q "querries"
 
 	"github.com/andersfylling/disgord"
-	"github.com/machinebox/graphql"
 )
 
-// GraphURL : GraphQL API URL
-var GraphURL = "https://graphql.anilist.co"
 var tokenFile = "./token.json"
 
-// Response schema
-type Response struct {
-	MEDIA struct {
-		ID    int
-		TITLE struct {
-			ROMAJI  string
-			ENGLISH string
-			NATIVE  string
-		}
+func main() {
+	res := q.Char(random())
+	for res.Character.Name.Full == "" {
+		res = q.Char(random())
 	}
+	fmt.Println(res.Character.ID)
 }
 
-// Query : makes the query
-func Query() Response {
-	// create a client (safe to share across requests)
-	client := graphql.NewClient(GraphURL)
-
-	// make a request
-	req := graphql.NewRequest(`
-query ($id: Int) {
-    Media (id: $id, type: ANIME) {
-        id
-        title {
-        romaji
-        english
-        native
-        }
-    }
-}
-`)
-
-	// set any variables
-	req.Var("id", 99263)
-	ctx := context.Background()
-	// run it and capture the response
-	var res Response //interface{}
-	if err := client.Run(ctx, req, &res); err != nil {
-		log.Fatal(err)
-	}
-	return res
+// random : search the char by ID entered in discord
+func random() int {
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	random := r.Int() % 63000
+	return random
 }
 
-// Connect : Get token from file & connect
-func Connect() {
+// connect : Get token from file & connect
+func connect() {
 	tok := tokenFromJSON(tokenFile)
-	client := disgord.New(disgord.Config{
-		BotToken: tok,
-	})
+	client := disgord.New(disgord.Config{BotToken: tok})
 	defer client.StayConnectedUntilInterrupted(context.Background())
 }
 
@@ -82,8 +55,4 @@ func tokenFromJSON(file string) (tok string) {
 		log.Println(err)
 	}
 	return tok
-}
-
-func main() {
-	Query()
 }
