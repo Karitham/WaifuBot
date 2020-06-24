@@ -11,7 +11,6 @@ import (
 	"time"
 
 	q "github.com/Karitham/WaifuBot/querries"
-
 	g "github.com/andersfylling/disgord"
 )
 
@@ -19,9 +18,14 @@ var tokenFile = "./token.json"
 var pageTotal int
 
 func main() {
+	launch()
+	fmt.Println(q.Char(random()).Page.Characters[0].Name.Full)
+	connect()
+}
+
+func launch() {
 	res := q.Char(1)
 	pageTotal = res.Page.PageInfo.LastPage
-	fmt.Println(res.Page.Characters[0].Name.Full)
 }
 
 // random : search the char by ID entered in discord
@@ -42,16 +46,11 @@ func connect() {
 func tokenFromJSON(file string) (tok string) {
 	// open file & defer its closing
 	jsonFile, err := os.Open(file)
-	if err != nil {
-		log.Println(err)
-	}
 	defer jsonFile.Close()
-
 	// read our opened jsonFile as a byte array & Unmarshal
-	byteValue, _ := ioutil.ReadAll(jsonFile)
-	err = json.Unmarshal(byteValue, &tok)
-	if err != nil {
-		log.Println(err)
+	byteValue, err := ioutil.ReadAll(jsonFile)
+	if json.Unmarshal(byteValue, &tok) != nil {
+		log.Fatal(err)
 	}
 	return tok
 }
