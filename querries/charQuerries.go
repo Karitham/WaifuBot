@@ -58,7 +58,7 @@ func Char(id int) ResponseChar {
 		}
 	}
 	`)
-	req.Var("pageNumber", 5849)
+	req.Var("pageNumber", id)
 	ctx := context.Background()
 	var res ResponseChar
 	if err := client.Run(ctx, req, &res); err != nil {

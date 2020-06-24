@@ -19,7 +19,7 @@ var tokenFile = "./token.json"
 var pageTotal int
 
 func main() {
-	res := q.Char(random())
+	res := q.Char(1)
 	pageTotal = res.Page.PageInfo.LastPage
 	fmt.Println(res.Page.Characters[0].Name.Full)
 }
