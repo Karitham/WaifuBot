@@ -10,32 +10,31 @@ import (
 	"os"
 	"time"
 
-	q "querries"
+	q "github.com/Karitham/WaifuBot/querries"
 
-	"github.com/andersfylling/disgord"
+	g "github.com/andersfylling/disgord"
 )
 
 var tokenFile = "./token.json"
+var pageTotal int
 
 func main() {
 	res := q.Char(random())
-	for res.Character.Name.Full == "" {
-		res = q.Char(random())
-	}
-	fmt.Println(res.Character.ID)
+	pageTotal = res.Page.PageInfo.LastPage
+	fmt.Println(res.Character.Name.Full)
 }
 
 // random : search the char by ID entered in discord
 func random() int {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
-	random := r.Int() % 63000
+	random := r.Int() % pageTotal
 	return random
 }
 
 // connect : Get token from file & connect
 func connect() {
 	tok := tokenFromJSON(tokenFile)
-	client := disgord.New(disgord.Config{BotToken: tok})
+	client := g.New(g.Config{BotToken: tok})
 	defer client.StayConnectedUntilInterrupted(context.Background())
 }
 

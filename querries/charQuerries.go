@@ -10,17 +10,22 @@ import (
 
 // ResponseChar : Struct for handling character requests from anilists API
 type ResponseChar struct {
-	Character struct {
-		ID    int64 `json:"id"`
-		Image struct {
-			Large  string `json:"large"`
-			Medium string `json:"medium"`
+	Page struct {
+		Characters []struct {
+			ID    int64 `json:"id"`
+			Image struct {
+				Large  string `json:"large"`
+				Medium string `json:"medium"`
+			}
+			Name struct {
+				First  string `json:"first"`
+				Full   string `json:"full"`
+				Last   string `json:"last"`
+				Native string `json:"native"`
+			}
 		}
-		Name struct {
-			First  string `json:"first"`
-			Full   string `json:"full"`
-			Last   string `json:"last"`
-			Native string `json:"native"`
+		PageInfo struct {
+			LastPage int64 `json:"lastPage"`
 		}
 	}
 }
@@ -31,23 +36,29 @@ var client = graphql.NewClient(graphURL)
 // Char : makes a character query
 func Char(id int) ResponseChar {
 	req := graphql.NewRequest(`
-	query ($id: Int) {
-		Character(id: $id) {
-			id
-			image {
-				large
-				medium
+	query ($pageNumber : Int) {
+		Page(perPage: 1, page: $pageNumber) {
+			pageInfo {
+				lastPage
 			}
-			name {
-				first
-				last
-				full
-				native
-				}
-			}
+			characters {
+					id
+					image {
+						large
+						medium
+					}
+					name {
+						first
+						last
+						full
+						native
+						}
+					}
+				
 		}
+	}
 	`)
-	req.Var("id", id)
+	req.Var("pageNumber", 5849)
 	ctx := context.Background()
 	var RespChar ResponseChar
 	if err := client.Run(ctx, req, &RespChar); err != nil {
