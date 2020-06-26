@@ -10,22 +10,50 @@ import (
 	"os"
 	"time"
 
-	q "github.com/Karitham/WaifuBot/querries"
-	g "github.com/andersfylling/disgord"
+	d "github.com/andersfylling/disgord"
+	"github.com/machinebox/graphql"
 )
 
-var tokenFile = "./token.json"
+// RespChar : Struct for handling character requests from anilists API
+type RespChar struct {
+	Page struct {
+		Characters []struct {
+			ID    int
+			Image struct {
+				Large  string
+				Medium string
+			}
+			Name struct {
+				First  string
+				Full   string
+				Last   string
+				Native string
+			}
+		}
+		PageInfo struct {
+			LastPage int
+		}
+	}
+}
+
+const tokenFile = "./token.json"
+
 var pageTotal int
 
 func main() {
-	launch()
-	fmt.Println(q.Char(random()).Page.Characters[0].Name.Full)
-	connect()
+	pageTotal = 80000
+	fmt.Println(makeRQ().Page.Characters[0].Image.Large)
+	go connect()
 }
 
-func launch() {
-	res := q.Char(1)
+// makeRQ make the request and setups correctly the page total
+func makeRQ() RespChar {
+	res, err := Char(random())
+	if err != nil {
+		fmt.Println(err)
+	}
 	pageTotal = res.Page.PageInfo.LastPage
+	return res
 }
 
 // random : search the char by ID entered in discord
@@ -38,7 +66,7 @@ func random() int {
 // connect : Get token from file & connect
 func connect() {
 	tok := tokenFromJSON(tokenFile)
-	client := g.New(g.Config{BotToken: tok})
+	client := d.New(d.Config{BotToken: tok})
 	defer client.StayConnectedUntilInterrupted(context.Background())
 }
 
@@ -53,4 +81,41 @@ func tokenFromJSON(file string) (tok string) {
 		log.Fatal(err)
 	}
 	return tok
+}
+
+// Char : makes a character query
+func Char(id int) (RespChar, error) {
+	graphURL := "https://graphql.anilist.co"
+	client := graphql.NewClient(graphURL)
+	var res RespChar
+
+	req := graphql.NewRequest(`
+	query ($pageNumber : Int) {
+		Page(perPage: 1, page: $pageNumber) {
+			pageInfo {
+				lastPage
+			}
+			characters {
+					id
+					image {
+						large
+						medium
+					}
+					name {
+						first
+						last
+						full
+						native
+						}
+					}
+				
+		}
+	}
+	`)
+
+	req.Var("pageNumber", id)
+
+	ctx := context.Background()
+	err := client.Run(ctx, req, &res)
+	return res, err
 }

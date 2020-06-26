@@ -1,4 +1,2 @@
-**.mod
-**.sum
 /token.json
-**test.go
+tests/*
