@@ -5,18 +5,22 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"math/rand"
 	"os"
 	"time"
 
-	d "github.com/andersfylling/disgord"
+	"github.com/andersfylling/disgord"
+	"github.com/andersfylling/disgord/std"
 	"github.com/machinebox/graphql"
+	"github.com/sirupsen/logrus"
 )
 
-// RespChar : Struct for handling character requests from anilists API
-type RespChar struct {
+// RespCharT : Struct for handling character requests from anilists API
+type RespCharT struct {
 	Page struct {
+		PageInfo struct {
+			LastPage int
+		}
 		Characters []struct {
 			ID    int
 			Image struct {
@@ -30,24 +34,73 @@ type RespChar struct {
 				Native string
 			}
 		}
-		PageInfo struct {
-			LastPage int
-		}
 	}
 }
 
-const tokenFile = "./token.json"
+// ConfigT is used to unmarshal the config.json
+type ConfigT struct {
+	Prefix   string `json:"Prefix"`
+	BotToken string `json:"Bot_Token"`
+}
 
+const tokenFile = "config.json"
+
+var config ConfigT
 var pageTotal int
 
+var log = &logrus.Logger{
+	Out:       os.Stderr,
+	Formatter: new(logrus.TextFormatter),
+	Hooks:     make(logrus.LevelHooks),
+	Level:     logrus.ErrorLevel,
+}
+
 func main() {
-	pageTotal = 80000
-	fmt.Println(makeRQ().Page.Characters[0].Image.Large)
-	go connect()
+	pageTotal = 85000
+	configFromJSON(tokenFile)
+	go bot()
+	fmt.Println("the bot is currently running")
+	for true {
+	}
+}
+
+func bot() {
+	client := disgord.New(disgord.Config{
+		BotToken: config.BotToken,
+		Logger:   log,
+	})
+	defer client.StayConnectedUntilInterrupted(context.Background())
+
+	log, _ := std.NewLogFilter(client)
+	filter, _ := std.NewMsgFilter(context.Background(), client)
+	filter.SetPrefix(config.Prefix)
+
+	// create a handler and bind it to new message events
+	// tip: read the documentation for std.CopyMsgEvt and understand why it is used here.
+	client.On(disgord.EvtMessageCreate,
+		// middleware
+		filter.NotByBot,    // ignore bot messages
+		filter.HasPrefix,   // read original
+		log.LogMsg,         // log command message
+		std.CopyMsgEvt,     // read & copy original
+		filter.StripPrefix, // write copy
+		// handler
+		replyWaifu) // handles copy
+}
+
+func replyWaifu(s disgord.Session, data *disgord.MessageCreate) {
+	msg := data.Message
+	var resp RespCharT
+	// whenever the message written is "ping", the bot replies "pong"
+	if msg.Content == "roll" {
+		resp = makeRQ()
+		response := fmt.Sprintf("https://anilist.co/character/%d", resp.Page.Characters[0].ID)
+		msg.Reply(context.Background(), s, response)
+	}
 }
 
 // makeRQ make the request and setups correctly the page total
-func makeRQ() RespChar {
+func makeRQ() RespCharT {
 	res, err := Char(random())
 	if err != nil {
 		fmt.Println(err)
@@ -63,32 +116,21 @@ func random() int {
 	return random
 }
 
-// connect : Get token from file & connect
-func connect() {
-	tok := tokenFromJSON(tokenFile)
-	client := d.New(d.Config{BotToken: tok})
-	defer client.StayConnectedUntilInterrupted(context.Background())
-}
-
-// tokenFromJSON : Reads token from file & returns the token
-func tokenFromJSON(file string) (tok string) {
-	// open file & defer its closing
-	jsonFile, err := os.Open(file)
-	defer jsonFile.Close()
-	// read our opened jsonFile as a byte array & Unmarshal
-	byteValue, err := ioutil.ReadAll(jsonFile)
-	if json.Unmarshal(byteValue, &tok) != nil {
-		log.Fatal(err)
+// configFromJSON : Reads token from file & returns the token
+func configFromJSON(file string) ConfigT {
+	/* Read file config.json return Type Config */
+	body, err := ioutil.ReadFile(file)
+	if err != nil {
+		fmt.Println(err)
 	}
-	return tok
+	json.Unmarshal(body, &config)
+	return config
 }
 
 // Char : makes a character query
-func Char(id int) (RespChar, error) {
+func Char(id int) (res RespCharT, err error) {
 	graphURL := "https://graphql.anilist.co"
 	client := graphql.NewClient(graphURL)
-	var res RespChar
-
 	req := graphql.NewRequest(`
 	query ($pageNumber : Int) {
 		Page(perPage: 1, page: $pageNumber) {
@@ -116,6 +158,6 @@ func Char(id int) (RespChar, error) {
 	req.Var("pageNumber", id)
 
 	ctx := context.Background()
-	err := client.Run(ctx, req, &res)
-	return res, err
+	err = client.Run(ctx, req, &res)
+	return
 }

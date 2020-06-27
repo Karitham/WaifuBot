@@ -11,12 +11,15 @@ I used the [Disgord go lib](github.com/andersfylling/disgord) & [Anilist's Graph
 
 ## SETUP
 
-Create a `token.json` file and put your token in the form of a string in it
+Create a `config.json` file and put your token in the form of a string in it
 
 ### Exemple
 
 ```json
-"ThisIsAdiscordToken.ù$dzajodpzaddzadzad4898dza"
+{
+    "Prefix": "w.",
+    "Bot_Token": "thIsIsaDiscorDToken.$dzahuidladsdazadgegdj"
+}
 ```
 
 Run `go mod init bot` and `go mod download` to download the depedencies needed.
@@ -26,19 +29,3 @@ This will create 2 file, a `go.mod` and a `go.sum`
 Do not touch them in case you do not know what you are doing.
 
 Run the bot `go run .`
-
-## Quick start (LINUX)
-
-This will open vi. if you do not have vi either install it or follow the [SETUP](#setup)
-
-Paste your token with `Ctrl+Maj+V` in the terminal. Quit & save it by typing `:wq`
-
-```sh
-git clone https://github.com/Karitham/WaifuBot
-cd WaifuBot
-touch token.json
-vi token.json
-go mod init bot
-go mod download
-go run .
-```
