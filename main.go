@@ -58,10 +58,7 @@ var log = &logrus.Logger{
 func main() {
 	pageTotal = 85000
 	configFromJSON(tokenFile)
-	go bot()
-	fmt.Println("the bot is currently running")
-	for true {
-	}
+	bot()
 }
 
 func bot() {
@@ -77,7 +74,7 @@ func bot() {
 
 	// create a handler and bind it to new message events
 	// tip: read the documentation for std.CopyMsgEvt and understand why it is used here.
-	client.On(disgord.EvtMessageCreate,
+	go client.On(disgord.EvtMessageCreate,
 		// middleware
 		filter.NotByBot,    // ignore bot messages
 		filter.HasPrefix,   // read original
@@ -85,17 +82,19 @@ func bot() {
 		std.CopyMsgEvt,     // read & copy original
 		filter.StripPrefix, // write copy
 		// handler
-		replyWaifu) // handles copy
+		reply) // handles copy
+	fmt.Println("the bot is currently running")
 }
 
-func replyWaifu(s disgord.Session, data *disgord.MessageCreate) {
+func reply(s disgord.Session, data *disgord.MessageCreate) {
 	msg := data.Message
 	var resp RespCharT
-	// whenever the message written is "ping", the bot replies "pong"
+	// test the message content and respond accordingly
 	if msg.Content == "roll" {
 		resp = makeRQ()
 		response := fmt.Sprintf("https://anilist.co/character/%d", resp.Page.Characters[0].ID)
 		msg.Reply(context.Background(), s, response)
+		fmt.Println("I just sent a message")
 	}
 }
 
@@ -112,7 +111,7 @@ func makeRQ() RespCharT {
 // random : search the char by ID entered in discord
 func random() int {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
-	random := r.Int() % pageTotal
+	random := r.Intn(pageTotal)
 	return random
 }
 

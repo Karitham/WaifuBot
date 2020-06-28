@@ -1,4 +1,4 @@
-module v0
+module bot
 
 go 1.14
 
