@@ -21,6 +21,7 @@ type ConfigT struct {
 }
 
 var maxCharQuery int
+var botURL string
 
 var log = &logrus.Logger{
 	Out:       os.Stderr,
@@ -33,7 +34,7 @@ var log = &logrus.Logger{
 func BotRun(configfile string) {
 	config := configFromJSON(configfile)
 	maxCharQuery = config.MaxChar
-	client := disgord.New(disgord.Config{
+	var client = disgord.New(disgord.Config{
 		BotToken: config.BotToken,
 		Logger:   log,
 	})
@@ -54,11 +55,16 @@ func BotRun(configfile string) {
 		filter.StripPrefix, // write copy
 		// handler
 		reply) // handles copy
-	fmt.Println("the bot is currently running")
+	fmt.Println("The bot is currently running")
+	var err error
+	botURL, err = client.InviteURL(context.Background())
+	if err != nil {
+		fmt.Println(err)
+	}
 }
 
 func reply(s disgord.Session, data *disgord.MessageCreate) {
-	fmt.Println()
+
 	msg := data.Message
 	var resp query.RespCharType
 	// test the message content and respond accordingly
@@ -66,7 +72,9 @@ func reply(s disgord.Session, data *disgord.MessageCreate) {
 		resp = query.MakeRQ(maxCharQuery)
 		response := fmt.Sprintf("https://anilist.co/character/%d", resp.Page.Characters[0].ID)
 		msg.Reply(context.Background(), s, response)
-		fmt.Println("I just sent ", response)
+	}
+	if msg.Content == "invite" {
+		msg.Reply(context.Background(), s, botURL)
 	}
 }
 
