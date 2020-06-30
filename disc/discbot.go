@@ -56,15 +56,10 @@ func BotRun(configfile string) {
 		// handler
 		reply) // handles copy
 	fmt.Println("The bot is currently running")
-	var err error
-	botURL, err = client.InviteURL(context.Background())
-	if err != nil {
-		fmt.Println(err)
-	}
+	botURL, _ = client.InviteURL(context.Background())
 }
 
 func reply(s disgord.Session, data *disgord.MessageCreate) {
-
 	msg := data.Message
 	var resp query.RespCharType
 	// test the message content and respond accordingly
