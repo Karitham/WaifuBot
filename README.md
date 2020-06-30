@@ -22,10 +22,8 @@ Create a `config.json` file and put your token in the form of a string in it
 }
 ```
 
-Run `go mod init bot` and `go mod download` to download the depedencies needed.
-
-This will create 2 file, a `go.mod` and a `go.sum`
+Run `go mod download` to download the depedencies needed.
 
 Do not touch them in case you do not know what you are doing.
 
-Run the bot `go run .`
+To run the bot, do `go run .`
