@@ -12,6 +12,5 @@ func main() {
 		panic(err)
 	}
 	path := dir + filename
-	const maxCharQuery = 5000
-	disc.BotRun(path, maxCharQuery)
+	disc.BotRun(path)
 }

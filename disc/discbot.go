@@ -17,6 +17,7 @@ import (
 type ConfigT struct {
 	Prefix   string `json:"Prefix"`
 	BotToken string `json:"Bot_Token"`
+	MaxChar  int    `json:"Max_Character_Roll"`
 }
 
 var maxCharQuery int
@@ -29,9 +30,9 @@ var log = &logrus.Logger{
 }
 
 // BotRun the bot and handle events
-func BotRun(configfile string, max int) {
+func BotRun(configfile string) {
 	config := configFromJSON(configfile)
-	maxCharQuery = max
+	maxCharQuery = config.MaxChar
 	client := disgord.New(disgord.Config{
 		BotToken: config.BotToken,
 		Logger:   log,
@@ -65,7 +66,7 @@ func reply(s disgord.Session, data *disgord.MessageCreate) {
 		resp = query.MakeRQ(maxCharQuery)
 		response := fmt.Sprintf("https://anilist.co/character/%d", resp.Page.Characters[0].ID)
 		msg.Reply(context.Background(), s, response)
-		fmt.Println("I just sent a the character ", resp.Page.Characters[0].ID)
+		fmt.Println("I just sent ", response)
 	}
 }
 
