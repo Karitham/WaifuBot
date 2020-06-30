@@ -53,8 +53,12 @@ func BotRun(configfile string) {
 		log.LogMsg,         // log command message
 		std.CopyMsgEvt,     // read & copy original
 		filter.StripPrefix, // write copy
+
 		// handler
-		reply) // handles copy
+		reply, // call reply func
+		// specific
+	) // handles copy
+
 	fmt.Println("The bot is currently running")
 	botURL, _ = client.InviteURL(context.Background())
 }
@@ -73,7 +77,8 @@ func reply(s disgord.Session, data *disgord.MessageCreate) {
 	}
 }
 
-// Read file config.json return Type Config
+// Read file config.json return Type ConfigType
+//
 // configFromJSON : Reads token from file & returns the token
 func configFromJSON(file string) ConfigT {
 	var config ConfigT
