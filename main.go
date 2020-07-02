@@ -18,8 +18,7 @@ func main() {
 	Karitham := data.UserBson{
 		UserID: 206794847581896705,
 		Date:   time.Now(),
-		Waifus: []int{4},
+		Waifu:  8,
 	}
-	data.Store(Karitham)
-
+	data.SeeWaifus(Karitham)
 }
