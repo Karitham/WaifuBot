@@ -81,7 +81,7 @@ func reply(s disgord.Session, data *disgord.MessageCreate) {
 	// send back the URL to a waifu
 	if msg.Content == "roll" || msg.Content == "r" {
 		resp = query.MakeRQ(maxCharQuery)
-		db.AddWaifu(db.UserBson{UserID: msg.Author.ID, Date: time.Now(), Waifu: resp.Page.Characters[0].ID})
+		db.AddWaifu(db.InputStruct{UserID: msg.Author.ID, Date: time.Now(), Waifu: resp.Page.Characters[0].ID})
 		response := fmt.Sprintf("https://anilist.co/character/%d", resp.Page.Characters[0].ID)
 		msg.Reply(ctx, s, response)
 	}
@@ -93,6 +93,12 @@ func reply(s disgord.Session, data *disgord.MessageCreate) {
 			msg.Reply(ctx, s, err)
 		}
 		msg.Reply(ctx, s, botURL)
+	}
+
+	// send list of waifus
+	if msg.Content == "list" || msg.Content == "l" {
+		waifuList := db.SeeWaifus(msg.Author.ID)
+		msg.Reply(ctx, s, waifuList)
 	}
 
 }

@@ -11,11 +11,18 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// UserBson represents how the data is stored in the database
-type UserBson struct {
+// InputStruct represents how to send data to the database
+type InputStruct struct {
 	UserID interface{} `bson:"_id"`
 	Date   time.Time   `bson:"Date"`
 	Waifu  int64       `bson:"Waifus"`
+}
+
+// OutputStruct is a representation of the data inside the database, it's used to retrieve data
+type OutputStruct struct {
+	UserID int       `bson:"_id"`
+	Date   time.Time `bson:"Date"`
+	Waifu  []int64   `bson:"Waifus"`
 }
 
 var client *mongo.Client
@@ -46,7 +53,7 @@ func InitDB() {
 }
 
 // Drop a user via USER ID
-func Drop(input UserBson) mongo.DeleteResult {
+func Drop(input InputStruct) mongo.DeleteResult {
 	deleteOneResult, err := collection.DeleteOne(ctx, bson.M{"UserID": input.UserID})
 	if err != nil {
 		fmt.Println(err)
@@ -55,7 +62,7 @@ func Drop(input UserBson) mongo.DeleteResult {
 }
 
 // AddWaifu adds a waifu to the user each time he has a new one
-func AddWaifu(input UserBson) {
+func AddWaifu(input InputStruct) {
 	var decoded bson.M
 	opts := options.FindOneAndUpdate().SetUpsert(true)
 	err := collection.FindOneAndUpdate(
@@ -75,15 +82,16 @@ func AddWaifu(input UserBson) {
 }
 
 // SeeWaifus returns a list of waifus the user has collected
-func SeeWaifus(input UserBson) []int {
-	bytesWaifu, err := collection.FindOne(ctx, bson.M{"_id": input.UserID}).DecodeBytes()
+func SeeWaifus(id interface{}) []int64 {
+	var output OutputStruct
+	bytesWaifu, err := collection.FindOne(ctx, bson.M{"_id": id}).DecodeBytes()
 	if err != nil {
 		fmt.Println(err)
 	}
-	tmp, err := bytesWaifu.Elements()
+	err = bson.Unmarshal(bytesWaifu, &output)
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println(tmp)
-	return nil
+	fmt.Println(output.Waifu)
+	return output.Waifu
 }
