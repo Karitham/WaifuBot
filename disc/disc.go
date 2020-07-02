@@ -1,12 +1,14 @@
 package disc
 
 import (
+	db "bot/data"
 	"bot/query"
 	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
+	"time"
 
 	"github.com/andersfylling/disgord"
 	"github.com/andersfylling/disgord/std"
@@ -21,6 +23,10 @@ type ConfigT struct {
 }
 
 var maxCharQuery int
+var botURL string
+var ctx = context.Background()
+var config ConfigT
+var client *disgord.Client
 
 var log = &logrus.Logger{
 	Out:       os.Stderr,
@@ -31,16 +37,17 @@ var log = &logrus.Logger{
 
 // BotRun the bot and handle events
 func BotRun(configfile string) {
-	config := configFromJSON(configfile)
+	config = configFromJSON(configfile)
 	maxCharQuery = config.MaxChar
-	client := disgord.New(disgord.Config{
+
+	client = disgord.New(disgord.Config{
 		BotToken: config.BotToken,
 		Logger:   log,
 	})
-	defer client.StayConnectedUntilInterrupted(context.Background())
+	defer client.StayConnectedUntilInterrupted(ctx)
 
 	log, _ := std.NewLogFilter(client)
-	filter, _ := std.NewMsgFilter(context.Background(), client)
+	filter, _ := std.NewMsgFilter(ctx, client)
 	filter.SetPrefix(config.Prefix)
 
 	// create a handler and bind it to new message events
@@ -52,25 +59,46 @@ func BotRun(configfile string) {
 		log.LogMsg,         // log command message
 		std.CopyMsgEvt,     // read & copy original
 		filter.StripPrefix, // write copy
+
 		// handler
-		reply) // handles copy
-	fmt.Println("the bot is currently running")
+		reply, // call reply func
+		// specific
+	) // handles copy
+
+	fmt.Println("The bot is currently running")
 }
 
 func reply(s disgord.Session, data *disgord.MessageCreate) {
-	fmt.Println()
 	msg := data.Message
 	var resp query.RespCharType
-	// test the message content and respond accordingly
-	if msg.Content == "roll" {
-		resp = query.MakeRQ(maxCharQuery)
-		response := fmt.Sprintf("https://anilist.co/character/%d", resp.Page.Characters[0].ID)
-		msg.Reply(context.Background(), s, response)
-		fmt.Println("I just sent ", response)
+
+	// helps the user and
+	if msg.Content == "help" || msg.Content == "h" {
+		help := fmt.Sprintf("The commands available to you right now are :\n\t%sroll\n\t%sinvite", config.Prefix, config.Prefix)
+		msg.Reply(ctx, s, help)
 	}
+
+	// send back the URL to a waifu
+	if msg.Content == "roll" || msg.Content == "r" {
+		resp = query.MakeRQ(maxCharQuery)
+		db.AddWaifu(db.UserBson{UserID: msg.Author.ID, Date: time.Now(), Waifu: resp.Page.Characters[0].ID})
+		response := fmt.Sprintf("https://anilist.co/character/%d", resp.Page.Characters[0].ID)
+		msg.Reply(ctx, s, response)
+	}
+
+	// send back bot invite url
+	if msg.Content == "invite" {
+		botURL, err := client.InviteURL(ctx)
+		if err != nil {
+			msg.Reply(ctx, s, err)
+		}
+		msg.Reply(ctx, s, botURL)
+	}
+
 }
 
-// Read file config.json return Type Config
+// Read file config.json return Type ConfigType
+//
 // configFromJSON : Reads token from file & returns the token
 func configFromJSON(file string) ConfigT {
 	var config ConfigT

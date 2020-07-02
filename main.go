@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bot/data"
 	"bot/disc"
 	"os"
 )
@@ -12,5 +13,8 @@ func main() {
 		panic(err)
 	}
 	path := dir + filename
+	go data.InitDB()
 	disc.BotRun(path)
+
+	// data.SeeWaifus(Karitham)
 }
