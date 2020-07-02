@@ -1,5 +1,4 @@
 package data
-<<<<<<< HEAD
 
 import (
 	"context"
@@ -40,23 +39,41 @@ func InitDB() {
 		log.Fatal(err)
 	}
 
+	// Connection successfull
 	fmt.Println("Connected to MongoDB!")
 }
 
-// Store handle the incoming data for the database
-func Store(input UserBson) {
+// Store handles incoming data
+func Store(input UserBson) (bson.M, mongo.InsertOneResult) {
+	var exists bson.M
+	var insertOneReturn *mongo.InsertOneResult
+
+	// Check if user exist in a document
 	collection := client.Database("waifu").Collection("users")
-	var test bson.M
-	err := collection.FindOne(context.TODO(), bson.D{{"UserID", input.UserID}}).Decode(&test)
+	err := collection.FindOne(context.TODO(), bson.M{"UserID": input.UserID}).Decode(&exists)
 	if err != nil {
-		collection.InsertOne(context.TODO(), input)
+		fmt.Println(err)
 	}
+
+	// Insert it if it doesn't exist
+	if exists == nil {
+		insertOneReturn, err = collection.InsertOne(context.TODO(), input)
+		if err != nil {
+			fmt.Println(err)
+		}
+	} else {
+		fmt.Println(exists)
+	}
+
+	return exists, *insertOneReturn
 }
 
-// ResetDB resets the database
-func ResetDB() {
-	client.Database("waifu").Drop(context.TODO())
-	fmt.Println("whole database emptied")
+// Drop a user via USER ID
+func Drop(input UserBson) mongo.DeleteResult {
+	collection := client.Database("waifu").Collection("users")
+	deleteOneResult, err := collection.DeleteOne(context.TODO(), bson.M{"UserID": input.UserID})
+	if err != nil {
+		fmt.Println(err)
+	}
+	return *deleteOneResult
 }
-=======
->>>>>>> 5a6f76adb141c254e863f291a31743c241bb2280
