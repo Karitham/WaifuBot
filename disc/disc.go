@@ -1,12 +1,14 @@
 package disc
 
 import (
+	db "bot/data"
 	"bot/query"
 	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
+	"time"
 
 	"github.com/andersfylling/disgord"
 	"github.com/andersfylling/disgord/std"
@@ -79,6 +81,7 @@ func reply(s disgord.Session, data *disgord.MessageCreate) {
 	// send back the URL to a waifu
 	if msg.Content == "roll" || msg.Content == "r" {
 		resp = query.MakeRQ(maxCharQuery)
+		db.AddWaifu(db.UserBson{UserID: msg.Author.ID, Date: time.Now(), Waifu: resp.Page.Characters[0].ID})
 		response := fmt.Sprintf("https://anilist.co/character/%d", resp.Page.Characters[0].ID)
 		msg.Reply(ctx, s, response)
 	}

@@ -13,9 +13,9 @@ import (
 
 // UserBson represents how the data is stored in the database
 type UserBson struct {
-	UserID int64     `bson:"_id"`
-	Date   time.Time `bson:"Date"`
-	Waifu  int       `bson:"Waifus"`
+	UserID interface{} `bson:"_id"`
+	Date   time.Time   `bson:"Date"`
+	Waifu  int64       `bson:"Waifus"`
 }
 
 var client *mongo.Client

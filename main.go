@@ -2,23 +2,19 @@ package main
 
 import (
 	"bot/data"
-	"time"
+	"bot/disc"
+	"os"
 )
 
 func main() {
-	/* const filename = "/config.json"
+	const filename = "/config.json"
 	dir, err := os.Getwd()
 	if err != nil {
 		panic(err)
 	}
 	path := dir + filename
-	disc.BotRun(path) */
-	data.InitDB()
+	go data.InitDB()
+	disc.BotRun(path)
 
-	Karitham := data.UserBson{
-		UserID: 206794847581896705,
-		Date:   time.Now(),
-		Waifu:  8,
-	}
-	data.SeeWaifus(Karitham)
+	// data.SeeWaifus(Karitham)
 }
