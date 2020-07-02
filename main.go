@@ -1,6 +1,9 @@
 package main
 
-import "bot/data"
+import (
+	"bot/data"
+	"time"
+)
 
 func main() {
 	/* 	const filename = "/config.json"
@@ -12,5 +15,7 @@ func main() {
 		   disc.BotRun(path) */
 
 	data.InitDB()
-	data.ResetDB()
+	Karitham := data.UserBson{UserID: 20679484758189670, Date: time.Now(), Waifus: []int{4}}
+	data.Store(Karitham)
+
 }

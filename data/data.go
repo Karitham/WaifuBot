@@ -4,22 +4,18 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"time"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // UserBson represents how the data is stored in the database
 type UserBson struct {
-	UserID int64  `json:"UserID"`
-	Date   string `json:"Date"`
-	Waifus []int  `json:"Waifus"`
-}
-
-// InputStruct serves as an input scheme
-type InputStruct struct {
-	UserID int `json:"UserID"`
-	Waifu  int `json:"Waifu"`
+	UserID int64     `bson:"UserID"`
+	Date   time.Time `bson:"Date"`
+	Waifus []int     `bson:"Waifus"`
 }
 
 var client *mongo.Client
@@ -47,15 +43,13 @@ func InitDB() {
 }
 
 // Store handle the incoming data for the database
-func Store(input InputStruct) {
+func Store(input UserBson) {
 	collection := client.Database("waifu").Collection("users")
-
-	insertResult, err := collection.InsertOne(context.TODO(), input)
+	var test bson.M
+	err := collection.FindOne(context.TODO(), bson.D{{"UserID", input.UserID}}).Decode(&test)
 	if err != nil {
-		log.Fatal(err)
+		collection.InsertOne(context.TODO(), input)
 	}
-
-	fmt.Println("Inserted a single document: ", insertResult.InsertedID)
 }
 
 // ResetDB resets the database
