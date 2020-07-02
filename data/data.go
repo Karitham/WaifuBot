@@ -1,4 +1,5 @@
 package data
+<<<<<<< HEAD
 
 import (
 	"context"
@@ -57,3 +58,5 @@ func ResetDB() {
 	client.Database("waifu").Drop(context.TODO())
 	fmt.Println("whole database emptied")
 }
+=======
+>>>>>>> 5a6f76adb141c254e863f291a31743c241bb2280
