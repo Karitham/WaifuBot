@@ -1,7 +1,5 @@
 package main
 
-import "bot/data"
-
 func main() {
 	/* 	const filename = "/config.json"
 	   	dir, err := os.Getwd()
@@ -11,6 +9,4 @@ func main() {
 	   	path := dir + filename
 		   disc.BotRun(path) */
 
-	data.InitDB()
-	data.ResetDB()
 }
