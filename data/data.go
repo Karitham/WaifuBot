@@ -19,6 +19,7 @@ type UserBson struct {
 }
 
 var client *mongo.Client
+var collection = client.Database("waifubot").Collection("waifus")
 
 // InitDB is used to start the database
 func InitDB() {
@@ -49,7 +50,6 @@ func Store(input UserBson) (bson.M, mongo.InsertOneResult) {
 	var insertOneReturn *mongo.InsertOneResult
 
 	// Check if user exist in a document
-	collection := client.Database("waifu").Collection("users")
 	err := collection.FindOne(context.TODO(), bson.M{"UserID": input.UserID}).Decode(&exists)
 	if err != nil {
 		fmt.Println(err)
@@ -70,7 +70,6 @@ func Store(input UserBson) (bson.M, mongo.InsertOneResult) {
 
 // Drop a user via USER ID
 func Drop(input UserBson) mongo.DeleteResult {
-	collection := client.Database("waifu").Collection("users")
 	deleteOneResult, err := collection.DeleteOne(context.TODO(), bson.M{"UserID": input.UserID})
 	if err != nil {
 		fmt.Println(err)

@@ -22,6 +22,9 @@ type ConfigT struct {
 
 var maxCharQuery int
 var botURL string
+var ctx = context.Background()
+var config ConfigT
+var client *disgord.Client
 
 var log = &logrus.Logger{
 	Out:       os.Stderr,
@@ -32,16 +35,17 @@ var log = &logrus.Logger{
 
 // BotRun the bot and handle events
 func BotRun(configfile string) {
-	config := configFromJSON(configfile)
+	config = configFromJSON(configfile)
 	maxCharQuery = config.MaxChar
-	var client = disgord.New(disgord.Config{
+
+	client = disgord.New(disgord.Config{
 		BotToken: config.BotToken,
 		Logger:   log,
 	})
-	defer client.StayConnectedUntilInterrupted(context.Background())
+	defer client.StayConnectedUntilInterrupted(ctx)
 
 	log, _ := std.NewLogFilter(client)
-	filter, _ := std.NewMsgFilter(context.Background(), client)
+	filter, _ := std.NewMsgFilter(ctx, client)
 	filter.SetPrefix(config.Prefix)
 
 	// create a handler and bind it to new message events
@@ -60,21 +64,34 @@ func BotRun(configfile string) {
 	) // handles copy
 
 	fmt.Println("The bot is currently running")
-	botURL, _ = client.InviteURL(context.Background())
 }
 
 func reply(s disgord.Session, data *disgord.MessageCreate) {
 	msg := data.Message
 	var resp query.RespCharType
-	// test the message content and respond accordingly
-	if msg.Content == "roll" {
+
+	// helps the user and
+	if msg.Content == "help" || msg.Content == "h" {
+		help := fmt.Sprintf("The commands available to you right now are :\n\t%sroll\n\t%sinvite", config.Prefix, config.Prefix)
+		msg.Reply(ctx, s, help)
+	}
+
+	// send back the URL to a waifu
+	if msg.Content == "roll" || msg.Content == "r" {
 		resp = query.MakeRQ(maxCharQuery)
 		response := fmt.Sprintf("https://anilist.co/character/%d", resp.Page.Characters[0].ID)
-		msg.Reply(context.Background(), s, response)
+		msg.Reply(ctx, s, response)
 	}
+
+	// send back bot invite url
 	if msg.Content == "invite" {
-		msg.Reply(context.Background(), s, botURL)
+		botURL, err := client.InviteURL(ctx)
+		if err != nil {
+			msg.Reply(ctx, s, err)
+		}
+		msg.Reply(ctx, s, botURL)
 	}
+
 }
 
 // Read file config.json return Type ConfigType
