@@ -79,6 +79,10 @@ func reply(s disgord.Session, data *disgord.MessageCreate) {
 		invite(s, data)
 	case msg.Content == "list" || msg.Content == "l":
 		list(s, data)
+	case msg.Content == "search" || msg.Content == "s":
+		search(s, data)
+	default:
+		unknown(s, data)
 	}
 }
 
@@ -165,7 +169,23 @@ func help(s disgord.Session, data *disgord.MessageCreate) {
 				invite : 	Invite link to add the bot to your server
 				help (h) :	show the commands you can use
 				`,
-				Color: 0xcc0000,
+				Color: 0xeec400,
+			},
+		})
+}
+
+func search(s disgord.Session, data *disgord.MessageCreate) {
+
+}
+func unknown(s disgord.Session, data *disgord.MessageCreate) {
+	client.CreateMessage(
+		ctx,
+		data.Message.ChannelID,
+		&disgord.CreateMessageParams{
+			Embed: &disgord.Embed{
+				Title:       "Unknown command",
+				Description: fmt.Sprintf("Type %shelp to see the commands available", config.Prefix),
+				Color:       0xcc0000,
 			},
 		})
 }
