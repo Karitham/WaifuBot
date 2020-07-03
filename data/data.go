@@ -76,9 +76,12 @@ func AddWaifu(input InputStruct) {
 		},
 		opts,
 	).Decode(&decoded)
-	if err != nil {
+	switch err != nil {
+	case err == mongo.ErrNoDocuments:
+	default:
 		fmt.Println(err)
 	}
+
 }
 
 // SeeWaifus returns a list of waifus the user has collected
@@ -92,6 +95,5 @@ func SeeWaifus(id interface{}) []int64 {
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println(output.Waifu)
 	return output.Waifu
 }

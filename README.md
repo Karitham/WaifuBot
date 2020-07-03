@@ -35,9 +35,8 @@ To build for the platform you are on, just do
 
 `go build`
 
-To build for raspberry Pi, do, 
+To build for raspberry Pi, do
 
 `env GOOS=linux GOARCH=arm GOARM=7 go build`
 
 If it doesn't work, check ARM version, this exemple works on raspberry Pi 4, I'm not sure about other models
-

@@ -70,37 +70,16 @@ func BotRun(configfile string) {
 
 func reply(s disgord.Session, data *disgord.MessageCreate) {
 	msg := data.Message
-	var resp query.RespCharType
-
-	// helps the user and
-	if msg.Content == "help" || msg.Content == "h" {
-		help := fmt.Sprintf("The commands available to you right now are :\n\t%sroll\n\t%sinvite", config.Prefix, config.Prefix)
-		msg.Reply(ctx, s, help)
+	switch {
+	case msg.Content == "help" || msg.Content == "h":
+		help(s, data)
+	case msg.Content == "roll" || msg.Content == "r":
+		roll(s, data)
+	case msg.Content == "invite":
+		invite(s, data)
+	case msg.Content == "list" || msg.Content == "l":
+		list(s, data)
 	}
-
-	// send back the URL to a waifu
-	if msg.Content == "roll" || msg.Content == "r" {
-		resp = query.MakeRQ(maxCharQuery)
-		db.AddWaifu(db.InputStruct{UserID: msg.Author.ID, Date: time.Now(), Waifu: resp.Page.Characters[0].ID})
-		response := fmt.Sprintf("https://anilist.co/character/%d", resp.Page.Characters[0].ID)
-		msg.Reply(ctx, s, response)
-	}
-
-	// send back bot invite url
-	if msg.Content == "invite" {
-		botURL, err := client.InviteURL(ctx)
-		if err != nil {
-			msg.Reply(ctx, s, err)
-		}
-		msg.Reply(ctx, s, botURL)
-	}
-
-	// send list of waifus
-	if msg.Content == "list" || msg.Content == "l" {
-		waifuList := db.SeeWaifus(msg.Author.ID)
-		msg.Reply(ctx, s, waifuList)
-	}
-
 }
 
 // Read file config.json return Type ConfigType
@@ -114,4 +93,79 @@ func configFromJSON(file string) ConfigT {
 	}
 	json.Unmarshal(body, &config)
 	return config
+}
+
+func list(s disgord.Session, data *disgord.MessageCreate) {
+	var desc string
+	waifuList := db.SeeWaifus(data.Message.Author.ID)
+	waifus := func() string {
+		for _, v := range waifuList {
+			desc = fmt.Sprintf("%d\n%s", v, desc)
+		}
+		return desc
+	}
+	client.CreateMessage(
+		ctx,
+		data.Message.ChannelID,
+		&disgord.CreateMessageParams{
+			Embed: &disgord.Embed{
+				Title:       "Waifu list",
+				Description: waifus(),
+				Color:       0x88ffcc,
+			}})
+}
+
+func roll(s disgord.Session, data *disgord.MessageCreate) {
+	resp := query.MakeRQ(maxCharQuery)
+	db.AddWaifu(db.InputStruct{UserID: data.Message.Author.ID, Date: time.Now(), Waifu: resp.Page.Characters[0].ID})
+	desc := fmt.Sprintf("You rolled waifu id : %d", resp.Page.Characters[0].ID)
+	url := fmt.Sprintf("https://anilist.co/character/%d", resp.Page.Characters[0].ID)
+	client.CreateMessage(
+		ctx,
+		data.Message.ChannelID,
+		&disgord.CreateMessageParams{
+			Embed: &disgord.Embed{
+				Title:       resp.Page.Characters[0].Name.Full,
+				URL:         url,
+				Description: desc,
+				Color:       0x225577,
+				Image: &disgord.EmbedImage{
+					URL: resp.Page.Characters[0].Image.Large,
+				},
+			}})
+}
+
+func invite(s disgord.Session, data *disgord.MessageCreate) {
+	botURL, err := client.InviteURL(ctx)
+	if err != nil {
+		data.Message.Reply(ctx, s, err)
+	}
+	client.CreateMessage(
+		ctx,
+		data.Message.ChannelID,
+		&disgord.CreateMessageParams{
+			Embed: &disgord.Embed{
+				Title: "Invite",
+				URL:   botURL,
+				Color: 0x49b675,
+			},
+		})
+}
+
+func help(s disgord.Session, data *disgord.MessageCreate) {
+	client.CreateMessage(
+		ctx,
+		data.Message.ChannelID,
+		&disgord.CreateMessageParams{
+			Embed: &disgord.Embed{
+				Title: "Help",
+				Description: `
+				roll (r): 	Roll a new waifu
+				list (l): 	List the waifus you have
+				invite : 	Invite link to add the bot to your server
+				help (h) :	show the commands you can use
+				`,
+				Color: 0xcc0000,
+			},
+		})
 }
