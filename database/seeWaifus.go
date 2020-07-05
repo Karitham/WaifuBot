@@ -25,8 +25,8 @@ type OutputStruct struct {
 	}
 }
 
-// SeeWaifus returns a list of waifus the user has collected
-func SeeWaifus(id interface{}) OutputStruct {
+// ViewUserData returns a list of waifus the user has collected
+func ViewUserData(id interface{}) OutputStruct {
 	var output OutputStruct
 	bytesWaifu, err := Collection.FindOne(context.TODO(), bson.M{"_id": id}).DecodeBytes()
 	if err != mongo.ErrNoDocuments {

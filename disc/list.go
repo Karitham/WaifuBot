@@ -33,7 +33,7 @@ func list(data *disgord.MessageCreate, args []string) {
 	}
 
 	// Make the database query
-	WList := database.SeeWaifus(user.ID)
+	WList := database.ViewUserData(user.ID)
 
 	// Check if the list is empty, if not, return a formatted description
 	if len(WList.Waifus) < 1 {

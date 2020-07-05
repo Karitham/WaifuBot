@@ -24,7 +24,7 @@ func profile(data *disgord.MessageCreate) {
 	}
 
 	// retrieve user information from database
-	db := database.SeeWaifus(user.ID)
+	db := database.ViewUserData(user.ID)
 
 	// send message
 	client.CreateMessage(

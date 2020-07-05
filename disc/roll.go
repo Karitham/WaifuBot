@@ -17,8 +17,47 @@ type WaifuRolled struct {
 }
 
 func roll(data *disgord.MessageCreate) {
+	// checkTimings verify if your query is legal
 
-	// Query the character and add it to the database
+	ableToRoll := database.ViewUserData(data.Message.Author.ID).Date.Add(3 * time.Hour)
+
+	// verify if the roll is legal
+	if ableToRoll.Sub(time.Now()) < 0 {
+		// Makes the querry and adds the character to the database
+		resp := queryRandom(data)
+
+		// Create a descrption adapated to the character retrieved
+		desc := fmt.Sprintf("You rolled waifu %d", resp.Page.Characters[0].ID)
+
+		// Sends the message
+		client.CreateMessage(
+			ctx,
+			data.Message.ChannelID,
+			&disgord.CreateMessageParams{
+				Embed: &disgord.Embed{
+					Title:       resp.Page.Characters[0].Name.Full,
+					URL:         resp.Page.Characters[0].SiteURL,
+					Description: desc,
+					Color:       0x225577,
+					Image: &disgord.EmbedImage{
+						URL: resp.Page.Characters[0].Image.Large,
+					},
+				}})
+	} else {
+		client.CreateMessage(
+			ctx,
+			data.Message.ChannelID,
+			&disgord.CreateMessageParams{
+				Embed: &disgord.Embed{
+					Title:       "Illegal roll",
+					Description: fmt.Sprintf("You can roll at %s", ableToRoll),
+					Color:       0x225577,
+				}})
+	}
+}
+
+// queryRandom makes a character query and adds it to the database
+func queryRandom(data *disgord.MessageCreate) query.CharStruct {
 	resp := query.RandomCharQuery(conf.MaxChar)
 	database.AddWaifu(database.InputWaifu{
 		UserID: data.Message.Author.ID,
@@ -33,22 +72,5 @@ func roll(data *disgord.MessageCreate) {
 			Image: resp.Page.Characters[0].Image.Large,
 		},
 	})
-
-	// Create a descrption adapated to the character retrieved
-	desc := fmt.Sprintf("You rolled waifu %d", resp.Page.Characters[0].ID)
-
-	// Send a message
-	client.CreateMessage(
-		ctx,
-		data.Message.ChannelID,
-		&disgord.CreateMessageParams{
-			Embed: &disgord.Embed{
-				Title:       resp.Page.Characters[0].Name.Full,
-				URL:         resp.Page.Characters[0].SiteURL,
-				Description: desc,
-				Color:       0x225577,
-				Image: &disgord.EmbedImage{
-					URL: resp.Page.Characters[0].Image.Large,
-				},
-			}})
+	return resp
 }
