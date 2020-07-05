@@ -2,10 +2,9 @@ package disc
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
+	"strings"
 
 	"github.com/andersfylling/disgord"
 	"github.com/andersfylling/disgord/std"
@@ -63,32 +62,23 @@ func BotRun(configfile string) {
 }
 
 func reply(s disgord.Session, data *disgord.MessageCreate) {
-	msg := data.Message
+
+	// Parses the message into command / args
+	command := strings.Fields(data.Message.Content)[0]
+	args := strings.Fields(data.Message.Content)[1:]
+
 	switch {
-	case msg.Content == "searchID" || msg.Content == "sID":
-		//searchID(data, search)
-	case msg.Content == "search" || msg.Content == "s":
-		//searchName(data, search)
-	case msg.Content == "help" || msg.Content == "h":
+	case command == "search" || command == "s":
+		search(data, args)
+	case command == "help" || command == "h":
 		help(data)
-	case msg.Content == "roll" || msg.Content == "r":
+	case command == "roll" || command == "r":
 		roll(data)
-	case msg.Content == "list" || msg.Content == "l":
+	case command == "list" || command == "l":
 		list(data)
-	case msg.Content == "invite":
+	case command == "invite":
 		invite(data)
 	default:
 		unknown(data)
 	}
-}
-
-// configFromJSON reads config from file
-func configFromJSON(file string) ConfigT {
-	var config ConfigT
-	body, err := ioutil.ReadFile(file)
-	if err != nil {
-		fmt.Println(err)
-	}
-	json.Unmarshal(body, &config)
-	return config
 }

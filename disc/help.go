@@ -10,10 +10,11 @@ func help(data *disgord.MessageCreate) {
 			Embed: &disgord.Embed{
 				Title: "Help",
 				Description: `
-				roll (r): 	Roll a new waifu
-				list (l): 	List the waifus you have
-				invite : 	Invite link to add the bot to your server
-				help (h) :	show the commands you can use
+				roll (r) : Roll a new waifu
+				list (l) : List the waifus you have
+				search (s) : Search for a character by name / ID
+				invite : Invite link to add the bot to your server
+				help (h) : Display this help page
 				`,
 				Color: 0xeec400,
 			},
