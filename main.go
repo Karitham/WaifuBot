@@ -1,18 +1,12 @@
 package main
 
 import (
-	"bot/data"
+	"bot/config"
+	"bot/database"
 	"bot/disc"
-	"os"
 )
 
 func main() {
-	const filename = "/config.json"
-	dir, err := os.Getwd()
-	if err != nil {
-		panic(err)
-	}
-	path := dir + filename
-	go data.InitDB()
-	disc.BotRun(path)
+	go database.Init(config.Retrieve("./config.json"))
+	disc.BotRun(config.Retrieve("./config.json"))
 }

@@ -1,12 +1,13 @@
 package disc
 
 import (
+	"bot/config"
 	"fmt"
 
 	"github.com/andersfylling/disgord"
 )
 
-func unknown(data *disgord.MessageCreate) {
+func unknown(data *disgord.MessageCreate, config config.ConfJSONStruct) {
 	client.CreateMessage(
 		ctx,
 		data.Message.ChannelID,

@@ -1,7 +1,8 @@
 package disc
 
 import (
-	db "bot/data"
+	"bot/config"
+	"bot/database"
 	"bot/query"
 	"fmt"
 	"time"
@@ -9,9 +10,9 @@ import (
 	"github.com/andersfylling/disgord"
 )
 
-func roll(data *disgord.MessageCreate) {
-	resp := query.MakeRQ(config.MaxChar)
-	db.AddWaifu(db.InputStruct{UserID: data.Message.Author.ID, Date: time.Now(), Waifu: resp.Page.Characters[0].ID})
+func roll(data *disgord.MessageCreate, config config.ConfJSONStruct) {
+	resp := query.RandomCharQuery(config.MaxChar)
+	database.AddWaifu(database.InputStruct{UserID: data.Message.Author.ID, Date: time.Now(), Waifu: resp.Page.Characters[0].ID})
 	desc := fmt.Sprintf("You rolled waifu id : %d", resp.Page.Characters[0].ID)
 	client.CreateMessage(
 		ctx,

@@ -1,6 +1,7 @@
 package disc
 
 import (
+	conf "bot/config"
 	"context"
 	"fmt"
 	"os"
@@ -11,22 +12,13 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// ConfigT is used to unmarshal the config.json
-type ConfigT struct {
-	Prefix   string `json:"Prefix"`
-	BotToken string `json:"Bot_Token"`
-	MaxChar  int    `json:"Max_Character_Roll"`
-}
-
 // Global Variables to ease working with client/sesion etc
 var ctx = context.Background()
-var config ConfigT
 var client *disgord.Client
 var session disgord.Session
 
 // BotRun the bot and handle events
-func BotRun(configfile string) {
-	config = configFromJSON(configfile)
+func BotRun(cf conf.ConfJSONStruct) {
 
 	var log = &logrus.Logger{
 		Out:       os.Stderr,
@@ -36,14 +28,14 @@ func BotRun(configfile string) {
 	}
 
 	client = disgord.New(disgord.Config{
-		BotToken: config.BotToken,
+		BotToken: cf.BotToken,
 		Logger:   log,
 	})
 
 	defer client.StayConnectedUntilInterrupted(ctx)
 
 	filter, _ := std.NewMsgFilter(ctx, client)
-	filter.SetPrefix(config.Prefix)
+	filter.SetPrefix(cf.Prefix)
 
 	// create a handler and bind it to new message events
 	go client.On(disgord.EvtMessageCreate,
@@ -61,7 +53,7 @@ func BotRun(configfile string) {
 	fmt.Println("The bot is currently running")
 }
 
-func reply(s disgord.Session, data *disgord.MessageCreate) {
+func reply(s disgord.Session, data *disgord.MessageCreate, config conf.ConfJSONStruct) {
 
 	// Parses the message into command / args
 	command := strings.Fields(data.Message.Content)[0]
@@ -75,12 +67,12 @@ func reply(s disgord.Session, data *disgord.MessageCreate) {
 	case command == "help" || command == "h":
 		help(data)
 	case command == "roll" || command == "r":
-		roll(data)
+		roll(data, config)
 	case command == "list" || command == "l":
 		list(data)
 	case command == "invite":
 		invite(data)
 	default:
-		unknown(data)
+		unknown(data, config)
 	}
 }

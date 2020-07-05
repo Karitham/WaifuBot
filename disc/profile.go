@@ -1,7 +1,7 @@
 package disc
 
 import (
-	db "bot/data"
+	"bot/database"
 	"fmt"
 
 	"github.com/andersfylling/disgord"
@@ -27,7 +27,7 @@ func profile(data *disgord.MessageCreate) {
 	}
 
 	// retrieve user information from database
-	db := db.SeeWaifus(user.ID)
+	db := database.SeeWaifus(user.ID)
 
 	// send message
 	client.CreateMessage(
@@ -35,10 +35,13 @@ func profile(data *disgord.MessageCreate) {
 		data.Message.ChannelID,
 		&disgord.CreateMessageParams{
 			Embed: &disgord.Embed{
-				Title:       data.Message.Author.Username,
-				Thumbnail:   &disgord.EmbedThumbnail{URL: avatar},
-				Description: fmt.Sprintf("This user last rolled %s.\nHe owns %d waifus.\nHis favourite waifu is", db.Date, len(db.Waifu)),
-				Color:       0xffe2fe,
+				Title:     data.Message.Author.Username,
+				Thumbnail: &disgord.EmbedThumbnail{URL: avatar},
+				Description: fmt.Sprintf(`
+				This user last rolled %s.
+				He owns %d waifus.
+				His favourite waifu is %d`, db.Date, len(db.Waifus), db.Waifus[0]),
+				Color: 0xffe2fe,
 			},
 		})
 }

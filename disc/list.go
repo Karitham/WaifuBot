@@ -1,7 +1,7 @@
 package disc
 
 import (
-	db "bot/data"
+	"bot/database"
 	"fmt"
 
 	"github.com/andersfylling/disgord"
@@ -9,10 +9,10 @@ import (
 
 func list(data *disgord.MessageCreate) {
 	var desc string
-	waifuList := db.SeeWaifus(data.Message.Author.ID).Waifu
+	waifuList := database.SeeWaifus(data.Message.Author.ID).Waifus
 	waifus := func() string {
 		for _, v := range waifuList {
-			desc = fmt.Sprintf("%d\n%s", v, desc)
+			desc = fmt.Sprintf("`%d`\n%s", v, desc)
 		}
 		return desc
 	}

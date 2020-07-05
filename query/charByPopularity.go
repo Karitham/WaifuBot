@@ -6,8 +6,8 @@ import (
 	"github.com/machinebox/graphql"
 )
 
-// RandomCharStruct handles data for RandomChar function
-type RandomCharStruct struct {
+// CharStruct handles data for RandomChar function
+type CharStruct struct {
 	Page struct {
 		Characters []struct {
 			ID      int64  `json:"id"`
@@ -24,8 +24,8 @@ type RandomCharStruct struct {
 }
 
 // RandomChar outputs the character you want based on their number on the page list
-func RandomChar(id int) (RandomCharStruct, error) {
-	var res RandomCharStruct
+func RandomChar(id int) (CharStruct, error) {
+	var res CharStruct
 	graphURL := "https://graphql.anilist.co"
 	client := graphql.NewClient(graphURL)
 	req := graphql.NewRequest(`
