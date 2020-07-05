@@ -10,15 +10,10 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// InputStruct represents how to send data to the database
-type InputStruct struct {
+// InputWaifu represents how to send data to the database
+type InputWaifu struct {
 	UserID    interface{} `bson:"_id"`
 	Date      time.Time   `bson:"Date"`
-	Favourite struct {
-		ID    int64  `bson:"ID"`
-		Name  string `bson:"Name"`
-		Image string `bson:"Image"`
-	}
 	WaifuList struct {
 		ID    int64  `bson:"ID"`
 		Name  string `bson:"Name"`
@@ -27,7 +22,7 @@ type InputStruct struct {
 }
 
 // AddWaifu adds a waifu to the user each time he has a new one
-func AddWaifu(input InputStruct) {
+func AddWaifu(input InputWaifu) {
 	var decoded bson.M
 	opts := options.FindOneAndUpdate().SetUpsert(true)
 	err := Collection.FindOneAndUpdate(

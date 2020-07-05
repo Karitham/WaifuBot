@@ -1,27 +1,18 @@
 # Waifu Bot
 
-This is a waifu / husbando bot in developpement.
+This is a waifu/husbando bot in developpement. It is unstable and will stay unstable until 1.0
 
-Tt uses [Disgord go lib](github.com/andersfylling/disgord), [Anilist's GraphQL API](https://github.com/AniList/ApiV2-GraphQL-Docs) and mongoDB
+Tt uses [Disgord go lib](github.com/andersfylling/disgord), [Anilist's GraphQL API](https://github.com/AniList/ApiV2-GraphQL-Docs) and [mongoDB](https://mongodb.com)
 
 ## Requirements
 
 * Golang (latest version recommended)
+* MongoDB
 * A discord bot token
 
 ## setup
 
-Create a `config.json` file and add the needed information like below
-
-### Exemple
-
-```json
-{
-    "Prefix": "w.",
-    "Bot_Token": "thIsIsaDiscorDToken.$dzahuidladsdazadgegdj",
-    "Max_Character_Roll": 7000
-}
-```
+Rename `configExemple.json` to `config.json` and change the values according to your needs
 
 Run `go mod init bot` to initialise a bot.
 

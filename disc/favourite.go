@@ -28,5 +28,17 @@ func favourite(data *disgord.MessageCreate, args []string) {
 				Image: resp.Character.Image.Large,
 			},
 		})
+		client.CreateMessage(
+			ctx,
+			data.Message.ChannelID,
+			&disgord.CreateMessageParams{
+				Embed: &disgord.Embed{
+					Title:       "New favourite waifu set",
+					Description: fmt.Sprintf("Your new waifu is %s", resp.Character.Name.Full),
+					Color:       0xffe2fe,
+					Image: &disgord.EmbedImage{
+						URL: resp.Character.Image.Large,
+					},
+				}})
 	}
 }
