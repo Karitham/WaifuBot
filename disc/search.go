@@ -2,8 +2,6 @@ package disc
 
 import (
 	"bot/query"
-	"strconv"
-	"strings"
 
 	"github.com/andersfylling/disgord"
 )
@@ -11,13 +9,7 @@ import (
 func search(data *disgord.MessageCreate, args []string) {
 	// check if there is a search term
 	if len(args) > 0 {
-		arg := strings.Join(args, " ")
-
-		id, err := strconv.Atoi(arg)
-
-		rq := query.SearchOpts{ID: id, Name: arg}
-
-		resp, err := query.CharSearch(rq)
+		resp, err := query.CharSearch(args)
 		if err == nil {
 			client.CreateMessage(
 				ctx,

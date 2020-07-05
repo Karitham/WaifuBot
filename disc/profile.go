@@ -39,8 +39,8 @@ func profile(data *disgord.MessageCreate) {
 				Thumbnail: &disgord.EmbedThumbnail{URL: avatar},
 				Description: fmt.Sprintf(`
 				This user last rolled %s.
-				He owns %d waifus.
-				His favourite waifu is %d`, db.Date, len(db.Waifus), db.Waifus[0]),
+				His favourite waifu is %s`, db.Date, db.Favourite.FavName),
+				Image: &disgord.EmbedImage{URL: db.Favourite.FavImage},
 				Color: 0xffe2fe,
 			},
 		})

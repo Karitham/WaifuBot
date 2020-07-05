@@ -1,7 +1,7 @@
 package disc
 
 import (
-	conf "bot/config"
+	"bot/config"
 	"context"
 	"fmt"
 	"os"
@@ -16,10 +16,11 @@ import (
 var ctx = context.Background()
 var client *disgord.Client
 var session disgord.Session
+var conf config.ConfJSONStruct
 
 // BotRun the bot and handle events
-func BotRun(cf conf.ConfJSONStruct) {
-
+func BotRun(cf config.ConfJSONStruct) {
+	conf = cf
 	var log = &logrus.Logger{
 		Out:       os.Stderr,
 		Formatter: new(logrus.TextFormatter),
@@ -53,7 +54,7 @@ func BotRun(cf conf.ConfJSONStruct) {
 	fmt.Println("The bot is currently running")
 }
 
-func reply(s disgord.Session, data *disgord.MessageCreate, config conf.ConfJSONStruct) {
+func reply(s disgord.Session, data *disgord.MessageCreate) {
 
 	// Parses the message into command / args
 	command := strings.Fields(data.Message.Content)[0]
@@ -62,17 +63,19 @@ func reply(s disgord.Session, data *disgord.MessageCreate, config conf.ConfJSONS
 	switch {
 	case command == "search" || command == "s":
 		search(data, args)
+	case command == "favourite" || command == "f":
+		favourite(data, args)
 	case command == "profile" || command == "p":
 		profile(data)
 	case command == "help" || command == "h":
 		help(data)
 	case command == "roll" || command == "r":
-		roll(data, config)
+		roll(data)
 	case command == "list" || command == "l":
 		list(data)
 	case command == "invite":
 		invite(data)
 	default:
-		unknown(data, config)
+		unknown(data)
 	}
 }

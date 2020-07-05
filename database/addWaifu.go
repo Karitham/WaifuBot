@@ -12,9 +12,18 @@ import (
 
 // InputStruct represents how to send data to the database
 type InputStruct struct {
-	UserID interface{} `bson:"_id"`
-	Date   time.Time   `bson:"Date"`
-	Waifu  int64       `bson:"Waifus"`
+	UserID    interface{} `bson:"_id"`
+	Date      time.Time   `bson:"Date"`
+	Favourite struct {
+		ID    int64  `bson:"ID"`
+		Name  string `bson:"Name"`
+		Image string `bson:"Image"`
+	}
+	WaifuList struct {
+		ID    int64  `bson:"ID"`
+		Name  string `bson:"Name"`
+		Image string `bson:"Image"`
+	}
 }
 
 // AddWaifu adds a waifu to the user each time he has a new one
@@ -27,15 +36,12 @@ func AddWaifu(input InputStruct) {
 			"_id": input.UserID,
 		},
 		bson.M{
-			"$push": bson.M{"Waifus": input.Waifu},
 			"$set":  bson.M{"Date": input.Date},
+			"$push": bson.M{"Waifus": input.WaifuList},
 		},
 		opts,
 	).Decode(&decoded)
-	switch err != nil {
-	case err == mongo.ErrNoDocuments:
-	default:
+	if err != mongo.ErrNoDocuments && err != nil {
 		fmt.Println(err)
 	}
-
 }

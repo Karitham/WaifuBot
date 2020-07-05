@@ -1,7 +1,6 @@
 package disc
 
 import (
-	"bot/config"
 	"bot/database"
 	"bot/query"
 	"fmt"
@@ -10,9 +9,28 @@ import (
 	"github.com/andersfylling/disgord"
 )
 
-func roll(data *disgord.MessageCreate, config config.ConfJSONStruct) {
-	resp := query.RandomCharQuery(config.MaxChar)
-	database.AddWaifu(database.InputStruct{UserID: data.Message.Author.ID, Date: time.Now(), Waifu: resp.Page.Characters[0].ID})
+// WaifuRolled is used to input the waifu rolled into the database
+type WaifuRolled struct {
+	ID    int64  `bson:"ID"`
+	Name  string `bson:"Name"`
+	Image string `bson:"Image"`
+}
+
+func roll(data *disgord.MessageCreate) {
+	resp := query.RandomCharQuery(conf.MaxChar)
+	database.AddWaifu(database.InputStruct{
+		UserID: data.Message.Author.ID,
+		Date:   time.Now(),
+		WaifuList: struct {
+			ID    int64  "bson:\"ID\""
+			Name  string "bson:\"Name\""
+			Image string "bson:\"Image\""
+		}{
+			ID:    resp.Page.Characters[0].ID,
+			Name:  resp.Page.Characters[0].Name.Full,
+			Image: resp.Page.Characters[0].Image.Large,
+		},
+	})
 	desc := fmt.Sprintf("You rolled waifu id : %d", resp.Page.Characters[0].ID)
 	client.CreateMessage(
 		ctx,
