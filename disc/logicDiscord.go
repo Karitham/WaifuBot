@@ -70,6 +70,8 @@ func reply(s disgord.Session, data *disgord.MessageCreate) {
 	switch {
 	case command == "search" || command == "s":
 		search(data, args)
+	case command == "profile" || command == "p":
+		profile(data)
 	case command == "help" || command == "h":
 		help(data)
 	case command == "roll" || command == "r":

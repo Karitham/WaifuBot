@@ -13,7 +13,8 @@ type RandomCharStruct struct {
 			ID      int64  `json:"id"`
 			SiteURL string `json:"siteUrl"`
 			Image   struct {
-				Large string `json:"large"`
+				Medium string `json:"medium"`
+				Large  string `json:"large"`
 			}
 			Name struct {
 				Full string `json:"full"`
@@ -28,21 +29,22 @@ func RandomChar(id int) (RandomCharStruct, error) {
 	graphURL := "https://graphql.anilist.co"
 	client := graphql.NewClient(graphURL)
 	req := graphql.NewRequest(`
-	query ($pageNumber: Int) {
-		Page(perPage: 1, page: $pageNumber) {
-		  characters(sort: FAVOURITES_DESC) {
-			id
-			siteUrl
-			image {
-			  large
+		query ($pageNumber: Int) {
+			Page(perPage: 1, page: $pageNumber) {
+				characters(sort: FAVOURITES_DESC) {
+					id
+					siteUrl
+					image {
+						medium
+						large
+					}
+					name {
+						full
+					}
+				}
+				}
 			}
-			name {
-			  full
-			}
-		  }
-		}
-	  }
-	`)
+		`)
 
 	req.Var("pageNumber", id)
 	ctx := context.Background()

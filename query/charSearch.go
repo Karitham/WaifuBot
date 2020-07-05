@@ -21,7 +21,8 @@ type CharSearchStruct struct {
 			Full string `json:"full"`
 		}
 		Image struct {
-			Large string `json:"large"`
+			Medium string `json:"medium"`
+			Large  string `json:"large"`
 		}
 		Description string `json:"description"`
 	}
@@ -42,6 +43,7 @@ func CharSearch(so SearchOpts) (CharSearchStruct, error) {
 			full
 		  }
 		  image {
+			medium
 			large
 		  }
 		  description

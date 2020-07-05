@@ -85,7 +85,7 @@ func AddWaifu(input InputStruct) {
 }
 
 // SeeWaifus returns a list of waifus the user has collected
-func SeeWaifus(id interface{}) []int64 {
+func SeeWaifus(id interface{}) OutputStruct {
 	var output OutputStruct
 	bytesWaifu, err := collection.FindOne(ctx, bson.M{"_id": id}).DecodeBytes()
 	if err != nil {
@@ -95,5 +95,5 @@ func SeeWaifus(id interface{}) []int64 {
 	if err != nil {
 		fmt.Println(err)
 	}
-	return output.Waifu
+	return output
 }

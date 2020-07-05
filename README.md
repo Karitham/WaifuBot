@@ -23,9 +23,7 @@ Create a `config.json` file and add the needed information like below
 }
 ```
 
-Run `go mod download` to download the depedencies needed.
-
-Do not touch them in case you do not know what you are doing.
+Run `go mod init bot` to initialise a bot.
 
 To run the bot, do `go run .`
 
