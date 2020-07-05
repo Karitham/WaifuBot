@@ -17,6 +17,8 @@ type WaifuRolled struct {
 }
 
 func roll(data *disgord.MessageCreate) {
+
+	// Query the character and add it to the database
 	resp := query.RandomCharQuery(conf.MaxChar)
 	database.AddWaifu(database.InputWaifu{
 		UserID: data.Message.Author.ID,
@@ -31,7 +33,11 @@ func roll(data *disgord.MessageCreate) {
 			Image: resp.Page.Characters[0].Image.Large,
 		},
 	})
+
+	// Create a descrption adapated to the character retrieved
 	desc := fmt.Sprintf("You rolled waifu %d", resp.Page.Characters[0].ID)
+
+	// Send a message
 	client.CreateMessage(
 		ctx,
 		data.Message.ChannelID,
@@ -42,7 +48,7 @@ func roll(data *disgord.MessageCreate) {
 				Description: desc,
 				Color:       0x225577,
 				Image: &disgord.EmbedImage{
-					URL: resp.Page.Characters[0].Image.Medium,
+					URL: resp.Page.Characters[0].Image.Large,
 				},
 			}})
 }

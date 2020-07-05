@@ -11,17 +11,17 @@ import (
 
 // OutputStruct is a representation of the data inside the database, it's used to retrieve data
 type OutputStruct struct {
-	UserID    int64     `bson:"_id"`
-	Date      time.Time `bson:"Date"`
+	ID        int64 `bson:"_id"`
 	Favourite struct {
-		FavID    int    `bson:"ID"`
-		FavName  string `bson:"Name"`
-		FavImage string `bson:"Image"`
+		ID    int64  `bson:"ID"`
+		Name  string `bson:"Name"`
+		Image string `bson:"Image"`
 	}
-	WaifuList struct {
-		WListID    int    `bson:"ID"`
-		WListName  string `bson:"Name"`
-		WListImage string `bson:"Image"`
+	Date   time.Time `bson:"Date"`
+	Waifus []struct {
+		ID    int64  `bson:"ID"`
+		Name  string `bson:"Name"`
+		Image string `bson:"Image"`
 	}
 }
 

@@ -20,10 +20,7 @@ func profile(data *disgord.MessageCreate) {
 	// get avatar URL
 	avatar, err := user.AvatarURL(128, false)
 	if err != nil {
-		client.CreateMessage(
-			ctx,
-			data.Message.ChannelID,
-			&disgord.CreateMessageParams{Embed: &disgord.Embed{Title: fmt.Sprintf("Error, %s", err), Color: 0xcc0000}})
+		fmt.Println(err)
 	}
 
 	// retrieve user information from database
@@ -39,8 +36,9 @@ func profile(data *disgord.MessageCreate) {
 				Thumbnail: &disgord.EmbedThumbnail{URL: avatar},
 				Description: fmt.Sprintf(`
 				This user last rolled %s.
-				His favourite waifu is %s`, db.Date, db.Favourite.FavName),
-				Image: &disgord.EmbedImage{URL: db.Favourite.FavImage},
+				He owns %d Waifus.
+				His favourite waifu is %s`, db.Date, len(db.Waifus), db.Favourite.Name),
+				Image: &disgord.EmbedImage{URL: db.Favourite.Image},
 				Color: 0xffe2fe,
 			},
 		})

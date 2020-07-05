@@ -72,7 +72,7 @@ func reply(s disgord.Session, data *disgord.MessageCreate) {
 	case command == "roll" || command == "r":
 		roll(data)
 	case command == "list" || command == "l":
-		list(data)
+		list(data, args)
 	case command == "invite":
 		invite(data)
 	default:
