@@ -18,8 +18,7 @@ type WaifuRolled struct {
 
 func roll(data *disgord.MessageCreate) {
 	// checkTimings verify if your query is legal
-
-	ableToRoll := database.ViewUserData(data.Message.Author.ID).Date.Add(3 * time.Hour)
+	ableToRoll := database.ViewUserData(data.Message.Author.ID).Date.Add(conf.TimeBetweenRolls * time.Hour)
 
 	// verify if the roll is legal
 	if ableToRoll.Sub(time.Now()) < 0 {

@@ -4,14 +4,16 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"time"
 )
 
 // ConfJSONStruct is used to unmarshal the config.json
 type ConfJSONStruct struct {
-	Prefix   string `json:"Prefix"`
-	BotToken string `json:"Bot_Token"`
-	MongoURL string `json:"Mongo_URL"`
-	MaxChar  int    `json:"Max_Character_Roll"`
+	Prefix           string        `json:"Prefix"`
+	BotToken         string        `json:"Bot_Token"`
+	MongoURL         string        `json:"Mongo_URL"`
+	MaxChar          int           `json:"Max_Character_Roll"`
+	TimeBetweenRolls time.Duration `json:"Time_Between_Rolls"`
 }
 
 var config ConfJSONStruct

@@ -2,5 +2,6 @@
   "Prefix": "w.",
   "Bot_Token": "thIsIsaDiscorDToken.$dzahuidladsdazadgegdj",
   "Mongo_URL": "mongodb://localhost:27017",
-  "Max_Character_Roll": 7000
+  "Max_Character_Roll": 7000,
+  "Time_Between_Rolls": 3
 }
