@@ -13,7 +13,7 @@ func help(data *disgord.MessageCreate) {
 				roll (r) : Roll a new waifu
 				list (l) : List the waifus you have
 				search (s) : Search for a character by name / ID
-				profile (s) : Display profile information for yourself, or the user mentioned
+				profile (p) : Display profile information for yourself, or the user mentioned
 				favourite (f) : Set a favourite waifu to appear on your profile, you may choose any character you want
 				invite : Invite link to add the bot to your server
 				help (h) : Display this help page

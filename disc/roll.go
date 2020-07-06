@@ -61,11 +61,7 @@ func queryRandom(data *disgord.MessageCreate) query.CharStruct {
 	database.AddWaifu(database.InputWaifu{
 		UserID: data.Message.Author.ID,
 		Date:   time.Now(),
-		WaifuList: struct {
-			ID    int64  "bson:\"ID\""
-			Name  string "bson:\"Name\""
-			Image string "bson:\"Image\""
-		}{
+		WaifuList: database.CharLayout{
 			ID:    resp.Page.Characters[0].ID,
 			Name:  resp.Page.Characters[0].Name.Full,
 			Image: resp.Page.Characters[0].Image.Large,

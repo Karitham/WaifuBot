@@ -14,11 +14,7 @@ import (
 type InputWaifu struct {
 	UserID    interface{} `bson:"_id"`
 	Date      time.Time   `bson:"Date"`
-	WaifuList struct {
-		ID    int64  `bson:"ID"`
-		Name  string `bson:"Name"`
-		Image string `bson:"Image"`
-	}
+	WaifuList CharLayout
 }
 
 // AddWaifu adds a waifu to the user each time he has a new one

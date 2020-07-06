@@ -2,11 +2,16 @@ package disc
 
 import "github.com/andersfylling/disgord"
 
+// Send invite link in a small embed
 func invite(data *disgord.MessageCreate) {
+
+	// Get URL
 	botURL, err := client.InviteURL(ctx)
 	if err != nil {
 		data.Message.Reply(ctx, session, err)
 	}
+
+	// Create embed
 	client.CreateMessage(
 		ctx,
 		data.Message.ChannelID,

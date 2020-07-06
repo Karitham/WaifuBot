@@ -10,23 +10,23 @@ import (
 func profile(data *disgord.MessageCreate) {
 	var user disgord.User
 
-	// if a user is mentionned, check the users profile instead
+	// If a user is mentionned, check the users profile instead
 	if data.Message.Mentions != nil {
 		user = *data.Message.Mentions[0]
 	} else {
 		user = *data.Message.Author
 	}
 
-	// get avatar URL
+	// Get avatar URL
 	avatar, err := user.AvatarURL(128, false)
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	// retrieve user information from database
+	// Setrieve user information from database
 	db := database.ViewUserData(user.ID)
 
-	// send message
+	// Send message
 	client.CreateMessage(
 		ctx,
 		data.Message.ChannelID,

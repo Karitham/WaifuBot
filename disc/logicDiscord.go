@@ -20,7 +20,10 @@ var conf config.ConfJSONStruct
 
 // BotRun the bot and handle events
 func BotRun(cf config.ConfJSONStruct) {
+	// sets the config for the whole disc package
 	conf = cf
+
+	// create a basic logger
 	var log = &logrus.Logger{
 		Out:       os.Stderr,
 		Formatter: new(logrus.TextFormatter),
@@ -28,13 +31,16 @@ func BotRun(cf config.ConfJSONStruct) {
 		Level:     logrus.ErrorLevel,
 	}
 
+	// init the client
 	client = disgord.New(disgord.Config{
 		BotToken: cf.BotToken,
 		Logger:   log,
 	})
 
+	// stay connected to discord
 	defer client.StayConnectedUntilInterrupted(ctx)
 
+	// filter incomming messages & set the prefix
 	filter, _ := std.NewMsgFilter(ctx, client)
 	filter.SetPrefix(cf.Prefix)
 
@@ -55,15 +61,15 @@ func BotRun(cf config.ConfJSONStruct) {
 }
 
 func reply(s disgord.Session, data *disgord.MessageCreate) {
-
 	// Parses the message into command / args
 	command := strings.Fields(data.Message.Content)[0]
 	args := strings.Fields(data.Message.Content)[1:]
 
+	// Check if it recognises the command, if it doesn't, send back an error message
 	switch {
 	case command == "search" || command == "s":
 		search(data, args)
-	case command == "favourite" || command == "f":
+	case command == "favourite" || command == "favorite" || command == "f":
 		favourite(data, args)
 	case command == "profile" || command == "p":
 		profile(data)

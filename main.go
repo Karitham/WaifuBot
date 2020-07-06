@@ -7,6 +7,12 @@ import (
 )
 
 func main() {
-	go database.Init(config.Retrieve("./config.json"))
-	disc.BotRun(config.Retrieve("./config.json"))
+	// Get the config from config.json
+	conf := config.Retrieve("./config.json")
+
+	// Run the database handler in a goroutine
+	go database.Init(conf)
+
+	// Run the bot
+	disc.BotRun(conf)
 }

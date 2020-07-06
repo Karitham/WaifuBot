@@ -12,17 +12,16 @@ import (
 // OutputStruct is a representation of the data inside the database, it's used to retrieve data
 type OutputStruct struct {
 	ID        int64 `bson:"_id"`
-	Favourite struct {
-		ID    int64  `bson:"ID"`
-		Name  string `bson:"Name"`
-		Image string `bson:"Image"`
-	}
-	Date   time.Time `bson:"Date"`
-	Waifus []struct {
-		ID    int64  `bson:"ID"`
-		Name  string `bson:"Name"`
-		Image string `bson:"Image"`
-	}
+	Favourite CharLayout
+	Date      time.Time `bson:"Date"`
+	Waifus    []CharLayout
+}
+
+// CharLayout is how each character is stored
+type CharLayout struct {
+	ID    interface{} `bson:"ID"`
+	Name  string      `bson:"Name"`
+	Image string      `bson:"Image"`
 }
 
 // ViewUserData returns a list of waifus the user has collected

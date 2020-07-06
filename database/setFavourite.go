@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/andersfylling/snowflake/v4"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -11,12 +12,8 @@ import (
 
 // FavouriteStruct represents how to send data to the database
 type FavouriteStruct struct {
-	UserID    interface{} `bson:"_id"`
-	Favourite struct {
-		ID    interface{} `bson:"ID"`
-		Name  string      `bson:"Name"`
-		Image string      `bson:"Image"`
-	}
+	UserID    snowflake.Snowflake `bson:"_id"`
+	Favourite CharLayout
 }
 
 // SetFavourite adds a waifu to the user each time he has a new one
