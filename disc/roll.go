@@ -50,7 +50,7 @@ func roll(data *disgord.MessageCreate) {
 			&disgord.CreateMessageParams{
 				Embed: &disgord.Embed{
 					Title:       "Illegal roll",
-					Description: fmt.Sprintf("You can roll at %s", ableToRoll),
+					Description: fmt.Sprintf("You can roll in %s", ableToRoll.Sub(time.Now())),
 					Color:       0x225577,
 				}})
 	}

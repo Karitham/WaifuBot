@@ -40,5 +40,11 @@ func favourite(data *disgord.MessageCreate, args []string) {
 						URL: resp.Character.Image.Large,
 					},
 				}})
+	} else {
+		client.CreateMessage(
+			ctx,
+			data.Message.ChannelID,
+			&disgord.CreateMessageParams{
+				Embed: &disgord.Embed{Title: "Error, favourite requires at least 1 argument", Color: 0xcc0000}})
 	}
 }
