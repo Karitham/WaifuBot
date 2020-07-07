@@ -62,7 +62,7 @@ func BotRun(cf config.ConfJSONStruct) {
 
 func reply(s disgord.Session, data *disgord.MessageCreate) {
 	// Parses the message into command / args
-	command := strings.Fields(data.Message.Content)[0]
+	command := strings.ToLower(strings.Fields(data.Message.Content)[0])
 	args := strings.Fields(data.Message.Content)[1:]
 
 	// Check if it recognises the command, if it doesn't, send back an error message

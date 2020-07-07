@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/andersfylling/snowflake/v4"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -12,8 +13,8 @@ import (
 
 // InputWaifu represents how to send data to the database
 type InputWaifu struct {
-	UserID    interface{} `bson:"_id"`
-	Date      time.Time   `bson:"Date"`
+	UserID    snowflake.Snowflake `bson:"_id"`
+	Date      time.Time           `bson:"Date"`
 	WaifuList CharLayout
 }
 
