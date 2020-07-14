@@ -2,7 +2,7 @@
 
 This is a waifu/husbando bot in developpement. It is unstable and will stay unstable until 1.0
 
-Tt uses [Disgord go lib](github.com/andersfylling/disgord), [Anilist's GraphQL API](https://github.com/AniList/ApiV2-GraphQL-Docs) and [mongoDB](https://mongodb.com)
+It uses [Disgord go lib](github.com/andersfylling/disgord), [Anilist's GraphQL API](https://github.com/AniList/ApiV2-GraphQL-Docs) and [mongoDB](https://mongodb.com)
 
 ## Requirements
 
