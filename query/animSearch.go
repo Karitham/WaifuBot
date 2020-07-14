@@ -2,6 +2,7 @@ package query
 
 import (
 	"context"
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -10,25 +11,25 @@ import (
 
 // AnimSearchStruct handles data from CharByName queries
 type AnimSearchStruct struct {
-	Anime struct {
+	Media struct {
 		ID      int    `json:"id"`
 		SiteURL string `json:"siteUrl"`
-		Title    struct {
+		Title   struct {
 			Romaji string `json:"romaji"`
 		}
 		CoverImage struct {
 			Large string `json:"large"`
 		}
-		Status	    string `json:"status"`
-		Episodes    string `json:"episodes"`
-		Description string `json:"description"`
-		AverageScore string `json:"averageScore"`
-		IsAdult	     string `json:"isAdult"`
+		Status       string `json:"status"`
+		Episodes     int    `json:"episodes"`
+		Description  string `json:"description"`
+		AverageScore int    `json:"averageScore"`
+		IsAdult      bool   `json:"isAdult"`
 	}
 }
 
 // AnimSearch makes a query to the anilist API based on the name//ID you input
-func AnimSearch(args []string) (CharSearchStruct, error) {
+func AnimSearch(args []string) (AnimSearchStruct, error) {
 	var res AnimSearchStruct
 
 	// build query
@@ -36,23 +37,21 @@ func AnimSearch(args []string) (CharSearchStruct, error) {
 	client := graphql.NewClient(graphURL)
 	req := graphql.NewRequest(`
 	query ($query: String, $type: MediaType) {
-  Page (perPage: 1) {
-    media(search: $query, type: $type) {
-      id
-      title {
-        romaji
-      }
-      coverImage {
-        large
-      }
-      status
-      episodes
-      description
-      averageScore
-      isAdult
-    }
-  }
-}
+		Media(search: $query, type: $type) {
+		  id
+		  title {
+			romaji
+		  }
+		  coverImage {
+			large
+		  }
+		  status
+		  episodes
+		  description
+		  averageScore
+		  isAdult
+		}
+	  }
 	`)
 	// Parse the arguments to check if an ID or a Name was entered
 	req.Var("type", "ANIME")
@@ -68,6 +67,6 @@ func AnimSearch(args []string) (CharSearchStruct, error) {
 
 	ctx := context.Background()
 	err = client.Run(ctx, req, &res)
-
+	fmt.Println(res)
 	return res, err
 }
