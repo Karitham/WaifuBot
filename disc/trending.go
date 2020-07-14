@@ -1,15 +1,14 @@
 package disc
 
 import (
-	"bot/database"
-  "bot/query"
 	"fmt"
 	"strconv"
+	"bot/query"
 
 	"github.com/andersfylling/disgord"
 )
 
-func list(data *disgord.MessageCreate, args []string) {
+func animelist(data *disgord.MessageCreate, args []string) {
 	var desc string
 	var page, i int
 	var err error
@@ -27,7 +26,7 @@ func list(data *disgord.MessageCreate, args []string) {
 
 	// Check if the list is empty, if not, return a formatted description
 	for i = 10 * page; i < 10; i++ {
-			desc += fmt.Sprintf("`%d` : %s\n", Page.Media[i].ID, Page.Media[i].UserPreferred)
+			desc += fmt.Sprintf("`%d` : %s\n", Media[i].ID, Media[i].UserPreferred)
 		}
 
 	// Send the message

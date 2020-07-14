@@ -2,13 +2,11 @@ package query
 
 import (
 	"context"
-	"strconv"
-	"strings"
 
 	"github.com/machinebox/graphql"
 )
 
-// CharSearchStruct handles data from CharByName queries
+// tvTrendingStruct handles data from the queries.
 type tvTrendingStruct struct {
 	Media struct {
 		ID      int    `json:"id"`
@@ -20,13 +18,12 @@ type tvTrendingStruct struct {
 			Large string `json:"large"`
 		}
 		AverageScore  int `json:"averageScore"`
-    Popularity    int   `json:"popularity"`
-		}
+    		Popularity    int `json:"popularity"`
 	}
 }
 
 // TrendingSearch makes a query to the AniList GraphQL API to scrape the 10 best trending animes right now.
-func TrendingSearch(args []string) (CharSearchStruct, error) {
+func TrendingSearch(args []string) (tvTrendingStruct, error) {
 	var res tvTrendingStruct
 
 	// build query
@@ -51,13 +48,14 @@ func TrendingSearch(args []string) (CharSearchStruct, error) {
 }
 	`)
 	// Inject pre-made vars to get the trending animes.
-  req.Var("page", 1)
-  req.Var("type", "ANIME")
-  req.Var("sort", "["TRENDING_DESC","POPULARITY_DESC"]")
+  	req.Var("page", 1)
+  	req.Var("type", "ANIME")
+  	req.Var("sort", "TRENDING_DESC")
+  	req.Var("sort", "POPULARITY_DESC")
 
-  // Execute code
+  	// Execute code
 	ctx := context.Background()
-	err = client.Run(ctx, req, &res)
-
+	err := client.Run(ctx, req, &res)
+	
 	return res, err
 }
