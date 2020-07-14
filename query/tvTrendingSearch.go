@@ -32,9 +32,9 @@ func TrendingSearch(args []string) (tvTrendingStruct, error) {
 	graphURL := "https://graphql.anilist.co"
 	client := graphql.NewClient(graphURL)
 	req := graphql.NewRequest(`
-	query ($page: Int) {
+	query ($page: Int, $type: MediaType, $sort: [MediaSort]) {
 		Page(perPage: 10, page: $page) {
-		  media(type: ANIME, sort: POPULARITY_DESC) {
+		  media(type: $type, sort: $sort) {
 			id
 			siteUrl
 			title {
@@ -48,10 +48,11 @@ func TrendingSearch(args []string) (tvTrendingStruct, error) {
 		  }
 		}
 	  }
-	  
 	`)
 	// Inject pre-made vars to get the trending animes.
-	req.Var("page", 1)
+	req.Var("page", 0)
+	req.Var("sort", "TRENDING_DESC")
+	req.Var("type", "ANIME")
 
 	// Execute code
 	ctx := context.Background()
