@@ -10,7 +10,6 @@ import (
 
 func animelist(data *disgord.MessageCreate, args []string) {
 	var desc string
-	var page int
 
 	// check if there is a page input
 	if len(args) > 0 {
@@ -23,13 +22,15 @@ func animelist(data *disgord.MessageCreate, args []string) {
 		}
 	}
 
+	// query the trending anime
 	res, err := query.TrendingSearch(args)
 	if err != nil {
 		fmt.Println(err)
 	}
-	// Check if the list is empty, if not, return a formatted description
-	for i := 10 * page; i < 10; i++ {
-		desc += fmt.Sprintf("`%d` : %s\n", res.Media.ID, res.Media.Title.UserPreferred)
+
+	// return a formatted description
+	for i := range res.Page.Media {
+		desc += fmt.Sprintf("`%d` : %s\n", res.Page.Media[i].ID, res.Page.Media[i].Title.UserPreferred)
 	}
 
 	// Send the message
@@ -38,7 +39,8 @@ func animelist(data *disgord.MessageCreate, args []string) {
 		data.Message.ChannelID,
 		&disgord.CreateMessageParams{
 			Embed: &disgord.Embed{
-				Title: fmt.Sprintf("Trending Anime List"),
-				Color: 0x88ffcc,
+				Title:       fmt.Sprintf("Trending Anime List"),
+				Description: desc,
+				Color:       0x88ffcc,
 			}})
 }

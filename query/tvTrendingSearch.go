@@ -8,17 +8,19 @@ import (
 
 // tvTrendingStruct handles data from the queries.
 type tvTrendingStruct struct {
-	Media struct {
-		ID      int    `json:"id"`
-		SiteURL string `json:"siteUrl"`
-		Title    struct {
-			UserPreferred string `json:"userPreferred"`
+	Page struct {
+		Media []struct {
+			ID      int    `json:"id"`
+			SiteURL string `json:"siteUrl"`
+			Title   struct {
+				UserPreferred string `json:"userPreferred"`
+			}
+			CoverImage struct {
+				Large string `json:"large"`
+			}
+			AverageScore int `json:"averageScore"`
+			Popularity   int `json:"popularity"`
 		}
-		CoverImage struct {
-			Large string `json:"large"`
-		}
-		AverageScore  int `json:"averageScore"`
-    		Popularity    int `json:"popularity"`
 	}
 }
 
@@ -48,14 +50,14 @@ func TrendingSearch(args []string) (tvTrendingStruct, error) {
 }
 	`)
 	// Inject pre-made vars to get the trending animes.
-  	req.Var("page", 1)
-  	req.Var("type", "ANIME")
-  	req.Var("sort", "TRENDING_DESC")
-  	req.Var("sort", "POPULARITY_DESC")
+	req.Var("page", 1)
+	req.Var("type", "ANIME")
+	req.Var("sort", "TRENDING_DESC")
+	req.Var("sort", "POPULARITY_DESC")
 
-  	// Execute code
+	// Execute code
 	ctx := context.Background()
 	err := client.Run(ctx, req, &res)
-	
+
 	return res, err
 }
