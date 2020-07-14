@@ -79,6 +79,8 @@ func reply(s disgord.Session, data *disgord.MessageCreate) {
 		roll(data)
 	case command == "list" || command == "l":
 		list(data, args)
+	case command == "trendinganimes" || command == "ta":
+		animelist(data, args)
 	case command == "invite":
 		invite(data)
 	default:
