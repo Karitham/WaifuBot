@@ -19,7 +19,6 @@ type CharSearchStruct struct {
 		Image struct {
 			Large string `json:"large"`
 		}
-		Description string `json:"description"`
 		Media       struct {
 			Nodes []struct {
 				Title struct {
@@ -48,7 +47,6 @@ func CharSearch(args []string) (CharSearchStruct, error) {
 		  image {
 			large
 		  }
-		  description
 		  media(perPage: 1, sort: POPULARITY_DESC) {
 			nodes {
 			  title {
