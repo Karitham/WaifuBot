@@ -18,12 +18,12 @@ func animesearch(data *disgord.MessageCreate, args []string) {
 				data.Message.ChannelID,
 				&disgord.CreateMessageParams{
 					Embed: &disgord.Embed{
-						Title:       resp.Anime.Name.Full,
+						Title:       resp.Anime.Title.Romaji,
 						URL:         resp.Anime.SiteURL,
 						Description: desc,
 						Color:       0x225577,
 						Image: &disgord.EmbedImage{
-							URL: resp.Anime.Image.Large,
+							URL: resp.Anime.CoverImage.Large,
 						},
 					}})
 		} else {
