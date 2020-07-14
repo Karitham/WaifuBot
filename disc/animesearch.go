@@ -3,6 +3,7 @@ package disc
 import (
 	"bot/query"
 	"fmt"
+	"strings"
 
 	"github.com/andersfylling/disgord"
 )
@@ -12,7 +13,17 @@ func animesearch(data *disgord.MessageCreate, args []string) {
 	if len(args) > 0 {
 		resp, err := query.CharSearch(args)
 		if err == nil {
-			desc := fmt.Sprintf("I found the anime ID : %d\nThe name of the anime is : %s\n", resp.Anime.ID, resp.Anime.Title.Romaji)
+			desc := fmt.Sprintf("I found the anime ID %d.\n " +
+				"The name of the anime is %s.\n " +
+				"Description : %s.\n " +
+				"This anime is %s. \n" +
+				"Number of episodes : %d.\n" +
+				"Adult anime (hentai/ecchi) : %s", resp.Anime.ID,
+				resp.Anime.Title.Romaji,
+				resp.Anime.Description,
+				strings.ToLower(resp.Anime.Status),
+				resp.Anime.Episodes,
+				resp.Anime.IsAdult)
 			client.CreateMessage(
 				ctx,
 				data.Message.ChannelID,
