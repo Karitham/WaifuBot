@@ -28,7 +28,7 @@ type AnimSearchStruct struct {
 }
 
 // AnimSearch makes a query to the anilist API based on the name//ID you input
-func AnimSearch(args []string) (CharSearchStruct, error) {
+func AnimSearch(args []string) (AnimSearchStruct, error) {
 	var res AnimSearchStruct
 
 	// build query
