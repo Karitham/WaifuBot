@@ -39,7 +39,6 @@ func animelist(data *disgord.MessageCreate, args []string) {
 		&disgord.CreateMessageParams{
 			Embed: &disgord.Embed{
 				Title: fmt.Sprintf("Trending Anime List"),
-				Description : desc,
 				Color: 0x88ffcc,
 			}})
 }
