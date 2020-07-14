@@ -26,7 +26,7 @@ func roll(data *disgord.MessageCreate) {
 		resp := queryRandom(data)
 
 		// Create a descrption adapated to the character retrieved
-		desc := fmt.Sprintf("You rolled waifu %d", resp.Page.Characters[0].ID)
+		desc := fmt.Sprintf("You rolled character %d\nIt appears in :\n%s", resp.Page.Characters[0].ID, resp.Page.Characters[0].Media.Nodes[0].Title.Romaji)
 
 		// Sends the message
 		client.CreateMessage(
@@ -47,6 +47,7 @@ func roll(data *disgord.MessageCreate) {
 			ctx,
 			data.Message.ChannelID,
 			&disgord.CreateMessageParams{
+				Content: "cheh",
 				Embed: &disgord.Embed{
 					Title:       "Illegal roll",
 					Description: fmt.Sprintf("You can roll in %s", ableToRoll.Sub(time.Now())),

@@ -17,10 +17,16 @@ type CharSearchStruct struct {
 			Full string `json:"full"`
 		}
 		Image struct {
-			Medium string `json:"medium"`
-			Large  string `json:"large"`
+			Large string `json:"large"`
 		}
 		Description string `json:"description"`
+		Media       struct {
+			Nodes []struct {
+				Title struct {
+					Romaji string `json:"romaji"`
+				}
+			}
+		}
 	}
 }
 
@@ -32,18 +38,24 @@ func CharSearch(args []string) (CharSearchStruct, error) {
 	graphURL := "https://graphql.anilist.co"
 	client := graphql.NewClient(graphURL)
 	req := graphql.NewRequest(`
-	query ($id: Int, $name:String) {
-		Character(id: $id,search: $name) {
+	query ($id: Int, $name: String) {
+		Character(id: $id, search: $name, sort: SEARCH_MATCH) {
 		  id
 		  siteUrl
 		  name {
 			full
 		  }
 		  image {
-			medium
 			large
 		  }
 		  description
+		  media(perPage: 1, sort: POPULARITY_DESC) {
+			nodes {
+			  title {
+				romaji
+			  }
+			}
+		  }
 		}
 	  }
 	`)

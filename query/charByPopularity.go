@@ -10,14 +10,20 @@ import (
 type CharStruct struct {
 	Page struct {
 		Characters []struct {
-			ID      int64  `json:"id"`
+			ID      int    `json:"id"`
 			SiteURL string `json:"siteUrl"`
 			Image   struct {
-				Medium string `json:"medium"`
-				Large  string `json:"large"`
+				Large string `json:"large"`
 			}
 			Name struct {
 				Full string `json:"full"`
+			}
+			Media struct {
+				Nodes []struct {
+					Title struct {
+						Romaji string `json:"romaji"`
+					}
+				}
 			}
 		}
 	}
@@ -29,21 +35,27 @@ func RandomChar(id int) (CharStruct, error) {
 	graphURL := "https://graphql.anilist.co"
 	client := graphql.NewClient(graphURL)
 	req := graphql.NewRequest(`
-		query ($pageNumber: Int) {
-			Page(perPage: 1, page: $pageNumber) {
-				characters(sort: FAVOURITES_DESC) {
-					id
-					siteUrl
-					image {
-						medium
-						large
-					}
-					name {
-						full
-					}
-				}
-				}
+	query ($pageNumber: Int) {
+		Page(perPage: 1, page: $pageNumber) {
+		  characters(sort: FAVOURITES_DESC) {
+			id
+			siteUrl
+			image {
+			  large
 			}
+			name {
+			  full
+			}
+			media(perPage: 1, sort: POPULARITY_DESC) {
+			  nodes {
+				title {
+				  romaji
+				}
+			  }
+			}
+		  }
+		}
+	  }
 		`)
 
 	req.Var("pageNumber", id)

@@ -2,6 +2,7 @@ package disc
 
 import (
 	"bot/query"
+	"fmt"
 
 	"github.com/andersfylling/disgord"
 )
@@ -11,14 +12,16 @@ func search(data *disgord.MessageCreate, args []string) {
 	if len(args) > 0 {
 		resp, err := query.CharSearch(args)
 		if err == nil {
+			desc := fmt.Sprintf("I found character %d\nThis character appears in :\n%s", resp.Character.ID, resp.Character.Media.Nodes[0].Title.Romaji)
 			client.CreateMessage(
 				ctx,
 				data.Message.ChannelID,
 				&disgord.CreateMessageParams{
 					Embed: &disgord.Embed{
-						Title: resp.Character.Name.Full,
-						URL:   resp.Character.SiteURL,
-						Color: 0x225577,
+						Title:       resp.Character.Name.Full,
+						URL:         resp.Character.SiteURL,
+						Description: desc,
+						Color:       0x225577,
 						Image: &disgord.EmbedImage{
 							URL: resp.Character.Image.Large,
 						},
