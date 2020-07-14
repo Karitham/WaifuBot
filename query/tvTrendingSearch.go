@@ -50,9 +50,7 @@ func TrendingSearch(args []string) (tvTrendingStruct, error) {
 	  }
 	`)
 	// Inject pre-made vars to get the trending animes.
-	req.Var("page", 0)
 	req.Var("sort", "TRENDING_DESC")
-	req.Var("type", "ANIME")
 
 	// Execute code
 	ctx := context.Background()
