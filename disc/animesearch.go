@@ -16,7 +16,7 @@ func animesearch(data *disgord.MessageCreate, args []string) {
 			desc := fmt.Sprintf("I found the anime ID %d.\n " +
 				"The name of the anime is %s.\n " +
 				"Description : %s.\n " +
-				"This anime is %s. \n" +
+				"This anime is %s.\n" +
 				"Number of episodes : %d.\n" +
 				"Adult anime (hentai/ecchi) : %s", resp.Anime.ID,
 				resp.Anime.Title.Romaji,
