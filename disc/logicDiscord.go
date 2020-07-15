@@ -67,6 +67,8 @@ func reply(s disgord.Session, data *disgord.MessageCreate) {
 
 	// Check if it recognises the command, if it doesn't, send back an error message
 	switch {
+	case command == "anime" || command == "a":
+		animesearch(data, args)
 	case command == "search" || command == "s":
 		search(data, args)
 	case command == "favourite" || command == "favorite" || command == "f":
@@ -79,8 +81,10 @@ func reply(s disgord.Session, data *disgord.MessageCreate) {
 		roll(data)
 	case command == "list" || command == "l":
 		list(data, args)
-	case command == "trendinganimes" || command == "ta":
+	case command == "trendingAnimes" || command == "ta":
 		animelist(data, args)
+	case command == "searchAnime" || command == "sa":
+		animesearch(data, args)
 	case command == "invite":
 		invite(data)
 	default:
