@@ -19,7 +19,7 @@ type CharSearchStruct struct {
 		Image struct {
 			Large string `json:"large"`
 		}
-		Media       struct {
+		Media struct {
 			Nodes []struct {
 				Title struct {
 					Romaji string `json:"romaji"`
