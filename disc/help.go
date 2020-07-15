@@ -9,8 +9,7 @@ func help(data *disgord.MessageCreate) {
 		&disgord.CreateMessageParams{
 			Embed: &disgord.Embed{
 				Title: "Help",
-				Description: `
-				anime (sa) : Search for a anime in the Anilist database 
+				Description: ` 
 				roll (r) : Roll a new waifu
 				list (l) : List the waifus you have
 				search (s) : Search for a character by name / ID
@@ -18,6 +17,7 @@ func help(data *disgord.MessageCreate) {
 				favourite (f) : Set a favourite waifu to appear on your profile, you may choose any character you want
 				invite : Invite link to add the bot to your server
 				trendingAnimes (ta) : Displays the top 10 trending animes from Anilist
+				searchAnime (sa) : Search for a anime in the Anilist database
 				help (h) : Display this help page
 				`,
 				Color: 0xeec400,
