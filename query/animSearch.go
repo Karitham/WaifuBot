@@ -67,6 +67,5 @@ func AnimSearch(args []string) (AnimSearchStruct, error) {
 
 	ctx := context.Background()
 	err = client.Run(ctx, req, &res)
-	fmt.Println(res)
 	return res, err
 }
