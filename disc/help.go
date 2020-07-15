@@ -10,7 +10,7 @@ func help(data *disgord.MessageCreate) {
 			Embed: &disgord.Embed{
 				Title: "Help",
 				Description: `
-				animeSearch (sa) : Search for a anime in the Anilist database 
+				anime (sa) : Search for a anime in the Anilist database 
 				roll (r) : Roll a new waifu
 				list (l) : List the waifus you have
 				search (s) : Search for a character by name / ID
