@@ -32,7 +32,7 @@ func TrendingSearch(args []string) (tvTrendingStruct, error) {
 	req := graphql.NewRequest(`
 	query ($page: Int) {
   Page(perPage: 10, page: $page) {
-    media(type: ANIME, sort: [TRENDING_DESC]) {
+    media(type: ANIME, sort: [TRENDING_DESC, POPULARITY_DESC]) {
       id
       siteUrl
       title {
