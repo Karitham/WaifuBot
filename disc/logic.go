@@ -62,8 +62,7 @@ func BotRun(cf config.ConfJSONStruct) {
 
 func reply(s disgord.Session, data *disgord.MessageCreate) {
 	// Parses the message into command / args
-	command := strings.ToLower(strings.Fields(data.Message.Content)[0])
-	args := strings.Fields(data.Message.Content)[1:]
+	command, args := parseData(data)
 
 	// Check if it recognises the command, if it doesn't, send back an error message
 	switch {
@@ -71,21 +70,36 @@ func reply(s disgord.Session, data *disgord.MessageCreate) {
 		search(data, args)
 	case command == "favourite" || command == "favorite" || command == "f":
 		favourite(data, args)
+	case command == "trendingAnimes" || command == "ta":
+		trendingAnime(data, args)
+	case command == "searchAnime" || command == "sa":
+		searchAnime(data, args)
 	case command == "profile" || command == "p":
 		profile(data)
+	case command == "give" || command == "g":
+		giveChar(data, args)
 	case command == "help" || command == "h":
 		help(data)
 	case command == "roll" || command == "r":
 		roll(data)
 	case command == "list" || command == "l":
 		list(data, args)
-	case command == "trendingAnimes" || command == "ta":
-		animelist(data, args)
-	case command == "searchAnime" || command == "sa":
-		animesearch(data, args)
 	case command == "invite":
 		invite(data)
 	default:
 		unknown(data)
 	}
+}
+
+func parseData(data *disgord.MessageCreate) (string, []string) {
+	var command string
+	var args []string
+
+	if len(data.Message.Content) > 0 {
+		command = strings.ToLower(strings.Fields(data.Message.Content)[0])
+		if len(data.Message.Content) > 1 {
+			args = strings.Fields(data.Message.Content)[1:]
+		}
+	}
+	return command, args
 }

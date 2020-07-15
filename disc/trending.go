@@ -8,7 +8,7 @@ import (
 	"github.com/andersfylling/disgord"
 )
 
-func animelist(data *disgord.MessageCreate, args []string) {
+func trendingAnime(data *disgord.MessageCreate, args []string) {
 	var desc string
 
 	// check if there is a page input

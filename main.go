@@ -3,7 +3,6 @@ package main
 import (
 	"bot/config"
 	"bot/database"
-	"bot/disc"
 )
 
 func main() {
@@ -14,5 +13,7 @@ func main() {
 	go database.Init(conf)
 
 	// Run the bot
-	disc.BotRun(conf)
+	// disc.BotRun(conf)
+
+	database.OwnsCharacter(206794847581896705, 2010)
 }

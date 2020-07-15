@@ -11,7 +11,7 @@ import (
 // CharSearchStruct handles data from CharByName queries
 type CharSearchStruct struct {
 	Character struct {
-		ID      int    `json:"id"`
+		ID      int64  `json:"id"`
 		SiteURL string `json:"siteUrl"`
 		Name    struct {
 			Full string `json:"full"`

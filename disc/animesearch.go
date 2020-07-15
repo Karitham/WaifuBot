@@ -8,7 +8,7 @@ import (
 	"github.com/andersfylling/disgord"
 )
 
-func animesearch(data *disgord.MessageCreate, args []string) {
+func searchAnime(data *disgord.MessageCreate, args []string) {
 	// check if there is a search term
 	if len(args) > 0 {
 		resp, err := query.AnimSearch(args)
