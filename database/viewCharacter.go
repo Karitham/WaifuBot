@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/andersfylling/disgord"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -19,13 +20,13 @@ type OutputStruct struct {
 
 // CharLayout is how each character is stored
 type CharLayout struct {
-	ID    interface{} `bson:"ID"`
-	Name  string      `bson:"Name"`
-	Image string      `bson:"Image"`
+	ID    int64  `bson:"ID"`
+	Name  string `bson:"Name"`
+	Image string `bson:"Image"`
 }
 
 // ViewUserData returns a list of waifus the user has collected
-func ViewUserData(id interface{}) OutputStruct {
+func ViewUserData(id disgord.Snowflake) OutputStruct {
 	var output OutputStruct
 	bytesWaifu, err := Collection.FindOne(context.TODO(), bson.M{"_id": id}).DecodeBytes()
 	if err != mongo.ErrNoDocuments {

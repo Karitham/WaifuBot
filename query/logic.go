@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-// RandomCharQuery make the request and setups correctly the page total
+// RandomCharQuery make a random rq based on the maxCharQuery
 func RandomCharQuery(maxCharQuery int) CharStruct {
 	// set seeds & roll
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))

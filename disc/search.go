@@ -10,7 +10,7 @@ import (
 func search(data *disgord.MessageCreate, args []string) {
 	// check if there is a search term
 	if len(args) > 0 {
-		resp, err := query.CharSearch(args)
+		resp, err := query.CharSearch(ParseArgToSearch(args))
 		if err == nil {
 			desc := fmt.Sprintf("I found character %d\nThis character appears in :\n%s", resp.Character.ID, resp.Character.Media.Nodes[0].Title.Romaji)
 			client.CreateMessage(

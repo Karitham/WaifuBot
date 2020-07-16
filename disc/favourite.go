@@ -10,10 +10,13 @@ import (
 
 func favourite(data *disgord.MessageCreate, args []string) {
 	if len(args) > 0 {
-		resp, err := query.CharSearch(args)
+		// Query Char using search to Anilists graphQL api
+		resp, err := query.CharSearch(ParseArgToSearch(args))
 		if err != nil {
 			fmt.Println(err)
 		}
+
+		// Set favourite in database
 		database.SetFavourite(database.FavouriteStruct{
 			UserID: data.Message.Author.ID,
 			Favourite: database.CharLayout{
@@ -22,6 +25,8 @@ func favourite(data *disgord.MessageCreate, args []string) {
 				Image: resp.Character.Image.Large,
 			},
 		})
+
+		// Send confirmation message
 		client.CreateMessage(
 			ctx,
 			data.Message.ChannelID,

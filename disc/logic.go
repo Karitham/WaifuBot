@@ -2,14 +2,14 @@ package disc
 
 import (
 	"bot/config"
+	"bot/query"
 	"context"
 	"fmt"
-	"os"
+	"strconv"
 	"strings"
 
 	"github.com/andersfylling/disgord"
 	"github.com/andersfylling/disgord/std"
-	"github.com/sirupsen/logrus"
 )
 
 // Global Variables to ease working with client/sesion etc
@@ -23,19 +23,8 @@ func BotRun(cf config.ConfJSONStruct) {
 	// sets the config for the whole disc package
 	conf = cf
 
-	// create a basic logger
-	var log = &logrus.Logger{
-		Out:       os.Stderr,
-		Formatter: new(logrus.TextFormatter),
-		Hooks:     make(logrus.LevelHooks),
-		Level:     logrus.ErrorLevel,
-	}
-
 	// init the client
-	client = disgord.New(disgord.Config{
-		BotToken: cf.BotToken,
-		Logger:   log,
-	})
+	client = disgord.New(disgord.Config{BotToken: cf.BotToken})
 
 	// stay connected to discord
 	defer client.StayConnectedUntilInterrupted(ctx)
@@ -54,38 +43,61 @@ func BotRun(cf config.ConfJSONStruct) {
 
 		// handler
 		reply, // call reply func
-		// specific
 	) // handles copy
 
 	fmt.Println("The bot is currently running")
 }
 
 func reply(s disgord.Session, data *disgord.MessageCreate) {
-	// Parses the message into command / args
-	command := strings.ToLower(strings.Fields(data.Message.Content)[0])
-	args := strings.Fields(data.Message.Content)[1:]
+	command, args := ParseMessage(data)
 
-	// Check if it recognises the command, if it doesn't, send back an error message
+	// Check if it recognises the command, if not, send back an error message
 	switch {
 	case command == "search" || command == "s":
 		search(data, args)
 	case command == "favourite" || command == "favorite" || command == "f":
 		favourite(data, args)
+	case command == "trendingAnimes" || command == "ta":
+		trendingAnime(data, args)
+	case command == "searchAnime" || command == "sa":
+		searchAnime(data, args)
 	case command == "profile" || command == "p":
 		profile(data)
+	case command == "give" || command == "g":
+		giveChar(data, args)
 	case command == "help" || command == "h":
 		help(data)
 	case command == "roll" || command == "r":
 		roll(data)
 	case command == "list" || command == "l":
 		list(data, args)
-	case command == "trendingAnimes" || command == "ta":
-		animelist(data, args)
-	case command == "searchAnime" || command == "sa":
-		animesearch(data, args)
 	case command == "invite":
 		invite(data)
 	default:
 		unknown(data)
 	}
+}
+
+// ParseMessage parses the message into command / args
+func ParseMessage(data *disgord.MessageCreate) (string, []string) {
+	var command string
+	var args []string
+
+	if len(data.Message.Content) > 0 {
+		command = strings.ToLower(strings.Fields(data.Message.Content)[0])
+		if len(data.Message.Content) > 1 {
+			args = strings.Fields(data.Message.Content)[1:]
+		}
+	}
+	return command, args
+}
+
+// ParseArgToSearch parses any arg to an int, if no int is entered, returns 0 as the result
+func ParseArgToSearch(args []string) query.CharSearchInput {
+	id, err := strconv.Atoi(args[0])
+	arg := strings.Join(args, " ")
+	if err != nil {
+		fmt.Println(err)
+	}
+	return query.CharSearchInput{ID: id, Name: arg}
 }

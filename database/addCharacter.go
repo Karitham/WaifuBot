@@ -12,14 +12,14 @@ import (
 )
 
 // InputWaifu represents how to send data to the database
-type InputWaifu struct {
+type InputChar struct {
 	UserID    snowflake.Snowflake `bson:"_id"`
 	Date      time.Time           `bson:"Date"`
 	WaifuList CharLayout
 }
 
-// AddWaifu adds a waifu to the user each time he has a new one
-func AddWaifu(input InputWaifu) {
+// AddChar adds a waifu to the user each time he has a new one
+func AddChar(input InputChar) {
 	var decoded bson.M
 	opts := options.FindOneAndUpdate().SetUpsert(true)
 	err := Collection.FindOneAndUpdate(

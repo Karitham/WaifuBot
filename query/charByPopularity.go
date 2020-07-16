@@ -10,7 +10,7 @@ import (
 type CharStruct struct {
 	Page struct {
 		Characters []struct {
-			ID      int    `json:"id"`
+			ID      int64  `json:"id"`
 			SiteURL string `json:"siteUrl"`
 			Image   struct {
 				Large string `json:"large"`

@@ -6,8 +6,8 @@ import (
 	"github.com/machinebox/graphql"
 )
 
-// tvTrendingStruct handles data from the queries.
-type tvTrendingStruct struct {
+// TvTrendingStruct handles data from the queries
+type TvTrendingStruct struct {
 	Page struct {
 		Media []struct {
 			ID      int    `json:"id"`
@@ -24,9 +24,9 @@ type tvTrendingStruct struct {
 	}
 }
 
-// TrendingSearch makes a query to the AniList GraphQL API to scrape the 10 best trending animes right now.
-func TrendingSearch(args []string) (tvTrendingStruct, error) {
-	var res tvTrendingStruct
+// TrendingSearch makes a query to the AniList GraphQL API to scrape the 10 best trending animes right now
+func TrendingSearch(args []string) (TvTrendingStruct, error) {
+	var res TvTrendingStruct
 
 	// build query
 	graphURL := "https://graphql.anilist.co"
@@ -49,7 +49,7 @@ func TrendingSearch(args []string) (tvTrendingStruct, error) {
   }
 }
 	`)
-	// Inject pre-made vars to get the trending animes.
+	// Inject pre-made vars to get the trending animes
 	req.Var("page", 1)
 
 	// Execute code
