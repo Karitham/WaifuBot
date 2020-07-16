@@ -13,6 +13,7 @@ func giveChar(data *disgord.MessageCreate, arg []string) {
 
 	if valid == true {
 		database.DelWaifu(database.DelWaifuStruct{UserID: data.Message.Author.ID, WaifuID: charID})
+
 	} else {
 		// Get avatar
 		avatar, err := data.Message.Author.AvatarURL(128, false)
@@ -44,12 +45,11 @@ func validGive(data *disgord.MessageCreate, arg []string) (CharID int, desc stri
 			return CharID, fmt.Sprintf("Error, %d is not a valid WaifuID,\nRefer to help to see this command's syntax", CharID), false
 		case data.Message.Mentions == nil:
 			return CharID, fmt.Sprintf("Error, please tag a discord user,\nRefer to help to see this command's syntax"), false
-		case database.OwnsCharacter(data.Message.Author.ID, CharID) == false:
-			fmt.Println(data.Message.Author.ID, CharID)
+		case database.DelWaifu(database.DelWaifuStruct{UserID: data.Message.Author.ID, WaifuID: CharID}) == false:
 			return CharID, fmt.Sprintf("You do not own the character ID %d,\nVerify if the ID you entered is correct", CharID), false
 		default:
 			return CharID, fmt.Sprintf("You gave %d to %s", CharID, data.Message.Mentions[0].Username), true
 		}
 	}
-	return 0, "Please enter arguments,\nRefer to help to see how to use this command", false
+	return CharID, "Please enter arguments,\nRefer to help to see how to use this command", false
 }

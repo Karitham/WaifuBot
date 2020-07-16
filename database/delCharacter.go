@@ -6,6 +6,7 @@ import (
 
 	"github.com/andersfylling/disgord"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -16,19 +17,28 @@ type DelWaifuStruct struct {
 }
 
 // DelWaifu removes a waifu from the database
-func DelWaifu(input DelWaifuStruct) {
+func DelWaifu(input DelWaifuStruct) bool {
 	var decoded bson.M
 
 	// Find the character and delete it
 	err := Collection.FindOneAndUpdate(
 		context.TODO(),
-		bson.M{
-			"_id": input.UserID,
+		bson.D{
+			primitive.E{Key: "_id", Value: input.UserID},
+			primitive.E{Key: "Waifus.ID", Value: input.WaifuID},
 		},
 		bson.M{"$pull": bson.M{"Waifus": bson.M{"ID": input.WaifuID}}},
 	).Decode(&decoded)
-	if err != mongo.ErrNoDocuments && err != nil {
+
+	// If the database found something, returns true
+	switch {
+	case err == mongo.ErrNoDocuments:
+		return false
+	case err != nil:
 		fmt.Println(err)
+		return false
+	case err == nil:
+		return true
 	}
-	fmt.Println(decoded)
+	return false
 }
