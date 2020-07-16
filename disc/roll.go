@@ -4,17 +4,11 @@ import (
 	"bot/database"
 	"bot/query"
 	"fmt"
+	"math/rand"
 	"time"
 
 	"github.com/andersfylling/disgord"
 )
-
-// WaifuRolled is used to input the waifu rolled into the database
-type WaifuRolled struct {
-	ID    int64  `bson:"ID"`
-	Name  string `bson:"Name"`
-	Image string `bson:"Image"`
-}
 
 func roll(data *disgord.MessageCreate) {
 	// checkTimings verify if your query is legal
@@ -23,7 +17,7 @@ func roll(data *disgord.MessageCreate) {
 	// verify if the roll is legal
 	if ableToRoll.Sub(time.Now()) < 0 {
 		// Makes the querry and adds the character to the database
-		resp := queryRandom(data)
+		resp := RandomToDB(data)
 
 		// Create a descrption adapated to the character retrieved
 		desc := fmt.Sprintf("You rolled character %d\nIt appears in :\n%s", resp.Page.Characters[0].ID, resp.Page.Characters[0].Media.Nodes[0].Title.Romaji)
@@ -56,17 +50,31 @@ func roll(data *disgord.MessageCreate) {
 	}
 }
 
-// queryRandom makes a character query and adds it to the database
-func queryRandom(data *disgord.MessageCreate) query.CharStruct {
-	resp := query.RandomCharQuery(conf.MaxChar)
+// RandomToDB makes a character query and adds it to the database
+func RandomToDB(data *disgord.MessageCreate) query.CharStruct {
+	resp := RandomCharRQ(conf.MaxChar)
 	database.AddChar(database.InputChar{
 		UserID: data.Message.Author.ID,
 		Date:   time.Now(),
-		WaifuList: database.CharLayout{
+		CharList: database.CharLayout{
 			ID:    resp.Page.Characters[0].ID,
 			Name:  resp.Page.Characters[0].Name.Full,
 			Image: resp.Page.Characters[0].Image.Large,
 		},
 	})
 	return resp
+}
+
+// RandomCharRQ make a random rq based on the maxCharQuery
+func RandomCharRQ(maxCharQuery int) query.CharStruct {
+	// set seeds & roll
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	random := r.Intn(maxCharQuery)
+
+	// get the response
+	res, err := query.RandomChar(random)
+	if err != nil {
+		fmt.Println(err)
+	}
+	return res
 }

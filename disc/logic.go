@@ -57,9 +57,9 @@ func reply(s disgord.Session, data *disgord.MessageCreate) {
 		search(data, args)
 	case command == "favourite" || command == "favorite" || command == "f":
 		favourite(data, args)
-	case command == "trendingAnimes" || command == "ta":
+	case command == "trendinganimes" || command == "ta":
 		trendingAnime(data, args)
-	case command == "searchAnime" || command == "sa":
+	case command == "searchanime" || command == "sa":
 		searchAnime(data, args)
 	case command == "profile" || command == "p":
 		profile(data)

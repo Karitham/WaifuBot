@@ -16,7 +16,7 @@ type DelWaifuStruct struct {
 	CharID int
 }
 
-// DelWaifu removes a waifu from the database
+// DelChar removes a waifu from the database
 func DelChar(input DelWaifuStruct) bool {
 	var decoded bson.M
 

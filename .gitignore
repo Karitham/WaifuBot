@@ -2,4 +2,4 @@ config.json
 bot*
 *.xml
 *.iml
-.vscode/settings.json
+.vscode/*

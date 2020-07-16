@@ -28,7 +28,7 @@ func giveChar(data *disgord.MessageCreate, args []string) {
 		// Add the char to the mentionned user's database
 		database.AddChar(database.InputChar{
 			UserID: data.Message.Mentions[0].ID,
-			WaifuList: database.CharLayout{
+			CharList: database.CharLayout{
 				ID:    resp.Character.ID,
 				Image: resp.Character.Image.Large,
 				Name:  resp.Character.Name.Full,

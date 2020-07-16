@@ -11,11 +11,11 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// InputWaifu represents how to send data to the database
+// InputChar represents how to send data to the database
 type InputChar struct {
-	UserID    snowflake.Snowflake `bson:"_id"`
-	Date      time.Time           `bson:"Date"`
-	WaifuList CharLayout
+	UserID   snowflake.Snowflake `bson:"_id"`
+	Date     time.Time           `bson:"Date"`
+	CharList CharLayout
 }
 
 // AddChar adds a waifu to the user each time he has a new one
@@ -29,7 +29,7 @@ func AddChar(input InputChar) {
 		},
 		bson.M{
 			"$set":  bson.M{"Date": input.Date},
-			"$push": bson.M{"Waifus": input.WaifuList},
+			"$push": bson.M{"Waifus": input.CharList},
 		},
 		opts,
 	).Decode(&decoded)
