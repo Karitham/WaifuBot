@@ -4,12 +4,10 @@ import (
 	"bot/config"
 	"context"
 	"fmt"
-	"os"
 	"strings"
 
 	"github.com/andersfylling/disgord"
 	"github.com/andersfylling/disgord/std"
-	"github.com/sirupsen/logrus"
 )
 
 // Global Variables to ease working with client/sesion etc
@@ -23,19 +21,8 @@ func BotRun(cf config.ConfJSONStruct) {
 	// sets the config for the whole disc package
 	conf = cf
 
-	// create a basic logger
-	var log = &logrus.Logger{
-		Out:       os.Stderr,
-		Formatter: new(logrus.TextFormatter),
-		Hooks:     make(logrus.LevelHooks),
-		Level:     logrus.ErrorLevel,
-	}
-
 	// init the client
-	client = disgord.New(disgord.Config{
-		BotToken: cf.BotToken,
-		Logger:   log,
-	})
+	client = disgord.New(disgord.Config{BotToken: cf.BotToken})
 
 	// stay connected to discord
 	defer client.StayConnectedUntilInterrupted(ctx)
@@ -54,17 +41,15 @@ func BotRun(cf config.ConfJSONStruct) {
 
 		// handler
 		reply, // call reply func
-		// specific
 	) // handles copy
 
 	fmt.Println("The bot is currently running")
 }
 
 func reply(s disgord.Session, data *disgord.MessageCreate) {
-	// Parses the message into command / args
-	command, args := parseData(data)
+	command, args := ParseMessage(data)
 
-	// Check if it recognises the command, if it doesn't, send back an error message
+	// Check if it recognises the command, if not, send back an error message
 	switch {
 	case command == "search" || command == "s":
 		search(data, args)
@@ -91,7 +76,8 @@ func reply(s disgord.Session, data *disgord.MessageCreate) {
 	}
 }
 
-func parseData(data *disgord.MessageCreate) (string, []string) {
+// ParseMessage parses the message into command / args
+func ParseMessage(data *disgord.MessageCreate) (string, []string) {
 	var command string
 	var args []string
 

@@ -15,7 +15,7 @@ func giveChar(data *disgord.MessageCreate, arg []string) {
 		database.DelWaifu(database.DelWaifuStruct{UserID: data.Message.Author.ID, WaifuID: charID})
 	} else {
 		// Get avatar
-		avatar, err := data.Message.Author.AvatarURL(64, false)
+		avatar, err := data.Message.Author.AvatarURL(128, false)
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -36,7 +36,7 @@ func giveChar(data *disgord.MessageCreate, arg []string) {
 }
 
 // Verify if the user is able to give this character
-func validGive(data *disgord.MessageCreate, arg []string) (int, string, bool) {
+func validGive(data *disgord.MessageCreate, arg []string) (CharID int, desc string, isValid bool) {
 	if len(arg) > 0 {
 		CharID, err := strconv.Atoi(arg[0])
 		switch {
@@ -44,11 +44,12 @@ func validGive(data *disgord.MessageCreate, arg []string) (int, string, bool) {
 			return CharID, fmt.Sprintf("Error, %d is not a valid WaifuID,\nRefer to help to see this command's syntax", CharID), false
 		case data.Message.Mentions == nil:
 			return CharID, fmt.Sprintf("Error, please tag a discord user,\nRefer to help to see this command's syntax"), false
-		case database.OwnsCharacter(data.Message.Mentions[0].ID, CharID) == false:
-			return CharID, fmt.Sprintf("You do not own the character ID %d,\nPlease verify if the ID you entered is correct", CharID), false
+		case database.OwnsCharacter(data.Message.Author.ID, CharID) == false:
+			fmt.Println(data.Message.Author.ID, CharID)
+			return CharID, fmt.Sprintf("You do not own the character ID %d,\nVerify if the ID you entered is correct", CharID), false
 		default:
 			return CharID, fmt.Sprintf("You gave %d to %s", CharID, data.Message.Mentions[0].Username), true
 		}
 	}
-	return 0, "", false
+	return 0, "Please enter arguments,\nRefer to help to see how to use this command", false
 }
