@@ -42,7 +42,7 @@ func giveChar(data *disgord.MessageCreate, args []string) {
 				Embed: &disgord.Embed{
 					Title:       "Give Waifu Succeded",
 					Thumbnail:   &disgord.EmbedThumbnail{URL: avatar},
-					Description: fmt.Sprintf("User %s gave %s to %s", data.Message.Author.Username, resp.Character.Name, data.Message.Mentions[0].Username),
+					Description: fmt.Sprintf("%s gave %s to %s", data.Message.Author.Username, resp.Character.Name.Full, data.Message.Mentions[0].Username),
 					Image:       &disgord.EmbedImage{URL: resp.Character.Image.Large},
 					Color:       0x43e99a,
 				},
