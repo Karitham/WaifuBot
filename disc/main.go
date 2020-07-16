@@ -96,7 +96,7 @@ func ParseMessage(data *disgord.MessageCreate) (string, []string) {
 func ParseArgToSearch(args []string) query.CharSearchInput {
 	id, err := strconv.Atoi(args[0])
 	arg := strings.Join(args, " ")
-	if err != nil {
+	if err != nil && id != 0 {
 		fmt.Println(err)
 	}
 	return query.CharSearchInput{ID: id, Name: arg}
