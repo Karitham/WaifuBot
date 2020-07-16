@@ -2,6 +2,7 @@ package query
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/machinebox/graphql"
 )
@@ -29,8 +30,8 @@ type CharStruct struct {
 	}
 }
 
-// RandomChar outputs the character you want based on their number on the page list
-func RandomChar(id int) (CharStruct, error) {
+// CharSearchByPopularity outputs the character you want based on their number on the page list
+func CharSearchByPopularity(id int) CharStruct {
 	var res CharStruct
 	graphURL := "https://graphql.anilist.co"
 	client := graphql.NewClient(graphURL)
@@ -61,6 +62,9 @@ func RandomChar(id int) (CharStruct, error) {
 	req.Var("pageNumber", id)
 	ctx := context.Background()
 	err := client.Run(ctx, req, &res)
+	if err != nil {
+		fmt.Println(err)
+	}
 
-	return res, err
+	return res
 }

@@ -34,7 +34,7 @@ type CharSearchInput struct {
 }
 
 // CharSearch makes a query to the anilist API based on the name//ID you input
-func CharSearch(input CharSearchInput) (CharSearchStruct, error) {
+func (input CharSearchInput) CharSearch() (CharSearchStruct, error) {
 	var res CharSearchStruct
 
 	// build query

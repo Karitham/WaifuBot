@@ -17,7 +17,7 @@ type FavouriteStruct struct {
 }
 
 // SetFavourite adds a waifu to the user each time he has a new one
-func SetFavourite(input FavouriteStruct) {
+func (input FavouriteStruct) SetFavourite() {
 	var decoded bson.M
 	opts := options.FindOneAndUpdate().SetUpsert(true)
 	err := Collection.FindOneAndUpdate(

@@ -12,6 +12,9 @@ import (
 	"github.com/andersfylling/disgord/std"
 )
 
+// CmdArguments represents the arguments entered by the user after a command
+type CmdArguments []string
+
 // Global Variables to ease working with client/sesion etc
 var ctx = context.Background()
 var client *disgord.Client
@@ -93,7 +96,7 @@ func ParseMessage(data *disgord.MessageCreate) (string, []string) {
 }
 
 // ParseArgToSearch parses any arg to an int, if no int is entered, returns 0 as the result
-func ParseArgToSearch(args []string) query.CharSearchInput {
+func (args CmdArguments) ParseArgToSearch() query.CharSearchInput {
 	id, err := strconv.Atoi(args[0])
 	arg := strings.Join(args, " ")
 	if err != nil && id != 0 {

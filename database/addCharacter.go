@@ -19,7 +19,7 @@ type InputChar struct {
 }
 
 // AddChar adds a waifu to the user each time he has a new one
-func AddChar(input InputChar) {
+func (input InputChar) AddChar() {
 	var decoded bson.M
 	opts := options.FindOneAndUpdate().SetUpsert(true)
 	err := Collection.FindOneAndUpdate(

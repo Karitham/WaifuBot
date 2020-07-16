@@ -23,7 +23,7 @@ func trendingAnime(data *disgord.MessageCreate, args []string) {
 	}
 
 	// query the trending anime
-	res, err := query.TrendingSearch(args)
+	res, err := query.TrendingSearch()
 	if err != nil {
 		fmt.Println(err)
 	}

@@ -2,13 +2,12 @@ package disc
 
 import (
 	"bot/database"
-	"bot/query"
 	"fmt"
 
 	"github.com/andersfylling/disgord"
 )
 
-func giveChar(data *disgord.MessageCreate, args []string) {
+func giveChar(data *disgord.MessageCreate, args CmdArguments) {
 	// Verify if give is valid, also deletes the character from User1's database if valid
 	desc, valid := validGive(data, args)
 
@@ -20,19 +19,19 @@ func giveChar(data *disgord.MessageCreate, args []string) {
 
 	if valid == true {
 		// Get char
-		resp, err := query.CharSearch(ParseArgToSearch(args))
+		resp, err := args.ParseArgToSearch().CharSearch()
 		if err != nil {
 			fmt.Println(err)
 		}
 
 		// Add the char to the mentionned user's database
-		database.AddChar(database.InputChar{
+		database.InputChar{
 			UserID: data.Message.Mentions[0].ID,
 			CharList: database.CharLayout{
 				ID:    resp.Character.ID,
 				Image: resp.Character.Image.Large,
 				Name:  resp.Character.Name.Full,
-			}})
+			}}.AddChar()
 
 		// Send confirmation Message
 		client.CreateMessage(
@@ -64,15 +63,15 @@ func giveChar(data *disgord.MessageCreate, args []string) {
 }
 
 // Verify if give is valid, also deletes the character from User1's database
-func validGive(data *disgord.MessageCreate, arg []string) (desc string, isValid bool) {
+func validGive(data *disgord.MessageCreate, arg CmdArguments) (desc string, isValid bool) {
 	if len(arg) > 0 {
-		resp := ParseArgToSearch(arg)
+		resp := arg.ParseArgToSearch()
 		switch {
 		case resp.ID == 0:
 			return fmt.Sprintf("Error, %d is not a valid WaifuID,\nRefer to %shelp to see this command's syntax", resp.ID, conf.Prefix), false
 		case data.Message.Mentions == nil:
 			return fmt.Sprintf("Error, please tag a discord user,\nRefer to %shelp to see this command's syntax", conf.Prefix), false
-		case database.DelChar(database.DelWaifuStruct{UserID: data.Message.Author.ID, CharID: resp.ID}) == false:
+		case database.DelWaifuStruct{UserID: data.Message.Author.ID, CharID: resp.ID}.DelChar() == false:
 			return fmt.Sprintf("You do not own the character ID %d,\nVerify if the ID you entered is correct", resp.ID), false
 		default:
 			return "", true

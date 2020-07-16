@@ -2,14 +2,12 @@ package query
 
 import (
 	"context"
-	"strconv"
-	"strings"
 
 	"github.com/machinebox/graphql"
 )
 
-// AnimSearchStruct handles data from CharByName queries
-type AnimSearchStruct struct {
+// AnimeSearchStruct handles data from CharByName queries
+type AnimeSearchStruct struct {
 	Media struct {
 		ID      int    `json:"id"`
 		SiteURL string `json:"siteUrl"`
@@ -27,9 +25,9 @@ type AnimSearchStruct struct {
 	}
 }
 
-// AnimSearch makes a query to the anilist API based on the name//ID you input
-func AnimSearch(args []string) (AnimSearchStruct, error) {
-	var res AnimSearchStruct
+// SearchAnime makes a query to the anilist API based on the name//ID you input
+func (args CharSearchInput) SearchAnime() (AnimeSearchStruct, error) {
+	var res AnimeSearchStruct
 
 	// build query
 	graphURL := "https://graphql.anilist.co"
@@ -52,19 +50,15 @@ func AnimSearch(args []string) (AnimSearchStruct, error) {
 		}
 	  }
 	`)
-	// Parse the arguments to check if an ID or a Name was entered
-	req.Var("type", "ANIME")
-	arg := strings.Join(args, " ")
-	id, err := strconv.Atoi(arg)
 
 	// Add variable
-	if id != 0 {
-		req.Var("id", id)
+	if args.ID != 0 {
+		req.Var("id", args.ID)
 	} else {
-		req.Var("query", arg)
+		req.Var("query", args.Name)
 	}
 
 	ctx := context.Background()
-	err = client.Run(ctx, req, &res)
+	err := client.Run(ctx, req, &res)
 	return res, err
 }

@@ -2,29 +2,28 @@ package disc
 
 import (
 	"bot/database"
-	"bot/query"
 	"fmt"
 
 	"github.com/andersfylling/disgord"
 )
 
-func favourite(data *disgord.MessageCreate, args []string) {
+func favourite(data *disgord.MessageCreate, args CmdArguments) {
 	if len(args) > 0 {
 		// Query Char using search to Anilists graphQL api
-		resp, err := query.CharSearch(ParseArgToSearch(args))
+		resp, err := args.ParseArgToSearch().CharSearch()
 		if err != nil {
 			fmt.Println(err)
 		}
 
 		// Set favourite in database
-		database.SetFavourite(database.FavouriteStruct{
+		database.FavouriteStruct{
 			UserID: data.Message.Author.ID,
 			Favourite: database.CharLayout{
 				ID:    resp.Character.ID,
 				Name:  resp.Character.Name.Full,
 				Image: resp.Character.Image.Large,
 			},
-		})
+		}.SetFavourite()
 
 		// Send confirmation message
 		client.CreateMessage(

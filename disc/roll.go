@@ -53,7 +53,7 @@ func roll(data *disgord.MessageCreate) {
 // RandomToDB makes a character query and adds it to the database
 func RandomToDB(data *disgord.MessageCreate) query.CharStruct {
 	resp := RandomCharRQ(conf.MaxChar)
-	database.AddChar(database.InputChar{
+	database.InputChar{
 		UserID: data.Message.Author.ID,
 		Date:   time.Now(),
 		CharList: database.CharLayout{
@@ -61,7 +61,7 @@ func RandomToDB(data *disgord.MessageCreate) query.CharStruct {
 			Name:  resp.Page.Characters[0].Name.Full,
 			Image: resp.Page.Characters[0].Image.Large,
 		},
-	})
+	}.AddChar()
 	return resp
 }
 
@@ -69,12 +69,5 @@ func RandomToDB(data *disgord.MessageCreate) query.CharStruct {
 func RandomCharRQ(maxCharQuery int) query.CharStruct {
 	// set seeds & roll
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
-	random := r.Intn(maxCharQuery)
-
-	// get the response
-	res, err := query.RandomChar(random)
-	if err != nil {
-		fmt.Println(err)
-	}
-	return res
+	return query.CharSearchByPopularity(r.Intn(maxCharQuery))
 }

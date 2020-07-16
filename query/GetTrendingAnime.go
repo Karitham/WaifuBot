@@ -25,7 +25,7 @@ type TvTrendingStruct struct {
 }
 
 // TrendingSearch makes a query to the AniList GraphQL API to scrape the 10 best trending animes right now
-func TrendingSearch(args []string) (TvTrendingStruct, error) {
+func TrendingSearch() (TvTrendingStruct, error) {
 	var res TvTrendingStruct
 
 	// build query
