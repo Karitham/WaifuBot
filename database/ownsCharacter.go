@@ -11,16 +11,12 @@ import (
 
 // OwnsCharacter verify if a use owns a character, if not, returns false
 func OwnsCharacter(UserID disgord.Snowflake, CharacterID int) bool {
-	_, err := Collection.FindOne(context.TODO(),
-		bson.M{
-			"$eq": bson.M{
-				"_id": UserID,
-				"Waifus": bson.M{
-					"ID": CharacterID,
-				},
-			},
-		},
-	).DecodeBytes()
+	_, err := Collection.FindOne(
+		context.TODO(),
+		bson.D{
+			{"_id", UserID},
+			{"Waifus.ID", CharacterID},
+		}).DecodeBytes()
 	switch {
 	case err == mongo.ErrNoDocuments:
 		return false

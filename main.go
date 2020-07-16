@@ -3,6 +3,7 @@ package main
 import (
 	"bot/config"
 	"bot/database"
+	"fmt"
 )
 
 func main() {
@@ -10,10 +11,13 @@ func main() {
 	conf := config.Retrieve("./config.json")
 
 	// Run the database handler in a goroutine
-	go database.Init(conf)
+	database.Init(conf)
 
 	// Run the bot
 	// disc.BotRun(conf)
 
-	database.OwnsCharacter(206794847581896705, 2010)
+	fmt.Println(database.OwnsCharacter(
+		206794847581896705,
+		2010,
+	))
 }
