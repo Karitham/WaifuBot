@@ -2,8 +2,10 @@ package disc
 
 import (
 	"bot/config"
+	"bot/query"
 	"context"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/andersfylling/disgord"
@@ -88,4 +90,14 @@ func ParseMessage(data *disgord.MessageCreate) (string, []string) {
 		}
 	}
 	return command, args
+}
+
+// ParseArgToSearch parses any arg to an int, if no int is entered, returns 0 as the result
+func ParseArgToSearch(args []string) query.CharSearchInput {
+	id, err := strconv.Atoi(args[0])
+	arg := strings.Join(args, " ")
+	if err != nil {
+		fmt.Println(err)
+	}
+	return query.CharSearchInput{ID: id, Name: arg}
 }

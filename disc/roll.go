@@ -59,7 +59,7 @@ func roll(data *disgord.MessageCreate) {
 // queryRandom makes a character query and adds it to the database
 func queryRandom(data *disgord.MessageCreate) query.CharStruct {
 	resp := query.RandomCharQuery(conf.MaxChar)
-	database.AddWaifu(database.InputWaifu{
+	database.AddChar(database.InputChar{
 		UserID: data.Message.Author.ID,
 		Date:   time.Now(),
 		WaifuList: database.CharLayout{

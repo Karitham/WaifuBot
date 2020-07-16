@@ -12,12 +12,12 @@ import (
 
 // DelWaifuStruct is what data to send to remove a waifu from the database
 type DelWaifuStruct struct {
-	UserID  disgord.Snowflake `bson:"_id"`
-	WaifuID int
+	UserID disgord.Snowflake `bson:"_id"`
+	CharID int
 }
 
 // DelWaifu removes a waifu from the database
-func DelWaifu(input DelWaifuStruct) bool {
+func DelChar(input DelWaifuStruct) bool {
 	var decoded bson.M
 
 	// Find the character and delete it
@@ -25,9 +25,9 @@ func DelWaifu(input DelWaifuStruct) bool {
 		context.TODO(),
 		bson.D{
 			primitive.E{Key: "_id", Value: input.UserID},
-			primitive.E{Key: "Waifus.ID", Value: input.WaifuID},
+			primitive.E{Key: "Waifus.ID", Value: input.CharID},
 		},
-		bson.M{"$pull": bson.M{"Waifus": bson.M{"ID": input.WaifuID}}},
+		bson.M{"$pull": bson.M{"Waifus": bson.M{"ID": input.CharID}}},
 	).Decode(&decoded)
 
 	// If the database found something, returns true

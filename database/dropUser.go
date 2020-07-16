@@ -9,7 +9,7 @@ import (
 )
 
 // Drop a user via USER ID
-func Drop(input InputWaifu) mongo.DeleteResult {
+func Drop(input InputChar) mongo.DeleteResult {
 	deleteOneResult, err := Collection.DeleteOne(context.TODO(), bson.M{"UserID": input.UserID})
 	if err != nil {
 		fmt.Println(err)

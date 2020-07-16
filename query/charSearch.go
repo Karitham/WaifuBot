@@ -2,8 +2,6 @@ package query
 
 import (
 	"context"
-	"strconv"
-	"strings"
 
 	"github.com/machinebox/graphql"
 )
@@ -29,8 +27,14 @@ type CharSearchStruct struct {
 	}
 }
 
+// CharSearchInput is used to input the arguments you want to search
+type CharSearchInput struct {
+	ID   int
+	Name string
+}
+
 // CharSearch makes a query to the anilist API based on the name//ID you input
-func CharSearch(args []string) (CharSearchStruct, error) {
+func CharSearch(input CharSearchInput) (CharSearchStruct, error) {
 	var res CharSearchStruct
 
 	// build query
@@ -57,19 +61,15 @@ func CharSearch(args []string) (CharSearchStruct, error) {
 		}
 	  }
 	`)
-	// Parse the arguments to check if an ID or a Name was entered
-	arg := strings.Join(args, " ")
-	id, err := strconv.Atoi(arg)
-
 	// Add variable
-	if id != 0 {
-		req.Var("id", id)
+	if input.ID != 0 {
+		req.Var("id", input.ID)
 	} else {
-		req.Var("name", arg)
+		req.Var("name", input.Name)
 	}
 
 	ctx := context.Background()
-	err = client.Run(ctx, req, &res)
+	err := client.Run(ctx, req, &res)
 
 	return res, err
 }
