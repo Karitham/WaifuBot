@@ -6,13 +6,13 @@ It uses [Disgord go lib](github.com/andersfylling/disgord), [Anilist's GraphQL A
 
 ## Requirements
 
-* Golang (latest version recommended)
-* MongoDB
-* A discord bot token
+* [Golang](https://golang.org/) (latest version recommended)
+* [MongoDB](https://mongodb.com) (A working url to your cluster / database)
+* A discord bot token [(go there to get one](discordapp.com/developers)
 
-## setup
+## Setup
 
-Rename `configExemple.json` to `config.json` and change the values according to your needs
+Rename `configExample.json` to `config.json` and change the values according to your needs
 
 Run `go mod init bot` to initialise a bot.
 
@@ -24,8 +24,20 @@ To build for the platform you are on, just do
 
 `go build`
 
-To build for raspberry Pi, do
+To build for other models, specify the OS & architecture, if nothing is specified it defaults to the current OS / architecture
+
+### Exemple for Raspberry Pi 4
 
 `env GOOS=linux GOARCH=arm GOARM=7 go build`
 
 If it doesn't work, check ARM version, this exemple works on raspberry Pi 4, I'm not sure about other models
+
+## Contribution
+
+If you want to contribute, just try to follow a clear style just as the rest of the code
+
+Check the Project section to see advance in the project v1
+
+## Feature Requests
+
+I'm open to new feature requests, please follow the template given and/or formulate a clear request
