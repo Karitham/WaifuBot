@@ -64,10 +64,12 @@ func reply(s disgord.Session, data *disgord.MessageCreate) {
 		trendingAnime(data, args)
 	case command == "searchanime" || command == "sa":
 		searchAnime(data, args)
-	case command == "profile" || command == "p":
-		profile(data)
 	case command == "give" || command == "g":
 		giveChar(data, args)
+	case command == "quote" || command == "q":
+		quote(data, args)
+	case command == "profile" || command == "p":
+		profile(data)
 	case command == "help" || command == "h":
 		help(data)
 	case command == "roll" || command == "r":
