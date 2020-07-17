@@ -33,21 +33,22 @@ func TrendingSearch() (TvTrendingStruct, error) {
 	client := graphql.NewClient(graphURL)
 	req := graphql.NewRequest(`
 	query ($page: Int) {
-  Page(perPage: 10, page: $page) {
-    media(type: ANIME, sort: [TRENDING_DESC, POPULARITY_DESC]) {
-      id
-      siteUrl
-      title {
-        userPreferred
-      }
-      coverImage {
-        large
-      }
-      averageScore
-      popularity
-    }
-  }
-}
+		Page(perPage: 10, page: $page) {
+		  media(type: ANIME, sort: [TRENDING_DESC, POPULARITY_DESC]) {
+			id
+			siteUrl
+			title {
+			  userPreferred
+			}
+			coverImage {
+			  large
+			}
+			averageScore
+			popularity
+		  }
+		}
+	  }
+	  
 	`)
 	// Inject pre-made vars to get the trending animes
 	req.Var("page", 1)

@@ -3,6 +3,7 @@ package disc
 import (
 	"bot/database"
 	"fmt"
+	"time"
 
 	"github.com/andersfylling/disgord"
 )
@@ -17,14 +18,14 @@ func profile(data *disgord.MessageCreate) {
 		user = *data.Message.Author
 	}
 
+	// Setrieve user information from database
+	db := database.ViewUserData(user.ID)
+
 	// Get avatar URL
 	avatar, err := user.AvatarURL(128, false)
 	if err != nil {
 		fmt.Println(err)
 	}
-
-	// Setrieve user information from database
-	db := database.ViewUserData(user.ID)
 
 	// Send message
 	client.CreateMessage(
@@ -32,14 +33,45 @@ func profile(data *disgord.MessageCreate) {
 		data.Message.ChannelID,
 		&disgord.CreateMessageParams{
 			Embed: &disgord.Embed{
-				Title:     data.Message.Author.Username,
-				Thumbnail: &disgord.EmbedThumbnail{URL: avatar},
-				Description: fmt.Sprintf(`
-				This user last rolled %s.
-				He owns %d Waifus.
-				His favourite waifu is %s`, db.Date, len(db.Waifus), db.Favourite.Name),
-				Image: &disgord.EmbedImage{URL: db.Favourite.Image},
+				Title:       data.Message.Author.Username,
+				Thumbnail:   &disgord.EmbedThumbnail{URL: avatar},
+				Description: desc(db),
+				Image: &disgord.EmbedImage{
+					URL: db.Favourite.Image,
+				},
 				Color: 0xffe2fe,
 			},
 		})
+}
+
+// Format Description
+func desc(db database.OutputStruct) string {
+	return fmt.Sprintf(
+		`
+		%s
+
+		This user last rolled %s ago.
+		This user owns %d Waifu.
+		%s`,
+		quoteDesc(db.Quote),
+		time.Now().Sub(db.Date).Truncate(time.Second),
+		len(db.Waifus),
+		favDesc(db.Favourite.Name),
+	)
+}
+
+// Format favourite char
+func favDesc(favChar string) string {
+	if favChar == "" {
+		return "This user has not set a favourite waifu yet"
+	}
+	return fmt.Sprintf("This user's favourite waifu is `%s`", favChar)
+}
+
+// Format quote
+func quoteDesc(quote string) string {
+	if quote == "" {
+		return "This user has not set a custom quote yet"
+	}
+	return fmt.Sprintf("`%s`", quote)
 }

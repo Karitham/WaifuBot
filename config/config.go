@@ -16,8 +16,6 @@ type ConfJSONStruct struct {
 	TimeBetweenRolls time.Duration `json:"Time_Between_Rolls"`
 }
 
-var config ConfJSONStruct
-
 // Retrieve reads config from file
 func Retrieve(file string) ConfJSONStruct {
 	var config ConfJSONStruct
