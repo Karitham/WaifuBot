@@ -20,7 +20,7 @@ func quote(data *disgord.MessageCreate, args CmdArguments) {
 		}.SetQuote()
 
 		// Get avatar
-		avatarURL, err := data.Message.Author.AvatarURL(128, false)
+		avatarURL, err := data.Message.Author.AvatarURL(64, false)
 		if err != nil {
 			fmt.Println(err)
 		}

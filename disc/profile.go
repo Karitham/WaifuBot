@@ -22,7 +22,7 @@ func profile(data *disgord.MessageCreate) {
 	db := database.ViewUserData(user.ID)
 
 	// Get avatar URL
-	avatar, err := user.AvatarURL(128, false)
+	avatar, err := user.AvatarURL(64, false)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -33,8 +33,10 @@ func profile(data *disgord.MessageCreate) {
 		data.Message.ChannelID,
 		&disgord.CreateMessageParams{
 			Embed: &disgord.Embed{
-				Title:       data.Message.Author.Username,
-				Thumbnail:   &disgord.EmbedThumbnail{URL: avatar},
+				Title: data.Message.Author.Username,
+				Thumbnail: &disgord.EmbedThumbnail{
+					URL: avatar,
+				},
 				Description: desc(db),
 				Image: &disgord.EmbedImage{
 					URL: db.Favourite.Image,
@@ -49,7 +51,6 @@ func desc(db database.OutputStruct) string {
 	return fmt.Sprintf(
 		`
 		%s
-
 		This user last rolled %s ago.
 		This user owns %d Waifu.
 		%s`,
@@ -65,7 +66,7 @@ func favDesc(favChar string) string {
 	if favChar == "" {
 		return "This user has not set a favourite waifu yet"
 	}
-	return fmt.Sprintf("This user's favourite waifu is `%s`", favChar)
+	return fmt.Sprintf("This user's favourite waifu is %s", favChar)
 }
 
 // Format quote
@@ -73,5 +74,9 @@ func quoteDesc(quote string) string {
 	if quote == "" {
 		return "This user has not set a custom quote yet"
 	}
-	return fmt.Sprintf("`%s`", quote)
+	return fmt.Sprintf(
+		`Favourite quote is:
+		"%s"`,
+		quote,
+	)
 }

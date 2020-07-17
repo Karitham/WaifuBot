@@ -41,7 +41,6 @@ func roll(data *disgord.MessageCreate) {
 			ctx,
 			data.Message.ChannelID,
 			&disgord.CreateMessageParams{
-				Content: "cheh",
 				Embed: &disgord.Embed{
 					Title:       "Illegal roll",
 					Description: fmt.Sprintf("You can roll in %s", ableToRoll.Sub(time.Now())),
