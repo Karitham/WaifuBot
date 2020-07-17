@@ -43,7 +43,7 @@ func roll(data *disgord.MessageCreate) {
 			&disgord.CreateMessageParams{
 				Embed: &disgord.Embed{
 					Title:       "Illegal roll",
-					Description: fmt.Sprintf("You can roll in %s", ableToRoll.Sub(time.Now())),
+					Description: fmt.Sprintf("You can roll in %s", ableToRoll.Sub(time.Now()).Truncate(time.Second)),
 					Color:       0xcc0000,
 				}})
 	}
@@ -51,7 +51,7 @@ func roll(data *disgord.MessageCreate) {
 
 // RandomToDB makes a character query and adds it to the database
 func RandomToDB(data *disgord.MessageCreate) query.CharStruct {
-	resp := RandomCharRQ(conf.MaxChar)
+	resp := query.CharSearchByPopularity(rand.New(rand.NewSource(time.Now().UnixNano())).Intn(conf.MaxChar))
 	database.InputChar{
 		UserID: data.Message.Author.ID,
 		Date:   time.Now(),
@@ -62,11 +62,4 @@ func RandomToDB(data *disgord.MessageCreate) query.CharStruct {
 		},
 	}.AddChar()
 	return resp
-}
-
-// RandomCharRQ make a random rq based on the maxCharQuery
-func RandomCharRQ(maxCharQuery int) query.CharStruct {
-	// set seeds & roll
-	r := rand.New(rand.NewSource(time.Now().UnixNano()))
-	return query.CharSearchByPopularity(r.Intn(maxCharQuery))
 }
