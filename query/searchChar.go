@@ -38,8 +38,7 @@ func (input CharSearchInput) CharSearch() (CharSearchStruct, error) {
 	var res CharSearchStruct
 
 	// build query
-	graphURL := "https://graphql.anilist.co"
-	client := graphql.NewClient(graphURL)
+	client := graphql.NewClient(GraphURL)
 	req := graphql.NewRequest(`
 	query ($id: Int, $name: String) {
 		Character(id: $id, search: $name, sort: SEARCH_MATCH) {

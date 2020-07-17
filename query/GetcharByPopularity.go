@@ -4,67 +4,50 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/machinebox/graphql"
+	"github.com/shurcooL/graphql"
 )
 
-// CharStruct handles data for RandomChar function
-type CharStruct struct {
+// GetCharByPopularityStruct represents the struct for the GetCharByPopularity func
+type GetCharByPopularityStruct struct {
 	Page struct {
 		Characters []struct {
-			ID      int64  `json:"id"`
-			SiteURL string `json:"siteUrl"`
+			ID      int64  `graphql:"id"`
+			SiteURL string `graphql:"siteUrl"`
 			Image   struct {
-				Large string `json:"large"`
-			}
+				Large string `graphql:"large"`
+			} `graphql:"image"`
 			Name struct {
-				Full string `json:"full"`
-			}
+				Full string `graphql:"full"`
+			} `graphql:"name"`
 			Media struct {
 				Nodes []struct {
 					Title struct {
-						Romaji string `json:"romaji"`
-					}
-				}
-			}
-		}
-	}
+						Romaji string `graphql:"romaji"`
+					} `graphql:"title"`
+				} `graphql:"nodes"`
+			} `graphql:"media(perPage: 1, sort: POPULARITY_DESC)"`
+		} `graphql:"characters(sort: FAVOURITES_DESC)"`
+	} `graphql:"Page(perPage: 1, page: $pageNumber)"`
 }
 
-// CharSearchByPopularity outputs the character you want based on their number on the page list
-func CharSearchByPopularity(id int) CharStruct {
-	var res CharStruct
-	graphURL := "https://graphql.anilist.co"
-	client := graphql.NewClient(graphURL)
-	req := graphql.NewRequest(`
-	query ($pageNumber: Int) {
-		Page(perPage: 1, page: $pageNumber) {
-		  characters(sort: FAVOURITES_DESC) {
-			id
-			siteUrl
-			image {
-			  large
-			}
-			name {
-			  full
-			}
-			media(perPage: 1, sort: POPULARITY_DESC) {
-			  nodes {
-				title {
-				  romaji
-				}
-			  }
-			}
-		  }
-		}
-	  }
-		`)
+// GetCharByPopularity is used to get characters by popularity order.
+// This makes it easy to always get characters and have a randomized feature
+func GetCharByPopularity(pageNumber int) GetCharByPopularityStruct {
+	// q represents the data sent back by the query
+	var q GetCharByPopularityStruct
 
-	req.Var("pageNumber", id)
-	ctx := context.Background()
-	err := client.Run(ctx, req, &res)
+	// create client
+	client := graphql.NewClient(GraphURL, nil)
+
+	// insert variables
+	variables := map[string]interface{}{
+		"pageNumber": graphql.Int(pageNumber),
+	}
+
+	// Query
+	err := client.Query(context.Background(), &q, variables)
 	if err != nil {
 		fmt.Println(err)
 	}
-
-	return res
+	return q
 }

@@ -29,8 +29,7 @@ func TrendingSearch() (TvTrendingStruct, error) {
 	var res TvTrendingStruct
 
 	// build query
-	graphURL := "https://graphql.anilist.co"
-	client := graphql.NewClient(graphURL)
+	client := graphql.NewClient(GraphURL)
 	req := graphql.NewRequest(`
 	query ($page: Int) {
 		Page(perPage: 10, page: $page) {

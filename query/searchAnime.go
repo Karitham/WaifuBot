@@ -30,8 +30,7 @@ func (args CharSearchInput) SearchAnime() (AnimeSearchStruct, error) {
 	var res AnimeSearchStruct
 
 	// build query
-	graphURL := "https://graphql.anilist.co"
-	client := graphql.NewClient(graphURL)
+	client := graphql.NewClient(GraphURL)
 	req := graphql.NewRequest(`
 	query ($query: String, $type: MediaType) {
 		Media(search: $query, type: $type) {

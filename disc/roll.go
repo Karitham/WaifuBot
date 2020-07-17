@@ -50,8 +50,8 @@ func roll(data *disgord.MessageCreate) {
 }
 
 // RandomToDB makes a character query and adds it to the database
-func RandomToDB(data *disgord.MessageCreate) query.CharStruct {
-	resp := query.CharSearchByPopularity(rand.New(rand.NewSource(time.Now().UnixNano())).Intn(conf.MaxChar))
+func RandomToDB(data *disgord.MessageCreate) query.GetCharByPopularityStruct {
+	resp := query.GetCharByPopularity(rand.New(rand.NewSource(time.Now().UnixNano())).Intn(conf.MaxChar))
 	database.InputChar{
 		UserID: data.Message.Author.ID,
 		Date:   time.Now(),
