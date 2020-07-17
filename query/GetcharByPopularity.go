@@ -36,9 +36,6 @@ func GetCharByPopularity(pageNumber int) GetCharByPopularityStruct {
 	// q represents the data sent back by the query
 	var q GetCharByPopularityStruct
 
-	// create client
-	client := graphql.NewClient(GraphURL, nil)
-
 	// insert variables
 	variables := map[string]interface{}{
 		"pageNumber": graphql.Int(pageNumber),
@@ -49,5 +46,6 @@ func GetCharByPopularity(pageNumber int) GetCharByPopularityStruct {
 	if err != nil {
 		fmt.Println(err)
 	}
+
 	return q
 }

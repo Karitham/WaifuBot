@@ -3,61 +3,41 @@ package query
 import (
 	"context"
 
-	"github.com/machinebox/graphql"
+	"github.com/shurcooL/graphql"
 )
 
-// AnimeSearchStruct handles data from CharByName queries
-type AnimeSearchStruct struct {
+// SearchAnimeStruct handles data from CharByName queries
+type SearchAnimeStruct struct {
 	Media struct {
-		ID      int    `json:"id"`
-		SiteURL string `json:"siteUrl"`
+		ID      int    `graphql:"id"`
+		SiteURL string `graphql:"siteUrl"`
 		Title   struct {
-			Romaji string `json:"romaji"`
-		}
+			Romaji string `graphql:"romaji"`
+		} `graphql:"title"`
 		CoverImage struct {
-			Large string `json:"large"`
-		}
-		Status       string `json:"status"`
-		Episodes     int    `json:"episodes"`
-		Description  string `json:"description"`
-		AverageScore int    `json:"averageScore"`
-		IsAdult      bool   `json:"isAdult"`
-	}
+			Large string `graphql:"large"`
+		} `graphql:"coverImage"`
+		Status       string `graphql:"status"`
+		Episodes     int    `graphql:"episodes"`
+		Description  string `graphql:"description"`
+		AverageScore int    `graphql:"averageScore"`
+		IsAdult      bool   `graphql:"isAdult"`
+	} `graphql:"Media(search: $query, type: ANIME)"`
 }
 
 // SearchAnime makes a query to the anilist API based on the name//ID you input
-func (args CharSearchInput) SearchAnime() (AnimeSearchStruct, error) {
-	var res AnimeSearchStruct
+func SearchAnime(args string) (SearchAnimeStruct, error) {
 
-	// build query
-	client := graphql.NewClient(GraphURL)
-	req := graphql.NewRequest(`
-	query ($query: String, $type: MediaType) {
-		Media(search: $query, type: $type) {
-		  id
-		  title {
-			romaji
-		  }
-		  coverImage {
-			large
-		  }
-		  status
-		  episodes
-		  description
-		  averageScore
-		  isAdult
-		}
-	  }
-	`)
-
-	// Add variable
-	if args.ID != 0 {
-		req.Var("id", args.ID)
-	} else {
-		req.Var("query", args.Name)
+	// Set variables
+	variables := map[string]interface{}{
+		"query": graphql.String(args),
 	}
 
-	ctx := context.Background()
-	err := client.Run(ctx, req, &res)
-	return res, err
+	// q represents the data sent back by the query
+	var q SearchAnimeStruct
+
+	// Query
+	err := client.Query(context.Background(), &q, variables)
+
+	return q, err
 }

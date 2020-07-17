@@ -3,58 +3,39 @@ package query
 import (
 	"context"
 
-	"github.com/machinebox/graphql"
+	"github.com/shurcooL/graphql"
 )
 
-// TvTrendingStruct handles data from the queries
-type TvTrendingStruct struct {
+// TrendingSearchStruct handles data from the queries
+type TrendingSearchStruct struct {
 	Page struct {
 		Media []struct {
-			ID      int    `json:"id"`
-			SiteURL string `json:"siteUrl"`
+			ID      int64  `graphql:"id"`
+			SiteURL string `graphql:"siteUrl"`
 			Title   struct {
-				UserPreferred string `json:"userPreferred"`
-			}
+				UserPreferred string `graphql:"userPreferred"`
+			} `graphql:"title"`
 			CoverImage struct {
-				Large string `json:"large"`
-			}
-			AverageScore int `json:"averageScore"`
-			Popularity   int `json:"popularity"`
-		}
-	}
+				Large string `graphql:"large"`
+			} `graphql:"coverImage"`
+			AverageScore int `graphql:"averageScore"`
+			Popularity   int `graphql:"popularity"`
+		} `graphql:"media(type: ANIME, sort: [TRENDING_DESC, POPULARITY_DESC])"`
+	} `graphql:"Page(perPage: 10, page: $page)"`
 }
 
 // TrendingSearch makes a query to the AniList GraphQL API to scrape the 10 best trending animes right now
-func TrendingSearch() (TvTrendingStruct, error) {
-	var res TvTrendingStruct
+func TrendingSearch() (TrendingSearchStruct, error) {
+	// insert variables
+	variables := map[string]interface{}{
+		"page": graphql.Int(0),
+	}
 
-	// build query
-	client := graphql.NewClient(GraphURL)
-	req := graphql.NewRequest(`
-	query ($page: Int) {
-		Page(perPage: 10, page: $page) {
-		  media(type: ANIME, sort: [TRENDING_DESC, POPULARITY_DESC]) {
-			id
-			siteUrl
-			title {
-			  userPreferred
-			}
-			coverImage {
-			  large
-			}
-			averageScore
-			popularity
-		  }
-		}
-	  }
-	  
-	`)
-	// Inject pre-made vars to get the trending animes
-	req.Var("page", 1)
+	// q represents the data sent back by the query
+	var q TrendingSearchStruct
 
-	// Execute code
-	ctx := context.Background()
-	err := client.Run(ctx, req, &res)
+	// Query
+	err := client.Query(context.Background(), &q, variables)
 
-	return res, err
+	return q, err
 }
