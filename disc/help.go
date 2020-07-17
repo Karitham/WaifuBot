@@ -21,6 +21,8 @@ func help(data *disgord.MessageCreate) {
 					Syntax : profile  <@Optional User>
 				favourite (f) : Set a favourite waifu to appear on your profile, you may choose any character you want
 					Syntax : favourite <ID / Name>
+				quote (q) : Set a custom quote on your profile
+					Syntax : quote <text>
 				searchAnime (sa) : Search for a anime in the Anilist database
 					Syntax : searchAnime <ID / Name>
 				trendingAnimes (ta) : Displays the top 10 trending animes from Anilist
