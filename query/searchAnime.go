@@ -36,6 +36,7 @@ func (args CharSearchInput) SearchAnime() (AnimeSearchStruct, error) {
 	query ($query: String, $type: MediaType) {
 		Media(search: $query, type: $type) {
 		  id
+		  siteUrl
 		  title {
 			romaji
 		  }
