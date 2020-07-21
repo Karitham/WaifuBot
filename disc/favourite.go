@@ -2,6 +2,7 @@ package disc
 
 import (
 	"bot/database"
+	"bot/query"
 	"fmt"
 
 	"github.com/andersfylling/disgord"
@@ -10,7 +11,7 @@ import (
 func favourite(data *disgord.MessageCreate, args CmdArguments) {
 	if len(args) > 0 {
 		// Query Char using search to Anilists graphQL api
-		resp, err := args.ParseArgToSearch().CharSearch()
+		resp, err := query.CharSearch(args.ParseArgToSearch())
 		if err != nil {
 			fmt.Println(err)
 		}

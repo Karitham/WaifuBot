@@ -52,32 +52,36 @@ func BotRun(cf config.ConfJSONStruct) {
 }
 
 func reply(s disgord.Session, data *disgord.MessageCreate) {
-	command, args := ParseMessage(data)
+	cmd, args := ParseMessage(data)
 
 	// Check if it recognises the command, if not, send back an error message
 	switch {
-	case command == "search" || command == "s":
+	case cmd == "search" || cmd == "s":
 		search(data, args)
-	case command == "favourite" || command == "favorite" || command == "f":
+	case cmd == "favourite" || cmd == "favorite" || cmd == "f":
 		favourite(data, args)
-	case command == "trendinganimes" || command == "ta":
+	case cmd == "trendinganimes" || cmd == "ta":
 		trendingAnime(data, args)
-	case command == "searchanime" || command == "sa":
+	case cmd == "searchanime" || cmd == "sa":
 		searchAnime(data, args)
-	case command == "give" || command == "g":
+	case cmd == "give" || cmd == "g":
 		giveChar(data, args)
-	case command == "quote" || command == "q":
+	case cmd == "quote" || cmd == "q":
 		quote(data, args)
-	case command == "profile" || command == "p":
+	case cmd == "profile" || cmd == "p":
 		profile(data)
-	case command == "help" || command == "h":
+	case cmd == "help" || cmd == "h":
 		help(data)
-	case command == "roll" || command == "r":
+	case cmd == "roll" || cmd == "r":
 		roll(data)
-	case command == "list" || command == "l":
+	case cmd == "list" || cmd == "l":
 		list(data, args)
-	case command == "invite":
+	case cmd == "drop" || cmd == "d":
+		drop(data)
+	case cmd == "invite":
 		invite(data)
+	case cmd == "claim" || cmd == "c":
+		claim(data, args)
 	default:
 		unknown(data)
 	}

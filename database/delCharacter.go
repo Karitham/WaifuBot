@@ -27,7 +27,12 @@ func (input DelWaifuStruct) DelChar() bool {
 			primitive.E{Key: "_id", Value: input.UserID},
 			primitive.E{Key: "Waifus.ID", Value: input.CharID},
 		},
-		bson.M{"$pull": bson.M{"Waifus": bson.M{"ID": input.CharID}}},
+		bson.M{"$pull": bson.M{
+			"Waifus": bson.M{
+				"ID": input.CharID,
+			},
+		},
+		},
 	).Decode(&decoded)
 
 	// If the database found something, returns true

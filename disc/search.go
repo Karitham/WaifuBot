@@ -1,6 +1,7 @@
 package disc
 
 import (
+	"bot/query"
 	"fmt"
 
 	"github.com/andersfylling/disgord"
@@ -9,7 +10,7 @@ import (
 func search(data *disgord.MessageCreate, args CmdArguments) {
 	// check if there is a search term
 	if len(args) > 0 {
-		resp, err := args.ParseArgToSearch().CharSearch()
+		resp, err := query.CharSearch(args.ParseArgToSearch())
 		if err == nil {
 			desc := fmt.Sprintf("I found character %d\nThis character appears in :\n%s", resp.Character.ID, resp.Character.Media.Nodes[0].Title.Romaji)
 			client.CreateMessage(
