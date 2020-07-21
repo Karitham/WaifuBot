@@ -21,6 +21,9 @@ var client *disgord.Client
 var session disgord.Session
 var conf config.ConfJSONStruct
 
+// DropIncrement controls the dropping
+var DropIncrement int
+
 // BotRun the bot and handle events
 func BotRun(cf config.ConfJSONStruct) {
 	// sets the config for the whole disc package
@@ -43,6 +46,7 @@ func BotRun(cf config.ConfJSONStruct) {
 		filter.HasPrefix,   // read original
 		std.CopyMsgEvt,     // read & copy original
 		filter.StripPrefix, // write copy
+		increment,          // used to drop waifus
 
 		// handler
 		reply, // call reply func
@@ -76,8 +80,6 @@ func reply(s disgord.Session, data *disgord.MessageCreate) {
 		roll(data)
 	case cmd == "list" || cmd == "l":
 		list(data, args)
-	case cmd == "drop" || cmd == "d":
-		drop(data)
 	case cmd == "invite":
 		invite(data)
 	case cmd == "claim" || cmd == "c":
@@ -85,6 +87,7 @@ func reply(s disgord.Session, data *disgord.MessageCreate) {
 	default:
 		unknown(data)
 	}
+
 }
 
 // ParseMessage parses the message into command / args
@@ -109,4 +112,12 @@ func (args CmdArguments) ParseArgToSearch() query.CharSearchInput {
 		fmt.Println(err)
 	}
 	return query.CharSearchInput{ID: id, Name: arg}
+}
+
+func increment(s disgord.Session, data *disgord.MessageCreate) {
+	DropIncrement++
+	if DropIncrement >= 25 {
+		drop(data)
+		DropIncrement = 0
+	}
 }

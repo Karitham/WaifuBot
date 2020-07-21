@@ -47,7 +47,7 @@ func claim(data *disgord.MessageCreate, args []string) {
 						URL:         char.Page.Characters[0].SiteURL,
 						Description: fmt.Sprintf("Well done %s, you claimed %s", data.Message.Author.Username, char.Page.Characters[0].Name.Full),
 						Thumbnail:   &disgord.EmbedThumbnail{URL: avatar},
-						Color:       0x225577,
+						Color:       0xFF924B,
 						Image: &disgord.EmbedImage{
 							URL: char.Page.Characters[0].Image.Large,
 						},

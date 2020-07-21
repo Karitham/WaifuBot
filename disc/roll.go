@@ -31,7 +31,7 @@ func roll(data *disgord.MessageCreate) {
 					Title:       resp.Page.Characters[0].Name.Full,
 					URL:         resp.Page.Characters[0].SiteURL,
 					Description: desc,
-					Color:       0x225577,
+					Color:       0x57D4FF,
 					Image: &disgord.EmbedImage{
 						URL: resp.Page.Characters[0].Image.Large,
 					},
