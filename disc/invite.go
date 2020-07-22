@@ -38,7 +38,7 @@ func inviteHelp(data *disgord.MessageCreate) {
 				Description: fmt.Sprintf(
 					"This is the help for the Invite functionnality\n\n"+
 						"Invite is used to get an invite link to be able to add the bot to your server, just use\n"+
-						"`%sinvite",
+						"`%sinvite`",
 					conf.Prefix,
 				),
 				Color: 0xeec400,
