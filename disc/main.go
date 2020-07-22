@@ -22,7 +22,7 @@ var session disgord.Session
 var conf config.ConfJSONStruct
 
 // DropIncrement controls the dropping
-var DropIncrement int
+var DropIncrement map[disgord.Snowflake]int
 
 // BotRun the bot and handle events
 func BotRun(cf config.ConfJSONStruct) {
@@ -115,9 +115,9 @@ func (args CmdArguments) ParseArgToSearch() query.CharSearchInput {
 }
 
 func increment(s disgord.Session, data *disgord.MessageCreate) {
-	DropIncrement++
-	if DropIncrement >= 25 {
+	DropIncrement[data.Message.ChannelID]++
+	if DropIncrement[data.Message.ChannelID] >= 10 {
 		drop(data)
-		DropIncrement = 0
+		DropIncrement[data.Message.ChannelID] = 0
 	}
 }
