@@ -48,7 +48,6 @@ func BotRun(cf config.ConfJSONStruct) {
 		filter.HasPrefix,   // read original
 		std.CopyMsgEvt,     // read & copy original
 		filter.StripPrefix, // write copy
-		increment,          // used to drop waifus
 
 		// handler
 		reply, // call reply func
@@ -66,20 +65,28 @@ func reply(s disgord.Session, data *disgord.MessageCreate) {
 		search(data, args)
 	case cmd == "favourite" || cmd == "favorite" || cmd == "f":
 		favourite(data, args)
+		increment(data) // used to drop waifus
 	case cmd == "trendinganimes" || cmd == "ta":
 		trendingAnime(data, args)
+		increment(data) // used to drop waifus
 	case cmd == "searchanime" || cmd == "sa":
 		searchAnime(data, args)
+		increment(data) // used to drop waifus
 	case cmd == "give" || cmd == "g":
 		giveChar(data, args)
+		increment(data) // used to drop waifus
 	case cmd == "quote" || cmd == "q":
 		quote(data, args)
+		increment(data) // used to drop waifus
 	case cmd == "profile" || cmd == "p":
 		profile(data)
+		increment(data) // used to drop waifus
 	case cmd == "roll" || cmd == "r":
 		roll(data)
+		increment(data) // used to drop waifus
 	case cmd == "list" || cmd == "l":
 		list(data, args)
+		increment(data) // used to drop waifus
 	case cmd == "invite":
 		invite(data)
 	case cmd == "claim" || cmd == "c":
@@ -116,7 +123,7 @@ func (args CmdArguments) ParseArgToSearch() query.CharSearchInput {
 	return query.CharSearchInput{ID: id, Name: arg}
 }
 
-func increment(s disgord.Session, data *disgord.MessageCreate) {
+func increment(data *disgord.MessageCreate) {
 	// Increment
 	DropIncrement[data.Message.ChannelID]++
 

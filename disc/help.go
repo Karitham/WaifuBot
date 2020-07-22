@@ -49,7 +49,7 @@ func defaultHelp(data *disgord.MessageCreate) {
 				Title: "Help || alias h",
 				Description: fmt.Sprintf(
 					"This is the help function.\n\n"+
-						"Use `%shelp functionName` to find out more about this function\n"+
+						"Use `%shelp functionName` to find out more about each function\n"+
 						"Current available functions : ```\nsearch, favourite, trendingAnime, searchAnime, give, quote, profile, roll, list, invite, claim \n```",
 					conf.Prefix,
 				),

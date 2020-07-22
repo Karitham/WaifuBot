@@ -19,6 +19,7 @@ func enableClaim(in query.CharStruct) {
 
 // claim is used to claim a waifu and add it to your database
 func claim(data *disgord.MessageCreate, args []string) {
+	fmt.Println(char)
 	if len(args) > 0 && char.Page.Characters[0].Name.Full != "" {
 		if strings.ToLower(strings.Join(args, " ")) == strings.ToLower(char.Page.Characters[0].Name.Full) {
 
@@ -34,7 +35,6 @@ func claim(data *disgord.MessageCreate, args []string) {
 
 			// Increment claimed waifu
 			database.ClaimIncrementStruct{UserID: data.Message.Author.ID, Increment: 1}.ClaimIncrement()
-
 			// Send confirmation message
 			avatar, err := data.Message.Author.AvatarURL(128, false)
 			if err != nil {
@@ -55,6 +55,9 @@ func claim(data *disgord.MessageCreate, args []string) {
 							URL: char.Page.Characters[0].Image.Large,
 						},
 					}})
+			// Reset the char value
+			char = query.CharStruct{}
+			fmt.Println(char)
 		} else {
 			client.CreateMessage(
 				ctx,
