@@ -50,7 +50,8 @@ func defaultHelp(data *disgord.MessageCreate) {
 				Description: fmt.Sprintf(
 					"This is the help function.\n\n"+
 						"Use `%shelp functionName` to find out more about each function\n"+
-						"Current available functions : ```\nsearch, favourite, trendingAnime, searchAnime, give, quote, profile, roll, list, invite, claim \n```",
+						"Current available functions : ```\nsearch, favourite, trendingAnime, searchAnime, give, quote, profile, roll, list, invite, claim \n```"+
+						"You can also read the source code here : https://github.com/Karitham/WaifuBot",
 					conf.Prefix,
 				),
 				Color: 0xeec400,
