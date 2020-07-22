@@ -26,7 +26,7 @@ type AnimeSearchStruct struct {
 }
 
 // SearchAnime makes a query to the anilist API based on the name//ID you input
-func (args CharSearchInput) SearchAnime() (AnimeSearchStruct, error) {
+func SearchAnime(args CharSearchInput) (AnimeSearchStruct, error) {
 	var res AnimeSearchStruct
 
 	// build query

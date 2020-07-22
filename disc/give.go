@@ -2,6 +2,7 @@ package disc
 
 import (
 	"bot/database"
+	"bot/query"
 	"fmt"
 
 	"github.com/andersfylling/disgord"
@@ -19,7 +20,7 @@ func giveChar(data *disgord.MessageCreate, args CmdArguments) {
 
 	if valid == true {
 		// Get char
-		resp, err := args.ParseArgToSearch().CharSearch()
+		resp, err := query.CharSearch(args.ParseArgToSearch())
 		if err != nil {
 			fmt.Println(err)
 		}

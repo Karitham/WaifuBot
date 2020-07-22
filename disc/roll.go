@@ -31,7 +31,7 @@ func roll(data *disgord.MessageCreate) {
 					Title:       resp.Page.Characters[0].Name.Full,
 					URL:         resp.Page.Characters[0].SiteURL,
 					Description: desc,
-					Color:       0x225577,
+					Color:       0x57D4FF,
 					Image: &disgord.EmbedImage{
 						URL: resp.Page.Characters[0].Image.Large,
 					},
@@ -51,7 +51,14 @@ func roll(data *disgord.MessageCreate) {
 
 // RandomToDB makes a character query and adds it to the database
 func RandomToDB(data *disgord.MessageCreate) query.CharStruct {
-	resp := query.CharSearchByPopularity(rand.New(rand.NewSource(time.Now().UnixNano())).Intn(conf.MaxChar))
+	// Get response
+	resp := query.CharSearchByPopularity(
+		rand.New(
+			rand.NewSource(
+				time.Now().UnixNano(),
+			),
+		).Intn(conf.MaxChar))
+
 	database.InputChar{
 		UserID: data.Message.Author.ID,
 		Date:   time.Now(),

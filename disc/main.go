@@ -5,8 +5,10 @@ import (
 	"bot/query"
 	"context"
 	"fmt"
+	"math/rand"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/andersfylling/disgord"
 	"github.com/andersfylling/disgord/std"
@@ -20,6 +22,9 @@ var ctx = context.Background()
 var client *disgord.Client
 var session disgord.Session
 var conf config.ConfJSONStruct
+
+// DropIncrement controls the dropping
+var DropIncrement = make(map[disgord.Snowflake]int)
 
 // BotRun the bot and handle events
 func BotRun(cf config.ConfJSONStruct) {
@@ -43,6 +48,7 @@ func BotRun(cf config.ConfJSONStruct) {
 		filter.HasPrefix,   // read original
 		std.CopyMsgEvt,     // read & copy original
 		filter.StripPrefix, // write copy
+		increment,          // used to drop waifus
 
 		// handler
 		reply, // call reply func
@@ -52,35 +58,38 @@ func BotRun(cf config.ConfJSONStruct) {
 }
 
 func reply(s disgord.Session, data *disgord.MessageCreate) {
-	command, args := ParseMessage(data)
+	cmd, args := ParseMessage(data)
 
 	// Check if it recognises the command, if not, send back an error message
 	switch {
-	case command == "search" || command == "s":
+	case cmd == "search" || cmd == "s":
 		search(data, args)
-	case command == "favourite" || command == "favorite" || command == "f":
+	case cmd == "favourite" || cmd == "favorite" || cmd == "f":
 		favourite(data, args)
-	case command == "trendinganimes" || command == "ta":
+	case cmd == "trendinganimes" || cmd == "ta":
 		trendingAnime(data, args)
-	case command == "searchanime" || command == "sa":
+	case cmd == "searchanime" || cmd == "sa":
 		searchAnime(data, args)
-	case command == "give" || command == "g":
+	case cmd == "give" || cmd == "g":
 		giveChar(data, args)
-	case command == "quote" || command == "q":
+	case cmd == "quote" || cmd == "q":
 		quote(data, args)
-	case command == "profile" || command == "p":
+	case cmd == "profile" || cmd == "p":
 		profile(data)
-	case command == "help" || command == "h":
+	case cmd == "help" || cmd == "h":
 		help(data)
-	case command == "roll" || command == "r":
+	case cmd == "roll" || cmd == "r":
 		roll(data)
-	case command == "list" || command == "l":
+	case cmd == "list" || cmd == "l":
 		list(data, args)
-	case command == "invite":
+	case cmd == "invite":
 		invite(data)
+	case cmd == "claim" || cmd == "c":
+		claim(data, args)
 	default:
 		unknown(data)
 	}
+
 }
 
 // ParseMessage parses the message into command / args
@@ -105,4 +114,20 @@ func (args CmdArguments) ParseArgToSearch() query.CharSearchInput {
 		fmt.Println(err)
 	}
 	return query.CharSearchInput{ID: id, Name: arg}
+}
+
+func increment(s disgord.Session, data *disgord.MessageCreate) {
+	// Increment
+	DropIncrement[data.Message.ChannelID]++
+
+	// Higher chances the more you interact with the bot
+	r := rand.New(
+		rand.NewSource(time.Now().UnixNano()),
+	).Intn(conf.DropsOnInteract - DropIncrement[data.Message.ChannelID])
+
+	// Drop
+	if r == 0 {
+		drop(data)
+		DropIncrement[data.Message.ChannelID] = 0
+	}
 }

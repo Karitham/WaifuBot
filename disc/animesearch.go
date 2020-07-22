@@ -1,6 +1,7 @@
 package disc
 
 import (
+	"bot/query"
 	"fmt"
 	"strings"
 
@@ -10,7 +11,7 @@ import (
 func searchAnime(data *disgord.MessageCreate, args CmdArguments) {
 	// check if there is a search term
 	if len(args) > 0 {
-		resp, err := args.ParseArgToSearch().SearchAnime()
+		resp, err := query.SearchAnime(args.ParseArgToSearch())
 		if err == nil {
 			desc := fmt.Sprintf(
 				"I found the anime ID %d.\n "+

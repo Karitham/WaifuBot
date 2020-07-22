@@ -12,11 +12,12 @@ import (
 
 // OutputStruct is a representation of the data inside the database, it's used to retrieve data
 type OutputStruct struct {
-	ID        int64        `bson:"_id"`
-	Quote     string       `bson:"Quote,omitempty"`
-	Favourite CharLayout   `bson:",omitempty"`
-	Date      time.Time    `bson:"Date"`
-	Waifus    []CharLayout `bson:",omitempty"`
+	ID            int64        `bson:"_id"`
+	Quote         string       `bson:"Quote,omitempty"`
+	Favourite     CharLayout   `bson:"Favourite,omitempty"`
+	ClaimedWaifus int64        `bson:"ClaimedWaifus,omitempty"`
+	Date          time.Time    `bson:"Date,omitempty"`
+	Waifus        []CharLayout `bson:"Waifus,omitempty"`
 }
 
 // CharLayout is how each character is stored
