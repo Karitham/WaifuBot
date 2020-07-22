@@ -56,7 +56,6 @@ func claim(data *disgord.MessageCreate, args []string) {
 					}})
 			// Reset the char value
 			char = query.CharStruct{}
-			fmt.Println(char)
 		} else {
 			client.CreateMessage(
 				ctx,
