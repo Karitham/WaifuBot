@@ -70,3 +70,21 @@ func RandomToDB(data *disgord.MessageCreate) query.CharStruct {
 	}.AddChar()
 	return resp
 }
+
+func rollHelp(data *disgord.MessageCreate) {
+	client.CreateMessage(
+		ctx,
+		data.Message.ChannelID,
+		&disgord.CreateMessageParams{
+			Embed: &disgord.Embed{
+				Title: "Quote Help || alias r",
+				Description: fmt.Sprintf(
+					"This is the help for the Roll functionnality\n\n"+
+						"You can roll random waifus using :\n"+
+						"`%sroll`\n",
+					conf.Prefix,
+				),
+				Color: 0xeec400,
+			},
+		})
+}

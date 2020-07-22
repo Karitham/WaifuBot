@@ -38,3 +38,22 @@ func search(data *disgord.MessageCreate, args CmdArguments) {
 	}
 
 }
+
+func searchHelp(data *disgord.MessageCreate) {
+	client.CreateMessage(
+		ctx,
+		data.Message.ChannelID,
+		&disgord.CreateMessageParams{
+			Embed: &disgord.Embed{
+				Title: "Character Search Help || alias s",
+				Description: fmt.Sprintf(
+					"This is the help for search character functionnality\n\n"+
+						"You can search a character using :\n"+
+						"`%ssearch Name/ID`\n"+
+						"You can search by either Name OR ID",
+					conf.Prefix,
+				),
+				Color: 0xeec400,
+			},
+		})
+}

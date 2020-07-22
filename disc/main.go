@@ -76,8 +76,6 @@ func reply(s disgord.Session, data *disgord.MessageCreate) {
 		quote(data, args)
 	case cmd == "profile" || cmd == "p":
 		profile(data)
-	case cmd == "help" || cmd == "h":
-		help(data)
 	case cmd == "roll" || cmd == "r":
 		roll(data)
 	case cmd == "list" || cmd == "l":
@@ -86,6 +84,8 @@ func reply(s disgord.Session, data *disgord.MessageCreate) {
 		invite(data)
 	case cmd == "claim" || cmd == "c":
 		claim(data, args)
+	case cmd == "help" || cmd == "h":
+		help(data, args)
 	default:
 		unknown(data)
 	}

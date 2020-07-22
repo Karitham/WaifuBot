@@ -68,3 +68,24 @@ func list(data *disgord.MessageCreate, args []string) {
 				Color:       0x88ffcc,
 			}})
 }
+
+func listHelp(data *disgord.MessageCreate) {
+	client.CreateMessage(
+		ctx,
+		data.Message.ChannelID,
+		&disgord.CreateMessageParams{
+			Embed: &disgord.Embed{
+				Title: "List Help || alias `l`",
+				Description: fmt.Sprintf(
+					"This is the help for the List functionnality\n\n"+
+						"List is used to display a list of your owned waifus. It is displayed from oldest to newest.\n"+
+						"Use the following syntax to display your list :\n"+
+						"`%slist <page> <@User>`"+
+						"(fields enclosed in <> are optionals)\n"+
+						"You can tag a user to see his list too",
+					conf.Prefix,
+				),
+				Color: 0xeec400,
+			},
+		})
+}

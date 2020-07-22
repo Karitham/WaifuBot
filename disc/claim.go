@@ -81,3 +81,21 @@ func getCharInitials() (initials string) {
 	}
 	return
 }
+
+func claimHelp(data *disgord.MessageCreate) {
+	client.CreateMessage(
+		ctx,
+		data.Message.ChannelID,
+		&disgord.CreateMessageParams{
+			Embed: &disgord.Embed{
+				Title: "Claim Help || alias c",
+				Description: fmt.Sprintf(
+					"This is the help for the claim functionnality\n\n"+
+						"You can claim a character for yourself after it has been dropped by using the following syntax :\n"+
+						"`%sclaim Name`\n",
+					conf.Prefix,
+				),
+				Color: 0xeec400,
+			},
+		})
+}
