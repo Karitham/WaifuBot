@@ -5,8 +5,10 @@ import (
 	"bot/query"
 	"context"
 	"fmt"
+	"math/rand"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/andersfylling/disgord"
 	"github.com/andersfylling/disgord/std"
@@ -118,8 +120,13 @@ func increment(s disgord.Session, data *disgord.MessageCreate) {
 	// Increment
 	DropIncrement[data.Message.ChannelID]++
 
+	// Higher chances the more you interact with the bot
+	r := rand.New(
+		rand.NewSource(time.Now().UnixNano()),
+	).Intn(conf.DropsOnInteract - DropIncrement[data.Message.ChannelID])
+
 	// Drop
-	if DropIncrement[data.Message.ChannelID] >= conf.DropsOnInteract {
+	if r == 0 {
 		drop(data)
 		DropIncrement[data.Message.ChannelID] = 0
 	}
