@@ -32,6 +32,9 @@ func claim(data *disgord.MessageCreate, args []string) {
 				},
 			}.AddChar()
 
+			// Increment claimed waifu
+			database.ClaimIncrementStruct{UserID: data.Message.Author.ID, Increment: 1}.ClaimIncrement()
+
 			// Send confirmation message
 			avatar, err := data.Message.Author.AvatarURL(128, false)
 			if err != nil {

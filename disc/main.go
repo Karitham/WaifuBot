@@ -119,7 +119,7 @@ func increment(s disgord.Session, data *disgord.MessageCreate) {
 	DropIncrement[data.Message.ChannelID]++
 
 	// Drop
-	if DropIncrement[data.Message.ChannelID] >= 15 {
+	if DropIncrement[data.Message.ChannelID] >= conf.DropsOnInteract {
 		drop(data)
 		DropIncrement[data.Message.ChannelID] = 0
 	}

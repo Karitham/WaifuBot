@@ -52,11 +52,11 @@ func desc(db database.OutputStruct) string {
 		`
 		%s
 		This user last rolled %s ago.
-		This user owns %d Waifu.
+		Has rolled %d Waifus, and has claimed %d.
 		%s`,
 		quoteDesc(db.Quote),
 		time.Now().Sub(db.Date).Truncate(time.Second),
-		len(db.Waifus),
+		len(db.Waifus), db.ClaimedWaifus,
 		favDesc(db.Favourite.Name),
 	)
 }

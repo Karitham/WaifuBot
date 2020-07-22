@@ -14,6 +14,7 @@ type ConfJSONStruct struct {
 	MongoURL         string        `json:"Mongo_URL"`
 	MaxChar          int           `json:"Max_Character_Roll"`
 	TimeBetweenRolls time.Duration `json:"Time_Between_Rolls"`
+	DropsOnInteract  int           `json:"Drops_On_Interact"`
 }
 
 // Retrieve reads config from file
