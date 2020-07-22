@@ -19,8 +19,7 @@ func enableClaim(in query.CharStruct) {
 
 // claim is used to claim a waifu and add it to your database
 func claim(data *disgord.MessageCreate, args []string) {
-	fmt.Println(char)
-	if len(args) > 0 && char.Page.Characters[0].Name.Full != "" {
+	if len(args) > 0 && char.Page.Characters != nil {
 		if strings.ToLower(strings.Join(args, " ")) == strings.ToLower(char.Page.Characters[0].Name.Full) {
 
 			// Add to db
@@ -74,7 +73,13 @@ func claim(data *disgord.MessageCreate, args []string) {
 			ctx,
 			data.Message.ChannelID,
 			&disgord.CreateMessageParams{
-				Embed: &disgord.Embed{Title: "Error, enter the name to claim the character", Color: 0xcc0000}})
+				Embed: &disgord.Embed{
+					Title:       "Error",
+					Description: "Please see\n`help claim`\nfor more information on the syntax",
+					Color:       0xcc0000,
+				},
+			},
+		)
 	}
 }
 
