@@ -1,4 +1,4 @@
-package disc
+package discord
 
 import (
 	"bot/database"
