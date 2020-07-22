@@ -80,3 +80,21 @@ func validGive(data *disgord.MessageCreate, arg CmdArguments) (desc string, isVa
 	}
 	return "Please enter arguments,\nRefer to help to see how to use this command", false
 }
+
+func giveCharHelp(data *disgord.MessageCreate) {
+	client.CreateMessage(
+		ctx,
+		data.Message.ChannelID,
+		&disgord.CreateMessageParams{
+			Embed: &disgord.Embed{
+				Title: "Give Help || alias g",
+				Description: fmt.Sprintf(
+					"This is the help for the give functionnality\n\n" +
+						"You can give a waifu to another user using the following syntax :\n" +
+						"`%sgive ID @User`" +
+						conf.Prefix,
+				),
+				Color: 0xeec400,
+			},
+		})
+}

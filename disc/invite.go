@@ -1,6 +1,10 @@
 package disc
 
-import "github.com/andersfylling/disgord"
+import (
+	"fmt"
+
+	"github.com/andersfylling/disgord"
+)
 
 // Send invite link in a small embed
 func invite(data *disgord.MessageCreate) {
@@ -20,6 +24,24 @@ func invite(data *disgord.MessageCreate) {
 				Title: "Invite",
 				URL:   botURL,
 				Color: 0x49b675,
+			},
+		})
+}
+
+func inviteHelp(data *disgord.MessageCreate) {
+	client.CreateMessage(
+		ctx,
+		data.Message.ChannelID,
+		&disgord.CreateMessageParams{
+			Embed: &disgord.Embed{
+				Title: "Invite Help",
+				Description: fmt.Sprintf(
+					"This is the help for the Invite functionnality\n\n"+
+						"Invite is used to get an invite link to be able to add the bot to your server, just use\n"+
+						"`%sinvite",
+					conf.Prefix,
+				),
+				Color: 0xeec400,
 			},
 		})
 }

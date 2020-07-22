@@ -44,3 +44,21 @@ func trendingAnime(data *disgord.MessageCreate, args []string) {
 				Color:       0x88ffcc,
 			}})
 }
+
+func trendingAnimeHelp(data *disgord.MessageCreate) {
+	client.CreateMessage(
+		ctx,
+		data.Message.ChannelID,
+		&disgord.CreateMessageParams{
+			Embed: &disgord.Embed{
+				Title: "Trending Anime Help || alias ta",
+				Description: fmt.Sprintf(
+					"This is the help for the Trending Anime functionnality\n\n"+
+						"Trending anime is used to display the top 10 trending anime from anilist. Use it like so :\n"+
+						"`%strendingAnimes",
+					conf.Prefix,
+				),
+				Color: 0xeec400,
+			},
+		})
+}

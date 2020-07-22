@@ -47,3 +47,21 @@ func quote(data *disgord.MessageCreate, args CmdArguments) {
 				}})
 	}
 }
+
+func quoteHelp(data *disgord.MessageCreate) {
+	client.CreateMessage(
+		ctx,
+		data.Message.ChannelID,
+		&disgord.CreateMessageParams{
+			Embed: &disgord.Embed{
+				Title: "Quote Help || alias q",
+				Description: fmt.Sprintf(
+					"This is the help for the Quote functionnality\n\n"+
+						"You can add a favourite quote to be displayed on your profile by using the following syntax :\n"+
+						"`%squote The thing you want to quote`\n",
+					conf.Prefix,
+				),
+				Color: 0xeec400,
+			},
+		})
+}

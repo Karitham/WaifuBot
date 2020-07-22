@@ -49,3 +49,21 @@ func searchAnime(data *disgord.MessageCreate, args CmdArguments) {
 	}
 
 }
+
+func searchAnimeHelp(data *disgord.MessageCreate) {
+	client.CreateMessage(
+		ctx,
+		data.Message.ChannelID,
+		&disgord.CreateMessageParams{
+			Embed: &disgord.Embed{
+				Title: "Anime Search Help || alias sa",
+				Description: fmt.Sprintf(
+					"This is the help for search anime functionnality\n\n"+
+						"You can search an anime by its name using the following syntax\n"+
+						"`%ssearchAnime Name`\n",
+					conf.Prefix,
+				),
+				Color: 0xeec400,
+			},
+		})
+}

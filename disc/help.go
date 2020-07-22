@@ -2,30 +2,56 @@ package disc
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/andersfylling/disgord"
 )
 
-func help(data *disgord.MessageCreate) {
+func help(data *disgord.MessageCreate, args []string) {
+	if len(args) > 0 {
+		switch arg := strings.ToLower(args[0]); {
+		case arg == "search" || arg == "s":
+			searchHelp(data)
+		case arg == "favourite" || arg == "favorite" || arg == "f":
+			favouriteHelp(data)
+		case arg == "trendinganimes" || arg == "ta":
+			trendingAnimeHelp(data)
+		case arg == "searchanime" || arg == "sa":
+			searchAnimeHelp(data)
+		case arg == "give" || arg == "g":
+			giveCharHelp(data)
+		case arg == "quote" || arg == "q":
+			quoteHelp(data)
+		case arg == "profile" || arg == "p":
+			profileHelp(data)
+		case arg == "roll" || arg == "r":
+			rollHelp(data)
+		case arg == "list" || arg == "l":
+			listHelp(data)
+		case arg == "invite":
+			inviteHelp(data)
+		case arg == "claim" || arg == "c":
+			claimHelp(data)
+		default:
+			defaultHelp(data)
+		}
+	} else {
+		defaultHelp(data)
+	}
+}
+
+func defaultHelp(data *disgord.MessageCreate) {
 	client.CreateMessage(
 		ctx,
 		data.Message.ChannelID,
 		&disgord.CreateMessageParams{
 			Embed: &disgord.Embed{
-				Title: "Help",
-				Description: fmt.Sprint(
-					"`roll` (r) : Roll a new waifu\n",
-					"`claim`(c) : Claims the dropped waifu for yourself\n",
-					"`list` (l) : List the waifus you, or the user mentionned owns\n",
-					"`give` (g) : Give a waifu to the user mentioned\n",
-					"`search` (s) : Search for a character by name / ID\n",
-					"`profile` (p) : Display profile information for yourself, or the user mentioned\n",
-					"`favourite` (f) : Set a favourite waifu to appear on your profile, you may choose any character you want\n",
-					"`quote` (q) : Set a custom quote on your profile\n",
-					"`searchAnime` (sa) : Search for a anime in the Anilist database\n",
-					"`trendingAnimes` (ta) : Displays the top 10 trending animes from Anilist\n",
-					"`invite` : Invite link to add the bot to your server\n",
-					"`help` (h) : Display this help page\n",
+				Title: "Help || alias h",
+				Description: fmt.Sprintf(
+					"This is the help function.\n\n"+
+						"Use `%shelp functionName` to find out more about this function"+
+						"Current available functions : ```\nsearch, favourite, trendingAnime, searchAnime, give, quote, profile, roll, list, invite, claim \n```",
+					conf.Prefix,
 				),
 				Color: 0xeec400,
 			},

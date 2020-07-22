@@ -80,3 +80,24 @@ func quoteDesc(quote string) string {
 		quote,
 	)
 }
+
+func profileHelp(data *disgord.MessageCreate) {
+	client.CreateMessage(
+		ctx,
+		data.Message.ChannelID,
+		&disgord.CreateMessageParams{
+			Embed: &disgord.Embed{
+				Title: "Profile Help || alias p",
+				Description: fmt.Sprintf(
+					"This is the help for the Profile functionnality\n\n"+
+						"Profile displays the profile of the concerned user.\n"+
+						"Use it like so :\n"+
+						"`%sprofile <@User>`\n"+
+						"(fields enclosed in <> are optionals)\n"+
+						"You can tag a user to see his list too",
+					conf.Prefix,
+				),
+				Color: 0xeec400,
+			},
+		})
+}

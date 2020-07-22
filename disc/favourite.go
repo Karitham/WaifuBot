@@ -47,3 +47,22 @@ func favourite(data *disgord.MessageCreate, args CmdArguments) {
 				Embed: &disgord.Embed{Title: "Error, favourite requires at least 1 argument", Color: 0xcc0000}})
 	}
 }
+
+func favouriteHelp(data *disgord.MessageCreate) {
+	client.CreateMessage(
+		ctx,
+		data.Message.ChannelID,
+		&disgord.CreateMessageParams{
+			Embed: &disgord.Embed{
+				Title: "Favourite Help || alias f ",
+				Description: fmt.Sprintf(
+					"This is the help for the Favourite functionnality\n\n"+
+						"You can add a character as favourite by using the following syntax :\n"+
+						"`%sfavourite Name/ID`\n"+
+						"You can use Name OR ID\n",
+					conf.Prefix,
+				),
+				Color: 0xeec400,
+			},
+		})
+}
