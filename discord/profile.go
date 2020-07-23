@@ -97,6 +97,9 @@ func profileHelp(data *disgord.MessageCreate) {
 						"You can tag a user to see his list too",
 					conf.Prefix,
 				),
+				Footer: &disgord.EmbedFooter{
+					Text: fmt.Sprintf("Help requested by %s", data.Message.Author.Username),
+				},
 				Color: 0xeec400,
 			},
 		})

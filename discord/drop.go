@@ -26,9 +26,12 @@ func printDrop(data *disgord.MessageCreate, image string) {
 			Embed: &disgord.Embed{
 				Title:       "A new character appeared",
 				Description: fmt.Sprintf("use %sclaim to get this character for yourself", conf.Prefix),
-				Color:       0xF2FF2E,
 				Image: &disgord.EmbedImage{
 					URL: image,
 				},
+				Footer: &disgord.EmbedFooter{
+					Text: fmt.Sprintf("Help requested by %s", data.Message.Author.Username),
+				},
+				Color: 0xF2FF2E,
 			}})
 }

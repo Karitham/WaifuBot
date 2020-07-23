@@ -54,15 +54,10 @@ func defaultHelp(data *disgord.MessageCreate) {
 						"You can also read the source code here : https://github.com/Karitham/WaifuBot",
 					conf.Prefix,
 				),
+				Footer: &disgord.EmbedFooter{
+					Text: fmt.Sprintf("Help requested by %s", data.Message.Author.Username),
+				},
 				Color: 0xeec400,
 			},
 		})
 }
-
-// 					Syntax : list <Optional page> <@Optional User>
-// 					Syntax : give <ID> <@User>
-// 					Syntax : search <ID / Name>
-// 					Syntax : profile  <@Optional User>
-// 					Syntax : favourite <ID / Name>
-// 					Syntax : quote <text>
-// 					Syntax : searchAnime <ID / Name>

@@ -14,7 +14,10 @@ func unknown(data *disgord.MessageCreate) {
 			Embed: &disgord.Embed{
 				Title:       "Unknown command",
 				Description: fmt.Sprintf("Type %shelp to see the commands available", conf.Prefix),
-				Color:       0xcc0000,
+				Footer: &disgord.EmbedFooter{
+					Text: fmt.Sprintf("You something wrong !!!"),
+				},
+				Color: 0xcc0000,
 			},
 		})
 }
