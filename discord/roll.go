@@ -89,5 +89,6 @@ func rollHelp(data *disgord.MessageCreate) {
 				},
 				Color: 0xeec400,
 			},
-		})
+		},
+	)
 }

@@ -46,7 +46,8 @@ func giveChar(data *disgord.MessageCreate, args CmdArguments) {
 					Image:       &disgord.EmbedImage{URL: resp.Character.Image.Large},
 					Color:       0x43e99a,
 				},
-			})
+			},
+		)
 	} else {
 		// Send message
 		client.CreateMessage(
@@ -59,7 +60,8 @@ func giveChar(data *disgord.MessageCreate, args CmdArguments) {
 					Description: desc,
 					Color:       0xcc0000,
 				},
-			})
+			},
+		)
 	}
 }
 
@@ -99,5 +101,6 @@ func giveCharHelp(data *disgord.MessageCreate) {
 				},
 				Color: 0xeec400,
 			},
-		})
+		},
+	)
 }

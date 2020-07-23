@@ -36,7 +36,9 @@ func searchAnime(data *disgord.MessageCreate, args CmdArguments) {
 						Image: &disgord.EmbedImage{
 							URL: resp.Media.CoverImage.Large,
 						},
-					}})
+					},
+				},
+			)
 		} else {
 			client.SendMsg(ctx, data.Message.ChannelID, err)
 		}
@@ -68,5 +70,6 @@ func searchAnimeHelp(data *disgord.MessageCreate) {
 				},
 				Color: 0xeec400,
 			},
-		})
+		},
+	)
 }

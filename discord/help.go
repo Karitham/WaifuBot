@@ -59,5 +59,6 @@ func defaultHelp(data *disgord.MessageCreate) {
 				},
 				Color: 0xeec400,
 			},
-		})
+		},
+	)
 }

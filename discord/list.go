@@ -66,7 +66,9 @@ func list(data *disgord.MessageCreate, args []string) {
 				Description: desc,
 				Thumbnail:   &disgord.EmbedThumbnail{URL: avatar},
 				Color:       0x88ffcc,
-			}})
+			},
+		},
+	)
 }
 
 func listHelp(data *disgord.MessageCreate) {
@@ -90,5 +92,6 @@ func listHelp(data *disgord.MessageCreate) {
 				},
 				Color: 0xeec400,
 			},
-		})
+		},
+	)
 }

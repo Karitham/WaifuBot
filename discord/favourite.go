@@ -38,7 +38,9 @@ func favourite(data *disgord.MessageCreate, args CmdArguments) {
 					Image: &disgord.EmbedImage{
 						URL: resp.Character.Image.Large,
 					},
-				}})
+				},
+			},
+		)
 	} else {
 		client.CreateMessage(
 			ctx,
@@ -67,5 +69,6 @@ func favouriteHelp(data *disgord.MessageCreate) {
 				},
 				Color: 0xeec400,
 			},
-		})
+		},
+	)
 }

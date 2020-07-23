@@ -19,5 +19,6 @@ func unknown(data *disgord.MessageCreate) {
 				},
 				Color: 0xcc0000,
 			},
-		})
+		},
+	)
 }

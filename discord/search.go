@@ -25,7 +25,9 @@ func search(data *disgord.MessageCreate, args CmdArguments) {
 						Image: &disgord.EmbedImage{
 							URL: resp.Character.Image.Large,
 						},
-					}})
+					},
+				},
+			)
 		} else {
 			client.SendMsg(ctx, data.Message.ChannelID, err)
 		}
@@ -58,5 +60,6 @@ func searchHelp(data *disgord.MessageCreate) {
 				},
 				Color: 0xeec400,
 			},
-		})
+		},
+	)
 }

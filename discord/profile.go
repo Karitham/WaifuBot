@@ -43,7 +43,8 @@ func profile(data *disgord.MessageCreate) {
 				},
 				Color: 0xffe2fe,
 			},
-		})
+		},
+	)
 }
 
 // Format Description
@@ -102,5 +103,6 @@ func profileHelp(data *disgord.MessageCreate) {
 				},
 				Color: 0xeec400,
 			},
-		})
+		},
+	)
 }

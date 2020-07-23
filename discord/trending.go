@@ -42,7 +42,9 @@ func trendingAnime(data *disgord.MessageCreate, args []string) {
 				Title:       fmt.Sprintf("Trending Anime List"),
 				Description: desc,
 				Color:       0x88ffcc,
-			}})
+			},
+		},
+	)
 }
 
 func trendingAnimeHelp(data *disgord.MessageCreate) {
@@ -63,5 +65,6 @@ func trendingAnimeHelp(data *disgord.MessageCreate) {
 				},
 				Color: 0xeec400,
 			},
-		})
+		},
+	)
 }

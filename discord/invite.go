@@ -25,7 +25,8 @@ func invite(data *disgord.MessageCreate) {
 				URL:   botURL,
 				Color: 0x49b675,
 			},
-		})
+		},
+	)
 }
 
 func inviteHelp(data *disgord.MessageCreate) {
@@ -46,5 +47,6 @@ func inviteHelp(data *disgord.MessageCreate) {
 				},
 				Color: 0xeec400,
 			},
-		})
+		},
+	)
 }

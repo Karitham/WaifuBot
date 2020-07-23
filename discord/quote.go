@@ -35,7 +35,9 @@ func quote(data *disgord.MessageCreate, args CmdArguments) {
 					Thumbnail:   &disgord.EmbedThumbnail{URL: avatarURL},
 					Description: fmt.Sprintf("Your new quote is %s", argStr),
 					Color:       0xffe2fe,
-				}})
+				},
+			},
+		)
 	} else {
 		client.CreateMessage(
 			ctx,
@@ -44,7 +46,9 @@ func quote(data *disgord.MessageCreate, args CmdArguments) {
 				Embed: &disgord.Embed{
 					Title: "Error, quote requires at least 1 argument",
 					Color: 0xcc0000,
-				}})
+				},
+			},
+		)
 	}
 }
 
@@ -66,5 +70,6 @@ func quoteHelp(data *disgord.MessageCreate) {
 				},
 				Color: 0xeec400,
 			},
-		})
+		},
+	)
 }
