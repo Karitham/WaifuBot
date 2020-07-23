@@ -36,7 +36,9 @@ func searchAnime(data *disgord.MessageCreate, args CmdArguments) {
 						Image: &disgord.EmbedImage{
 							URL: resp.Media.CoverImage.Large,
 						},
-					}})
+					},
+				},
+			)
 		} else {
 			client.SendMsg(ctx, data.Message.ChannelID, err)
 		}
@@ -45,7 +47,13 @@ func searchAnime(data *disgord.MessageCreate, args CmdArguments) {
 			ctx,
 			data.Message.ChannelID,
 			&disgord.CreateMessageParams{
-				Embed: &disgord.Embed{Title: "Error, search requires at least 1 argument", Color: 0xcc0000}})
+				Embed: &disgord.Embed{
+					Title:     "Error, search requires at least 1 argument",
+					Timestamp: data.Message.Timestamp,
+					Color:     0xcc0000,
+				},
+			},
+		)
 	}
 
 }
@@ -63,7 +71,12 @@ func searchAnimeHelp(data *disgord.MessageCreate) {
 						"`%ssearchAnime Name`\n",
 					conf.Prefix,
 				),
-				Color: 0xeec400,
+				Footer: &disgord.EmbedFooter{
+					Text: fmt.Sprintf("Help requested by %s", data.Message.Author.Username),
+				},
+				Timestamp: data.Message.Timestamp,
+				Color:     0xeec400,
 			},
-		})
+		},
+	)
 }

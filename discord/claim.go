@@ -4,7 +4,9 @@ import (
 	"bot/database"
 	"bot/query"
 	"fmt"
+	"math/rand"
 	"strings"
+	"time"
 
 	"github.com/andersfylling/disgord"
 )
@@ -15,6 +17,31 @@ var char query.CharStruct
 // enableClaim is used to make the new character claimable by the user
 func enableClaim(in query.CharStruct) {
 	char = in
+}
+
+func drop(data *disgord.MessageCreate) {
+	query := query.CharSearchByPopularity(rand.New(rand.NewSource(time.Now().UnixNano())).Intn(conf.MaxChar))
+	enableClaim(query)
+	printDrop(data, query.Page.Characters[0].Image.Large)
+}
+
+func printDrop(data *disgord.MessageCreate, image string) {
+	// Sends the message
+	client.CreateMessage(
+		ctx,
+		data.Message.ChannelID,
+		&disgord.CreateMessageParams{
+			Embed: &disgord.Embed{
+				Title:       "A new character appeared",
+				Description: fmt.Sprintf("use %sclaim to get this character for yourself", conf.Prefix),
+				Image: &disgord.EmbedImage{
+					URL: image,
+				},
+				Timestamp: data.Message.Timestamp,
+				Color:     0xF2FF2E,
+			},
+		},
+	)
 }
 
 // claim is used to claim a waifu and add it to your database
@@ -49,10 +76,11 @@ func claim(data *disgord.MessageCreate, args []string) {
 						URL:         char.Page.Characters[0].SiteURL,
 						Description: fmt.Sprintf("Well done %s, you claimed %s", data.Message.Author.Username, char.Page.Characters[0].Name.Full),
 						Thumbnail:   &disgord.EmbedThumbnail{URL: avatar},
-						Color:       0xFF924B,
 						Image: &disgord.EmbedImage{
 							URL: char.Page.Characters[0].Image.Large,
 						},
+						Timestamp: data.Message.Timestamp,
+						Color:     0xFF924B,
 					}})
 			// Reset the char value
 			char = query.CharStruct{}
@@ -64,6 +92,7 @@ func claim(data *disgord.MessageCreate, args []string) {
 					Embed: &disgord.Embed{
 						Title:       "Claim unsucessfull",
 						Description: fmt.Sprintf("Hint : this character's initial are %s", getCharInitials()),
+						Timestamp:   data.Message.Timestamp,
 						Color:       0x626868,
 					}})
 		}
@@ -75,6 +104,7 @@ func claim(data *disgord.MessageCreate, args []string) {
 				Embed: &disgord.Embed{
 					Title:       "Error",
 					Description: "Please see\n`help claim`\nfor more information on the syntax",
+					Timestamp:   data.Message.Timestamp,
 					Color:       0xcc0000,
 				},
 			},
@@ -102,7 +132,12 @@ func claimHelp(data *disgord.MessageCreate) {
 						"`%sclaim Name`\n",
 					conf.Prefix,
 				),
-				Color: 0xeec400,
+				Footer: &disgord.EmbedFooter{
+					Text: fmt.Sprintf("Help requested by %s", data.Message.Author.Username),
+				},
+				Timestamp: data.Message.Timestamp,
+				Color:     0xeec400,
 			},
-		})
+		},
+	)
 }

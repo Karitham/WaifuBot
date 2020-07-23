@@ -34,17 +34,16 @@ func favourite(data *disgord.MessageCreate, args CmdArguments) {
 				Embed: &disgord.Embed{
 					Title:       "New favourite waifu set",
 					Description: fmt.Sprintf("Your new favourite waifu is %s", resp.Character.Name.Full),
-					Color:       0xffe2fe,
 					Image: &disgord.EmbedImage{
 						URL: resp.Character.Image.Large,
 					},
-				}})
+					Timestamp: data.Message.Timestamp,
+					Color:     0xffe2fe,
+				},
+			},
+		)
 	} else {
-		client.CreateMessage(
-			ctx,
-			data.Message.ChannelID,
-			&disgord.CreateMessageParams{
-				Embed: &disgord.Embed{Title: "Error, favourite requires at least 1 argument", Color: 0xcc0000}})
+		favouriteHelp(data)
 	}
 }
 
@@ -62,7 +61,12 @@ func favouriteHelp(data *disgord.MessageCreate) {
 						"You can use Name OR ID\n",
 					conf.Prefix,
 				),
-				Color: 0xeec400,
+				Footer: &disgord.EmbedFooter{
+					Text: fmt.Sprintf("Help requested by %s", data.Message.Author.Username),
+				},
+				Timestamp: data.Message.Timestamp,
+				Color:     0xeec400,
 			},
-		})
+		},
+	)
 }

@@ -20,7 +20,7 @@ func roll(data *disgord.MessageCreate) {
 		resp := RandomToDB(data)
 
 		// Create a descrption adapated to the character retrieved
-		desc := fmt.Sprintf("You rolled character %d\nIt appears in :\n%s", resp.Page.Characters[0].ID, resp.Page.Characters[0].Media.Nodes[0].Title.Romaji)
+		desc := fmt.Sprintf("You rolled character `%d`\nIt appears in :\n- %s", resp.Page.Characters[0].ID, resp.Page.Characters[0].Media.Nodes[0].Title.Romaji)
 
 		// Sends the message
 		client.CreateMessage(
@@ -31,10 +31,11 @@ func roll(data *disgord.MessageCreate) {
 					Title:       resp.Page.Characters[0].Name.Full,
 					URL:         resp.Page.Characters[0].SiteURL,
 					Description: desc,
-					Color:       0x57D4FF,
 					Image: &disgord.EmbedImage{
 						URL: resp.Page.Characters[0].Image.Large,
 					},
+					Timestamp: data.Message.Timestamp,
+					Color:     0x57D4FF,
 				}})
 	} else {
 		client.CreateMessage(
@@ -44,6 +45,7 @@ func roll(data *disgord.MessageCreate) {
 				Embed: &disgord.Embed{
 					Title:       "Illegal roll",
 					Description: fmt.Sprintf("You can roll in %s", ableToRoll.Sub(time.Now()).Truncate(time.Second)),
+					Timestamp:   data.Message.Timestamp,
 					Color:       0xcc0000,
 				}})
 	}
@@ -84,7 +86,12 @@ func rollHelp(data *disgord.MessageCreate) {
 						"`%sroll`\n",
 					conf.Prefix,
 				),
-				Color: 0xeec400,
+				Footer: &disgord.EmbedFooter{
+					Text: fmt.Sprintf("Help requested by %s", data.Message.Author.Username),
+				},
+				Timestamp: data.Message.Timestamp,
+				Color:     0xeec400,
 			},
-		})
+		},
+	)
 }

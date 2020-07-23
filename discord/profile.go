@@ -41,9 +41,11 @@ func profile(data *disgord.MessageCreate) {
 				Image: &disgord.EmbedImage{
 					URL: db.Favourite.Image,
 				},
-				Color: 0xffe2fe,
+				Timestamp: data.Message.Timestamp,
+				Color:     0xffe2fe,
 			},
-		})
+		},
+	)
 }
 
 // Format Description
@@ -52,7 +54,7 @@ func desc(db database.OutputStruct) string {
 		`
 		%s
 		This user last rolled %s ago.
-		Has rolled %d Waifus, and has claimed %d.
+		Has rolled *%d* Waifus, and has claimed *%d*.
 		%s`,
 		quoteDesc(db.Quote),
 		time.Now().Sub(db.Date).Truncate(time.Second),
@@ -97,7 +99,12 @@ func profileHelp(data *disgord.MessageCreate) {
 						"You can tag a user to see his list too",
 					conf.Prefix,
 				),
-				Color: 0xeec400,
+				Footer: &disgord.EmbedFooter{
+					Text: fmt.Sprintf("Help requested by %s", data.Message.Author.Username),
+				},
+				Timestamp: data.Message.Timestamp,
+				Color:     0xeec400,
 			},
-		})
+		},
+	)
 }

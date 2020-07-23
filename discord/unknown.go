@@ -14,7 +14,9 @@ func unknown(data *disgord.MessageCreate) {
 			Embed: &disgord.Embed{
 				Title:       "Unknown command",
 				Description: fmt.Sprintf("Type %shelp to see the commands available", conf.Prefix),
+				Timestamp:   data.Message.Timestamp,
 				Color:       0xcc0000,
 			},
-		})
+		},
+	)
 }

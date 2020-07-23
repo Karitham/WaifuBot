@@ -21,11 +21,13 @@ func invite(data *disgord.MessageCreate) {
 		data.Message.ChannelID,
 		&disgord.CreateMessageParams{
 			Embed: &disgord.Embed{
-				Title: "Invite",
-				URL:   botURL,
-				Color: 0x49b675,
+				Title:     "Invite",
+				URL:       botURL,
+				Timestamp: data.Message.Timestamp,
+				Color:     0x49b675,
 			},
-		})
+		},
+	)
 }
 
 func inviteHelp(data *disgord.MessageCreate) {
@@ -41,7 +43,12 @@ func inviteHelp(data *disgord.MessageCreate) {
 						"`%sinvite`",
 					conf.Prefix,
 				),
-				Color: 0xeec400,
+				Footer: &disgord.EmbedFooter{
+					Text: fmt.Sprintf("Help requested by %s", data.Message.Author.Username),
+				},
+				Timestamp: data.Message.Timestamp,
+				Color:     0xeec400,
 			},
-		})
+		},
+	)
 }

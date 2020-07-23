@@ -34,17 +34,23 @@ func quote(data *disgord.MessageCreate, args CmdArguments) {
 					Title:       "New quote set",
 					Thumbnail:   &disgord.EmbedThumbnail{URL: avatarURL},
 					Description: fmt.Sprintf("Your new quote is %s", argStr),
+					Timestamp:   data.Message.Timestamp,
 					Color:       0xffe2fe,
-				}})
+				},
+			},
+		)
 	} else {
 		client.CreateMessage(
 			ctx,
 			data.Message.ChannelID,
 			&disgord.CreateMessageParams{
 				Embed: &disgord.Embed{
-					Title: "Error, quote requires at least 1 argument",
-					Color: 0xcc0000,
-				}})
+					Title:     "Error, quote requires at least 1 argument",
+					Timestamp: data.Message.Timestamp,
+					Color:     0xcc0000,
+				},
+			},
+		)
 	}
 }
 
@@ -61,7 +67,12 @@ func quoteHelp(data *disgord.MessageCreate) {
 						"`%squote The thing you want to quote`\n",
 					conf.Prefix,
 				),
-				Color: 0xeec400,
+				Footer: &disgord.EmbedFooter{
+					Text: fmt.Sprintf("Help requested by %s", data.Message.Author.Username),
+				},
+				Timestamp: data.Message.Timestamp,
+				Color:     0xeec400,
 			},
-		})
+		},
+	)
 }

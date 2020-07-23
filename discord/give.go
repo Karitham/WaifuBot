@@ -44,9 +44,11 @@ func giveChar(data *disgord.MessageCreate, args CmdArguments) {
 					Thumbnail:   &disgord.EmbedThumbnail{URL: avatar},
 					Description: fmt.Sprintf("%s gave %s to %s", data.Message.Author.Username, resp.Character.Name.Full, data.Message.Mentions[0].Username),
 					Image:       &disgord.EmbedImage{URL: resp.Character.Image.Large},
+					Timestamp:   data.Message.Timestamp,
 					Color:       0x43e99a,
 				},
-			})
+			},
+		)
 	} else {
 		// Send message
 		client.CreateMessage(
@@ -57,9 +59,11 @@ func giveChar(data *disgord.MessageCreate, args CmdArguments) {
 					Title:       "Give Waifu Failed",
 					Thumbnail:   &disgord.EmbedThumbnail{URL: avatar},
 					Description: desc,
+					Timestamp:   data.Message.Timestamp,
 					Color:       0xcc0000,
 				},
-			})
+			},
+		)
 	}
 }
 
@@ -89,12 +93,17 @@ func giveCharHelp(data *disgord.MessageCreate) {
 			Embed: &disgord.Embed{
 				Title: "Give Help || alias g",
 				Description: fmt.Sprintf(
-					"This is the help for the give functionnality\n\n" +
-						"You can give a waifu to another user using the following syntax :\n" +
-						"`%sgive ID @User`" +
-						conf.Prefix,
+					"This is the help for the give functionnality\n\n"+
+						"You can give a waifu to another user using the following syntax :\n"+
+						"`%sgive ID @User`",
+					conf.Prefix,
 				),
-				Color: 0xeec400,
+				Footer: &disgord.EmbedFooter{
+					Text: fmt.Sprintf("Help requested by %s", data.Message.Author.Username),
+				},
+				Timestamp: data.Message.Timestamp,
+				Color:     0xeec400,
 			},
-		})
+		},
+	)
 }

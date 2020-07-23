@@ -10,7 +10,7 @@ import (
 
 func list(data *disgord.MessageCreate, args []string) {
 	var user disgord.User
-	var desc string
+	var desc, footer string
 	var page, i int
 	var err error
 
@@ -46,7 +46,7 @@ func list(data *disgord.MessageCreate, args []string) {
 
 		// if there's a next page, tell the user it's possible to see it
 		if i < len(WList.Waifus) {
-			desc += fmt.Sprintf("\nYou can use %slist %d to see the next page", conf.Prefix, page+2)
+			footer = fmt.Sprintf("Use %slist %d to see the next page", conf.Prefix, page+2)
 		}
 	}
 
@@ -65,8 +65,12 @@ func list(data *disgord.MessageCreate, args []string) {
 				Title:       fmt.Sprintf("%s's Waifu list", user.Username),
 				Description: desc,
 				Thumbnail:   &disgord.EmbedThumbnail{URL: avatar},
+				Footer:      &disgord.EmbedFooter{Text: footer, IconURL: avatar},
+				Timestamp:   data.Message.Timestamp,
 				Color:       0x88ffcc,
-			}})
+			},
+		},
+	)
 }
 
 func listHelp(data *disgord.MessageCreate) {
@@ -85,7 +89,11 @@ func listHelp(data *disgord.MessageCreate) {
 						"You can tag a user to see his list too",
 					conf.Prefix,
 				),
+				Footer: &disgord.EmbedFooter{
+					Text: fmt.Sprintf("Help requested by %s", data.Message.Author.Username),
+				},
 				Color: 0xeec400,
 			},
-		})
+		},
+	)
 }
