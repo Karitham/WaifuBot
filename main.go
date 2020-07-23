@@ -3,7 +3,7 @@ package main
 import (
 	"bot/config"
 	"bot/database"
-	"bot/disc"
+	"bot/discord"
 )
 
 func main() {
@@ -14,5 +14,5 @@ func main() {
 	go database.Init(conf)
 
 	// Run the bot
-	disc.BotRun(conf)
+	discord.BotRun(conf)
 }
