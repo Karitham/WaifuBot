@@ -10,7 +10,7 @@ import (
 
 func list(data *disgord.MessageCreate, args []string) {
 	var user disgord.User
-	var desc string
+	var desc, footer string
 	var page, i int
 	var err error
 
@@ -46,7 +46,7 @@ func list(data *disgord.MessageCreate, args []string) {
 
 		// if there's a next page, tell the user it's possible to see it
 		if i < len(WList.Waifus) {
-			desc += fmt.Sprintf("\nYou can use %slist %d to see the next page", conf.Prefix, page+2)
+			footer = fmt.Sprintf("\nYou can use %slist %d to see the next page", conf.Prefix, page+2)
 		}
 	}
 
@@ -62,10 +62,14 @@ func list(data *disgord.MessageCreate, args []string) {
 		data.Message.ChannelID,
 		&disgord.CreateMessageParams{
 			Embed: &disgord.Embed{
-				Title:       fmt.Sprintf("%s's Waifu list", user.Username),
-				Description: desc,
-				Thumbnail:   &disgord.EmbedThumbnail{URL: avatar},
-				Color:       0x88ffcc,
+				Title: fmt.Sprintf("%s's Waifu list", user.Username),
+				//Description: desc,
+				Fields:    []*disgord.EmbedField{},
+				Author:    &disgord.EmbedAuthor{IconURL: avatar, Name: user.Username},
+				Thumbnail: &disgord.EmbedThumbnail{URL: avatar},
+				Footer:    &disgord.EmbedFooter{Text: footer},
+				Timestamp: data.Message.Timestamp,
+				Color:     0x88ffcc,
 			},
 		},
 	)

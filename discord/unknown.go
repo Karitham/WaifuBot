@@ -17,7 +17,8 @@ func unknown(data *disgord.MessageCreate) {
 				Footer: &disgord.EmbedFooter{
 					Text: fmt.Sprintf("You something wrong !!!"),
 				},
-				Color: 0xcc0000,
+				Timestamp: data.Message.Timestamp,
+				Color:     0xcc0000,
 			},
 		},
 	)

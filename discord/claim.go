@@ -49,10 +49,11 @@ func claim(data *disgord.MessageCreate, args []string) {
 						URL:         char.Page.Characters[0].SiteURL,
 						Description: fmt.Sprintf("Well done %s, you claimed %s", data.Message.Author.Username, char.Page.Characters[0].Name.Full),
 						Thumbnail:   &disgord.EmbedThumbnail{URL: avatar},
-						Color:       0xFF924B,
 						Image: &disgord.EmbedImage{
 							URL: char.Page.Characters[0].Image.Large,
 						},
+						Timestamp: data.Message.Timestamp,
+						Color:     0xFF924B,
 					}})
 			// Reset the char value
 			char = query.CharStruct{}
@@ -64,6 +65,7 @@ func claim(data *disgord.MessageCreate, args []string) {
 					Embed: &disgord.Embed{
 						Title:       "Claim unsucessfull",
 						Description: fmt.Sprintf("Hint : this character's initial are %s", getCharInitials()),
+						Timestamp:   data.Message.Timestamp,
 						Color:       0x626868,
 					}})
 		}
@@ -75,6 +77,7 @@ func claim(data *disgord.MessageCreate, args []string) {
 				Embed: &disgord.Embed{
 					Title:       "Error",
 					Description: "Please see\n`help claim`\nfor more information on the syntax",
+					Timestamp:   data.Message.Timestamp,
 					Color:       0xcc0000,
 				},
 			},
@@ -105,7 +108,8 @@ func claimHelp(data *disgord.MessageCreate) {
 				Footer: &disgord.EmbedFooter{
 					Text: fmt.Sprintf("Help requested by %s", data.Message.Author.Username),
 				},
-				Color: 0xeec400,
+				Timestamp: data.Message.Timestamp,
+				Color:     0xeec400,
 			},
 		},
 	)

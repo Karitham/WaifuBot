@@ -41,7 +41,8 @@ func profile(data *disgord.MessageCreate) {
 				Image: &disgord.EmbedImage{
 					URL: db.Favourite.Image,
 				},
-				Color: 0xffe2fe,
+				Timestamp: data.Message.Timestamp,
+				Color:     0xffe2fe,
 			},
 		},
 	)
@@ -101,7 +102,8 @@ func profileHelp(data *disgord.MessageCreate) {
 				Footer: &disgord.EmbedFooter{
 					Text: fmt.Sprintf("Help requested by %s", data.Message.Author.Username),
 				},
-				Color: 0xeec400,
+				Timestamp: data.Message.Timestamp,
+				Color:     0xeec400,
 			},
 		},
 	)

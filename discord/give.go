@@ -44,6 +44,7 @@ func giveChar(data *disgord.MessageCreate, args CmdArguments) {
 					Thumbnail:   &disgord.EmbedThumbnail{URL: avatar},
 					Description: fmt.Sprintf("%s gave %s to %s", data.Message.Author.Username, resp.Character.Name.Full, data.Message.Mentions[0].Username),
 					Image:       &disgord.EmbedImage{URL: resp.Character.Image.Large},
+					Timestamp:   data.Message.Timestamp,
 					Color:       0x43e99a,
 				},
 			},
@@ -58,6 +59,7 @@ func giveChar(data *disgord.MessageCreate, args CmdArguments) {
 					Title:       "Give Waifu Failed",
 					Thumbnail:   &disgord.EmbedThumbnail{URL: avatar},
 					Description: desc,
+					Timestamp:   data.Message.Timestamp,
 					Color:       0xcc0000,
 				},
 			},
@@ -99,7 +101,8 @@ func giveCharHelp(data *disgord.MessageCreate) {
 				Footer: &disgord.EmbedFooter{
 					Text: fmt.Sprintf("Help requested by %s", data.Message.Author.Username),
 				},
-				Color: 0xeec400,
+				Timestamp: data.Message.Timestamp,
+				Color:     0xeec400,
 			},
 		},
 	)

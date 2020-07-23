@@ -21,10 +21,11 @@ func search(data *disgord.MessageCreate, args CmdArguments) {
 						Title:       resp.Character.Name.Full,
 						URL:         resp.Character.SiteURL,
 						Description: desc,
-						Color:       0x225577,
 						Image: &disgord.EmbedImage{
 							URL: resp.Character.Image.Large,
 						},
+						Timestamp: data.Message.Timestamp,
+						Color:     0x225577,
 					},
 				},
 			)
@@ -36,7 +37,13 @@ func search(data *disgord.MessageCreate, args CmdArguments) {
 			ctx,
 			data.Message.ChannelID,
 			&disgord.CreateMessageParams{
-				Embed: &disgord.Embed{Title: "Error, search requires at least 1 argument", Color: 0xcc0000}})
+				Embed: &disgord.Embed{
+					Title:     "Error, search requires at least 1 argument",
+					Timestamp: data.Message.Timestamp,
+					Color:     0xcc0000,
+				},
+			},
+		)
 	}
 
 }
@@ -58,7 +65,8 @@ func searchHelp(data *disgord.MessageCreate) {
 				Footer: &disgord.EmbedFooter{
 					Text: fmt.Sprintf("Help requested by %s", data.Message.Author.Username),
 				},
-				Color: 0xeec400,
+				Timestamp: data.Message.Timestamp,
+				Color:     0xeec400,
 			},
 		},
 	)
