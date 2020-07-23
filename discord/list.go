@@ -62,14 +62,13 @@ func list(data *disgord.MessageCreate, args []string) {
 		data.Message.ChannelID,
 		&disgord.CreateMessageParams{
 			Embed: &disgord.Embed{
-				Title: fmt.Sprintf("%s's Waifu list", user.Username),
-				//Description: desc,
-				Fields:    []*disgord.EmbedField{},
-				Author:    &disgord.EmbedAuthor{IconURL: avatar, Name: user.Username},
-				Thumbnail: &disgord.EmbedThumbnail{URL: avatar},
-				Footer:    &disgord.EmbedFooter{Text: footer},
-				Timestamp: data.Message.Timestamp,
-				Color:     0x88ffcc,
+				Title:       fmt.Sprintf("%s's Waifu list", user.Username),
+				Description: desc,
+				Author:      &disgord.EmbedAuthor{IconURL: avatar, Name: user.Username},
+				Thumbnail:   &disgord.EmbedThumbnail{URL: avatar},
+				Footer:      &disgord.EmbedFooter{Text: footer},
+				Timestamp:   data.Message.Timestamp,
+				Color:       0x88ffcc,
 			},
 		},
 	)
