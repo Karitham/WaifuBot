@@ -38,16 +38,7 @@ func roll(data *disgord.MessageCreate) {
 					Color:     0x57D4FF,
 				}})
 	} else {
-		client.CreateMessage(
-			ctx,
-			data.Message.ChannelID,
-			&disgord.CreateMessageParams{
-				Embed: &disgord.Embed{
-					Title:       "Illegal roll",
-					Description: fmt.Sprintf("You can roll in %s", ableToRoll.Sub(time.Now()).Truncate(time.Second)),
-					Timestamp:   data.Message.Timestamp,
-					Color:       0xcc0000,
-				}})
+		illegalRoll(data, ableToRoll)
 	}
 }
 
@@ -71,6 +62,38 @@ func RandomToDB(data *disgord.MessageCreate) query.CharStruct {
 		},
 	}.AddChar()
 	return resp
+}
+
+func illegalRoll(data *disgord.MessageCreate, ableToRoll time.Time) {
+	resp, err := client.CreateMessage(
+		ctx,
+		data.Message.ChannelID,
+		&disgord.CreateMessageParams{
+			Embed: &disgord.Embed{
+				Title:       "Illegal roll",
+				Description: fmt.Sprintf("You can roll in %s", ableToRoll.Sub(time.Now()).Truncate(time.Second)),
+				Timestamp:   data.Message.Timestamp,
+				Color:       0xcc0000,
+			},
+		},
+	)
+	if err != nil {
+		fmt.Println("Create message returned error :", err)
+	}
+	go deleteMessage(resp)
+}
+
+func deleteMessage(resp *disgord.Message) {
+	time.Sleep(conf.DelIllegalRollAfter * time.Minute)
+
+	err := client.DeleteMessage(
+		ctx,
+		resp.ChannelID,
+		resp.ID,
+	)
+	if err != nil {
+		fmt.Println("error deleting message :", err)
+	}
 }
 
 func rollHelp(data *disgord.MessageCreate) {
