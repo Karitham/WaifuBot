@@ -43,17 +43,7 @@ func favourite(data *disgord.MessageCreate, args CmdArguments) {
 			},
 		)
 	} else {
-		client.CreateMessage(
-			ctx,
-			data.Message.ChannelID,
-			&disgord.CreateMessageParams{
-				Embed: &disgord.Embed{
-					Title:     "Error, favourite requires at least 1 argument",
-					Timestamp: data.Message.Timestamp,
-					Color:     0xcc0000,
-				},
-			},
-		)
+		favouriteHelp(data)
 	}
 }
 

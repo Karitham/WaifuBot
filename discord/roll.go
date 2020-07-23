@@ -20,7 +20,7 @@ func roll(data *disgord.MessageCreate) {
 		resp := RandomToDB(data)
 
 		// Create a descrption adapated to the character retrieved
-		desc := fmt.Sprintf("You rolled character %d\nIt appears in :\n%s", resp.Page.Characters[0].ID, resp.Page.Characters[0].Media.Nodes[0].Title.Romaji)
+		desc := fmt.Sprintf("You rolled character `%d`\nIt appears in :\n- %s", resp.Page.Characters[0].ID, resp.Page.Characters[0].Media.Nodes[0].Title.Romaji)
 
 		// Sends the message
 		client.CreateMessage(

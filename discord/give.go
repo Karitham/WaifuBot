@@ -93,10 +93,10 @@ func giveCharHelp(data *disgord.MessageCreate) {
 			Embed: &disgord.Embed{
 				Title: "Give Help || alias g",
 				Description: fmt.Sprintf(
-					"This is the help for the give functionnality\n\n" +
-						"You can give a waifu to another user using the following syntax :\n" +
-						"`%sgive ID @User`" +
-						conf.Prefix,
+					"This is the help for the give functionnality\n\n"+
+						"You can give a waifu to another user using the following syntax :\n"+
+						"`%sgive ID @User`",
+					conf.Prefix,
 				),
 				Footer: &disgord.EmbedFooter{
 					Text: fmt.Sprintf("Help requested by %s", data.Message.Author.Username),

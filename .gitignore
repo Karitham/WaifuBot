@@ -4,3 +4,4 @@ bot*
 *.iml
 .vscode/*
 *test.go
+__debug_bin

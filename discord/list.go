@@ -46,7 +46,7 @@ func list(data *disgord.MessageCreate, args []string) {
 
 		// if there's a next page, tell the user it's possible to see it
 		if i < len(WList.Waifus) {
-			footer = fmt.Sprintf("\nYou can use %slist %d to see the next page", conf.Prefix, page+2)
+			footer = fmt.Sprintf("Use %slist %d to see the next page", conf.Prefix, page+2)
 		}
 	}
 
@@ -64,9 +64,8 @@ func list(data *disgord.MessageCreate, args []string) {
 			Embed: &disgord.Embed{
 				Title:       fmt.Sprintf("%s's Waifu list", user.Username),
 				Description: desc,
-				Author:      &disgord.EmbedAuthor{IconURL: avatar, Name: user.Username},
 				Thumbnail:   &disgord.EmbedThumbnail{URL: avatar},
-				Footer:      &disgord.EmbedFooter{Text: footer},
+				Footer:      &disgord.EmbedFooter{Text: footer, IconURL: avatar},
 				Timestamp:   data.Message.Timestamp,
 				Color:       0x88ffcc,
 			},

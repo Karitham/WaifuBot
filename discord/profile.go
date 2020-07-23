@@ -54,7 +54,7 @@ func desc(db database.OutputStruct) string {
 		`
 		%s
 		This user last rolled %s ago.
-		Has rolled %d Waifus, and has claimed %d.
+		Has rolled *%d* Waifus, and has claimed *%d*.
 		%s`,
 		quoteDesc(db.Quote),
 		time.Now().Sub(db.Date).Truncate(time.Second),

@@ -33,19 +33,8 @@ func search(data *disgord.MessageCreate, args CmdArguments) {
 			client.SendMsg(ctx, data.Message.ChannelID, err)
 		}
 	} else {
-		client.CreateMessage(
-			ctx,
-			data.Message.ChannelID,
-			&disgord.CreateMessageParams{
-				Embed: &disgord.Embed{
-					Title:     "Error, search requires at least 1 argument",
-					Timestamp: data.Message.Timestamp,
-					Color:     0xcc0000,
-				},
-			},
-		)
+		searchHelp(data)
 	}
-
 }
 
 func searchHelp(data *disgord.MessageCreate) {
