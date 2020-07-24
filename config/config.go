@@ -23,8 +23,12 @@ func Retrieve(file string) ConfJSONStruct {
 	var config ConfJSONStruct
 	body, err := ioutil.ReadFile(file)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("error reading config file :", err)
 	}
-	json.Unmarshal(body, &config)
+
+	err = json.Unmarshal(body, &config)
+	if err != nil {
+		fmt.Println("error unmarshalling config :", err)
+	}
 	return config
 }
