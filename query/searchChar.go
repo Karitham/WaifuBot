@@ -33,13 +33,13 @@ type CharSearchInput struct {
 	Name string
 }
 
+const graphURL = "https://graphql.anilist.co"
+
 // CharSearch makes a query to the anilist API based on the name//ID you input
 func CharSearch(input CharSearchInput) (CharSearchStruct, error) {
 	var res CharSearchStruct
 
 	// build query
-	graphURL := "https://graphql.anilist.co"
-	client := graphql.NewClient(graphURL)
 	req := graphql.NewRequest(`
 	query ($id: Int, $name: String) {
 		Character(id: $id, search: $name, sort: SEARCH_MATCH) {
@@ -61,6 +61,7 @@ func CharSearch(input CharSearchInput) (CharSearchStruct, error) {
 		}
 	  }
 	`)
+
 	// Add variable
 	if input.ID != 0 {
 		req.Var("id", input.ID)
@@ -68,8 +69,8 @@ func CharSearch(input CharSearchInput) (CharSearchStruct, error) {
 		req.Var("name", input.Name)
 	}
 
-	ctx := context.Background()
-	err := client.Run(ctx, req, &res)
+	// Make query
+	err := graphql.NewClient(graphURL).Run(context.Background(), req, &res)
 
 	return res, err
 }

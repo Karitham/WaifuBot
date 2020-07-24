@@ -28,9 +28,7 @@ type TvTrendingStruct struct {
 func TrendingSearch() (TvTrendingStruct, error) {
 	var res TvTrendingStruct
 
-	// build query
-	graphURL := "https://graphql.anilist.co"
-	client := graphql.NewClient(graphURL)
+	// Build request
 	req := graphql.NewRequest(`
 	query ($page: Int) {
 		Page(perPage: 10, page: $page) {
@@ -50,12 +48,12 @@ func TrendingSearch() (TvTrendingStruct, error) {
 	  }
 	  
 	`)
+
 	// Inject pre-made vars to get the trending animes
 	req.Var("page", 1)
 
-	// Execute code
-	ctx := context.Background()
-	err := client.Run(ctx, req, &res)
+	// Execute query
+	err := graphql.NewClient(graphURL).Run(context.Background(), req, &res)
 
 	return res, err
 }

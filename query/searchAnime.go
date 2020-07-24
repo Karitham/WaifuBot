@@ -29,9 +29,7 @@ type AnimeSearchStruct struct {
 func SearchAnime(args CharSearchInput) (AnimeSearchStruct, error) {
 	var res AnimeSearchStruct
 
-	// build query
-	graphURL := "https://graphql.anilist.co"
-	client := graphql.NewClient(graphURL)
+	// build request
 	req := graphql.NewRequest(`
 	query ($name: String, $type: MediaType) {
 		Media(search: $name, type: $type) {
@@ -53,11 +51,11 @@ func SearchAnime(args CharSearchInput) (AnimeSearchStruct, error) {
 	`)
 
 	// Add variable
-
 	req.Var("type", "ANIME")
 	req.Var("name", args.Name)
 
-	ctx := context.Background()
-	err := client.Run(ctx, req, &res)
+	// Make request
+	err := graphql.NewClient(graphURL).Run(context.Background(), req, &res)
+
 	return res, err
 }

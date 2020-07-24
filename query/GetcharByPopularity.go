@@ -33,8 +33,8 @@ type CharStruct struct {
 // CharSearchByPopularity outputs the character you want based on their number on the page list
 func CharSearchByPopularity(id int) CharStruct {
 	var res CharStruct
-	graphURL := "https://graphql.anilist.co"
-	client := graphql.NewClient(graphURL)
+
+	// Create request
 	req := graphql.NewRequest(`
 	query ($pageNumber: Int) {
 		Page(perPage: 1, page: $pageNumber) {
@@ -57,13 +57,15 @@ func CharSearchByPopularity(id int) CharStruct {
 		  }
 		}
 	  }
-		`)
+	`)
 
+	// Add varriables
 	req.Var("pageNumber", id)
-	ctx := context.Background()
-	err := client.Run(ctx, req, &res)
+
+	// Make request
+	err := graphql.NewClient(graphURL).Run(context.Background(), req, &res)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("Error getting random character", err)
 	}
 
 	return res
