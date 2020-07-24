@@ -51,7 +51,7 @@ func giveChar(data *disgord.MessageCreate, args CmdArguments) {
 		)
 	} else {
 		// Send message
-		client.CreateMessage(
+		resp, err := client.CreateMessage(
 			ctx,
 			data.Message.ChannelID,
 			&disgord.CreateMessageParams{
@@ -64,6 +64,10 @@ func giveChar(data *disgord.MessageCreate, args CmdArguments) {
 				},
 			},
 		)
+		if err != nil {
+			fmt.Println("Create message returned error :", err)
+		}
+		go deleteMessage(resp, conf.DelMessageAfter)
 	}
 }
 

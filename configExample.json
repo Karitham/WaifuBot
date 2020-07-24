@@ -3,7 +3,7 @@
   "Bot_Token": "thIsIsaDiscorDToken.Xw41Og.Ix0IhJlhgEbEyK_CJwrGgucn9rk",
   "Mongo_URL": "mongodb://localhost:27017",
   "Max_Character_Roll": 7000,
-  "Delete_Illegal_Roll_After": 2,
-  "Time_Between_Rolls": 3,
-  "Drops_On_Interact": 15
+  "Delete_Illegal_Roll_After": 3,
+  "Time_Between_Rolls": 12,
+  "Drops_On_Interact": 10
 }

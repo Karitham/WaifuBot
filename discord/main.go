@@ -16,6 +16,7 @@ import (
 
 // CmdArguments represents the arguments entered by the user after a command
 type CmdArguments []string
+type msgEvent disgord.Message
 
 // Global Variables to ease working with client/sesion etc
 var ctx = context.Background()
@@ -136,5 +137,18 @@ func increment(data *disgord.MessageCreate) {
 	if r == 0 {
 		drop(data)
 		DropIncrement[data.Message.ChannelID] = 0
+	}
+}
+
+func deleteMessage(resp *disgord.Message, sleep time.Duration) {
+	time.Sleep(sleep)
+
+	err := client.DeleteMessage(
+		ctx,
+		resp.ChannelID,
+		resp.ID,
+	)
+	if err != nil {
+		fmt.Println("error deleting message :", err)
 	}
 }

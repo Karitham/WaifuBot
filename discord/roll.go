@@ -80,20 +80,7 @@ func illegalRoll(data *disgord.MessageCreate, ableToRoll time.Time) {
 	if err != nil {
 		fmt.Println("Create message returned error :", err)
 	}
-	go deleteMessage(resp)
-}
-
-func deleteMessage(resp *disgord.Message) {
-	time.Sleep(conf.DelMessageAfter * time.Minute)
-
-	err := client.DeleteMessage(
-		ctx,
-		resp.ChannelID,
-		resp.ID,
-	)
-	if err != nil {
-		fmt.Println("error deleting message :", err)
-	}
+	go deleteMessage(resp, conf.DelMessageAfter)
 }
 
 func rollHelp(data *disgord.MessageCreate) {

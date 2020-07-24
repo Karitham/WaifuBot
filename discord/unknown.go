@@ -22,5 +22,5 @@ func unknown(data *disgord.MessageCreate) {
 	if err != nil {
 		fmt.Println("error while creating message :", err)
 	}
-	go deleteMessage(resp)
+	go deleteMessage(resp, conf.DelMessageAfter)
 }

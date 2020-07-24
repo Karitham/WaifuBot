@@ -30,7 +30,11 @@ func search(data *disgord.MessageCreate, args CmdArguments) {
 				},
 			)
 		} else {
-			client.SendMsg(ctx, data.Message.ChannelID, err)
+			resp, err := client.SendMsg(ctx, data.Message.ChannelID, err)
+			if err != nil {
+				fmt.Println("Create message returned error :", err)
+			}
+			go deleteMessage(resp, conf.DelMessageAfter)
 		}
 	} else {
 		searchHelp(data)

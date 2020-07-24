@@ -85,7 +85,7 @@ func claim(data *disgord.MessageCreate, args []string) {
 			// Reset the char value
 			char = query.CharStruct{}
 		} else {
-			client.CreateMessage(
+			resp, err := client.CreateMessage(
 				ctx,
 				data.Message.ChannelID,
 				&disgord.CreateMessageParams{
@@ -94,10 +94,16 @@ func claim(data *disgord.MessageCreate, args []string) {
 						Description: fmt.Sprintf("Hint : this character's initial are %s", getCharInitials()),
 						Timestamp:   data.Message.Timestamp,
 						Color:       0x626868,
-					}})
+					},
+				},
+			)
+			if err != nil {
+				fmt.Println("Create message returned error :", err)
+			}
+			go deleteMessage(resp, conf.DelMessageAfter)
 		}
 	} else {
-		client.CreateMessage(
+		resp, err := client.CreateMessage(
 			ctx,
 			data.Message.ChannelID,
 			&disgord.CreateMessageParams{
@@ -109,6 +115,10 @@ func claim(data *disgord.MessageCreate, args []string) {
 				},
 			},
 		)
+		if err != nil {
+			fmt.Println("Create message returned error :", err)
+		}
+		go deleteMessage(resp, conf.DelMessageAfter)
 	}
 }
 
