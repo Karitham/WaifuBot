@@ -7,7 +7,7 @@ import (
 )
 
 func unknown(data *disgord.MessageCreate) {
-	client.CreateMessage(
+	resp, err := client.CreateMessage(
 		ctx,
 		data.Message.ChannelID,
 		&disgord.CreateMessageParams{
@@ -19,4 +19,8 @@ func unknown(data *disgord.MessageCreate) {
 			},
 		},
 	)
+	if err != nil {
+		fmt.Println("error while creating message :", err)
+	}
+	go deleteMessage(resp)
 }

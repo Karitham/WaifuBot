@@ -84,7 +84,7 @@ func illegalRoll(data *disgord.MessageCreate, ableToRoll time.Time) {
 }
 
 func deleteMessage(resp *disgord.Message) {
-	time.Sleep(conf.DelIllegalRollAfter * time.Minute)
+	time.Sleep(conf.DelMessageAfter * time.Minute)
 
 	err := client.DeleteMessage(
 		ctx,
