@@ -87,7 +87,6 @@ func reply(s disgord.Session, data *disgord.MessageCreate) {
 		increment(data) // used to drop waifus
 	case cmd == "list" || cmd == "l":
 		list(data, args)
-		increment(data) // used to drop waifus
 	case cmd == "invite":
 		invite(data)
 	case cmd == "claim" || cmd == "c":
