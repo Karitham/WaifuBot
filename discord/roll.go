@@ -50,7 +50,7 @@ func RandomToDB(data *disgord.MessageCreate) query.CharStruct {
 			rand.NewSource(
 				time.Now().UnixNano(),
 			),
-		).Intn(conf.MaxChar))
+		).Intn(conf.MaxCharRoll))
 
 	database.InputChar{
 		UserID: data.Message.Author.ID,
@@ -80,7 +80,7 @@ func illegalRoll(data *disgord.MessageCreate, ableToRoll time.Time) {
 	if err != nil {
 		fmt.Println("Create message returned error :", err)
 	}
-	go deleteMessage(resp, conf.DelMessageAfter)
+	go deleteMessage(resp, conf.DelIllegalRollAfter)
 }
 
 func rollHelp(data *disgord.MessageCreate) {

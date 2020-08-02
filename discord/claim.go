@@ -20,7 +20,7 @@ func enableClaim(in query.CharStruct) {
 }
 
 func drop(data *disgord.MessageCreate) {
-	query := query.CharSearchByPopularity(rand.New(rand.NewSource(time.Now().UnixNano())).Intn(conf.MaxChar))
+	query := query.CharSearchByPopularity(rand.New(rand.NewSource(time.Now().UnixNano())).Intn(conf.MaxCharDrop))
 	enableClaim(query)
 	printDrop(data, query.Page.Characters[0].Image.Large)
 }
@@ -37,8 +37,10 @@ func printDrop(data *disgord.MessageCreate, image string) {
 				Image: &disgord.EmbedImage{
 					URL: image,
 				},
-				Timestamp: data.Message.Timestamp,
-				Color:     0xF2FF2E,
+				Footer: &disgord.EmbedFooter{
+					Text: fmt.Sprintf("This characters initials are : %s", getCharInitials()),
+				},
+				Color: 0xF2FF2E,
 			},
 		},
 	)
@@ -48,7 +50,6 @@ func printDrop(data *disgord.MessageCreate, image string) {
 func claim(data *disgord.MessageCreate, args []string) {
 	if len(args) > 0 && char.Page.Characters != nil {
 		if strings.ToLower(strings.Join(args, " ")) == strings.ToLower(char.Page.Characters[0].Name.Full) {
-
 			// Add to db
 			database.InputChar{
 				UserID: data.Message.Author.ID,
@@ -67,6 +68,15 @@ func claim(data *disgord.MessageCreate, args []string) {
 				fmt.Println(err)
 			}
 
+			// Create desc
+			desc := fmt.Sprintf(
+				"Well done %s, you claimed %s\n"+
+					"It appears in :\n- %s",
+				data.Message.Author.Username,
+				char.Page.Characters[0].Name.Full,
+				char.Page.Characters[0].Media.Nodes[0].Title.Romaji,
+			)
+
 			client.CreateMessage(
 				ctx,
 				data.Message.ChannelID,
@@ -74,7 +84,7 @@ func claim(data *disgord.MessageCreate, args []string) {
 					Embed: &disgord.Embed{
 						Title:       "Claim successfull",
 						URL:         char.Page.Characters[0].SiteURL,
-						Description: fmt.Sprintf("Well done %s, you claimed %s", data.Message.Author.Username, char.Page.Characters[0].Name.Full),
+						Description: desc,
 						Thumbnail:   &disgord.EmbedThumbnail{URL: avatar},
 						Image: &disgord.EmbedImage{
 							URL: char.Page.Characters[0].Image.Large,
@@ -90,17 +100,16 @@ func claim(data *disgord.MessageCreate, args []string) {
 				data.Message.ChannelID,
 				&disgord.CreateMessageParams{
 					Embed: &disgord.Embed{
-						Title:       "Claim unsucessfull",
-						Description: fmt.Sprintf("Hint : this character's initial are %s", getCharInitials()),
-						Timestamp:   data.Message.Timestamp,
-						Color:       0x626868,
+						Title:     "Claim unsucessfull",
+						Timestamp: data.Message.Timestamp,
+						Color:     0x626868,
 					},
 				},
 			)
 			if err != nil {
 				fmt.Println("Create message returned error :", err)
 			}
-			go deleteMessage(resp, conf.DelMessageAfter)
+			go deleteMessage(resp, conf.DelWrongClaimAfter)
 		}
 	} else {
 		resp, err := client.CreateMessage(
@@ -118,7 +127,7 @@ func claim(data *disgord.MessageCreate, args []string) {
 		if err != nil {
 			fmt.Println("Create message returned error :", err)
 		}
-		go deleteMessage(resp, conf.DelMessageAfter)
+		go deleteMessage(resp, conf.DelWrongClaimAfter)
 	}
 }
 

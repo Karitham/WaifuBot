@@ -15,15 +15,12 @@ func searchAnime(data *disgord.MessageCreate, args CmdArguments) {
 		if err == nil {
 			desc := fmt.Sprintf(
 				"I found the anime ID %d.\n "+
-					"Description : %s...\n "+
-					"This anime is %s. \n"+
-					"Number of episodes : %d.\n"+
-					"Adult anime (hentai/ecchi) : %t",
+					"This anime is %s."+
+					"Description : %s...\n ",
 				resp.Media.ID,
-				strings.SplitN(resp.Media.Description, ".", 4)[0],
 				strings.ToLower(resp.Media.Status),
-				resp.Media.Episodes,
-				resp.Media.IsAdult)
+				formatDesc(resp.Media.Description),
+			)
 			client.CreateMessage(
 				ctx,
 				data.Message.ChannelID,
@@ -79,4 +76,13 @@ func searchAnimeHelp(data *disgord.MessageCreate) {
 			},
 		},
 	)
+}
+
+func formatDesc(inputDesc string) (desc string) {
+	splitInput := strings.Split(inputDesc, " ")
+	if len(splitInput) < 40 {
+		desc = strings.Join(splitInput, " ")
+	}
+	desc = strings.Join(splitInput[:40], " ")
+	return
 }
