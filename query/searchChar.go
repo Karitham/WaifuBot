@@ -36,9 +36,7 @@ type CharSearchInput struct {
 const graphURL = "https://graphql.anilist.co"
 
 // CharSearch makes a query to the anilist API based on the name//ID you input
-func CharSearch(input CharSearchInput) (CharSearchStruct, error) {
-	var res CharSearchStruct
-
+func CharSearch(input CharSearchInput) (response CharSearchStruct, err error) {
 	// build query
 	req := graphql.NewRequest(`
 	query ($id: Int, $name: String) {
@@ -70,7 +68,6 @@ func CharSearch(input CharSearchInput) (CharSearchStruct, error) {
 	}
 
 	// Make query
-	err := graphql.NewClient(graphURL).Run(context.Background(), req, &res)
-
-	return res, err
+	err = graphql.NewClient(graphURL).Run(context.Background(), req, &response)
+	return
 }

@@ -43,14 +43,18 @@ func roll(data *disgord.MessageCreate) {
 }
 
 // RandomToDB makes a character query and adds it to the database
-func RandomToDB(data *disgord.MessageCreate) query.CharStruct {
+func RandomToDB(data *disgord.MessageCreate) (resp query.CharStruct) {
 	// Get response
-	resp := query.CharSearchByPopularity(
+	resp, err := query.CharSearchByPopularity(
 		rand.New(
 			rand.NewSource(
 				time.Now().UnixNano(),
 			),
 		).Intn(conf.MaxCharRoll))
+	if err != nil {
+		fmt.Println("Error getting random char : ", err)
+		return
+	}
 
 	database.InputChar{
 		UserID: data.Message.Author.ID,
@@ -61,7 +65,7 @@ func RandomToDB(data *disgord.MessageCreate) query.CharStruct {
 			Image: resp.Page.Characters[0].Image.Large,
 		},
 	}.AddChar()
-	return resp
+	return
 }
 
 func illegalRoll(data *disgord.MessageCreate, ableToRoll time.Time) {

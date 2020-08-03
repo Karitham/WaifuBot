@@ -25,13 +25,11 @@ type TvTrendingStruct struct {
 }
 
 // TrendingSearch makes a query to the AniList GraphQL API to scrape the 10 best trending animes right now
-func TrendingSearch() (TvTrendingStruct, error) {
-	var res TvTrendingStruct
-
+func TrendingSearch() (response TvTrendingStruct, err error) {
 	// Build request
 	req := graphql.NewRequest(`
-	query ($page: Int) {
-		Page(perPage: 10, page: $page) {
+	query {
+		Page(perPage: 10, page: 1) {
 		  media(type: ANIME, sort: [TRENDING_DESC, POPULARITY_DESC]) {
 			id
 			siteUrl
@@ -49,11 +47,7 @@ func TrendingSearch() (TvTrendingStruct, error) {
 	  
 	`)
 
-	// Inject pre-made vars to get the trending animes
-	req.Var("page", 1)
-
 	// Execute query
-	err := graphql.NewClient(graphURL).Run(context.Background(), req, &res)
-
-	return res, err
+	err = graphql.NewClient(graphURL).Run(context.Background(), req, &response)
+	return
 }

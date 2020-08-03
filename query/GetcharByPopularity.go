@@ -2,7 +2,6 @@ package query
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/machinebox/graphql"
 )
@@ -31,9 +30,7 @@ type CharStruct struct {
 }
 
 // CharSearchByPopularity outputs the character you want based on their number on the page list
-func CharSearchByPopularity(id int) CharStruct {
-	var res CharStruct
-
+func CharSearchByPopularity(id int) (response CharStruct, err error) {
 	// Create request
 	req := graphql.NewRequest(`
 	query ($pageNumber: Int) {
@@ -59,14 +56,10 @@ func CharSearchByPopularity(id int) CharStruct {
 	  }
 	`)
 
-	// Add varriables
+	// Add variable
 	req.Var("pageNumber", id)
 
 	// Make request
-	err := graphql.NewClient(graphURL).Run(context.Background(), req, &res)
-	if err != nil {
-		fmt.Println("Error getting random character", err)
-	}
-
-	return res
+	err = graphql.NewClient(graphURL).Run(context.Background(), req, &response)
+	return
 }

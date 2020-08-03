@@ -11,7 +11,7 @@ import (
 func searchAnime(data *disgord.MessageCreate, args CmdArguments) {
 	// check if there is a search term
 	if len(args) > 0 {
-		resp, err := query.SearchAnime(args.ParseArgToSearch())
+		resp, err := query.SearchAnime(args.ParseArgToSearch().Name)
 		if err == nil {
 			desc := fmt.Sprintf(
 				"I found the anime ID %d.\n "+
@@ -80,9 +80,10 @@ func searchAnimeHelp(data *disgord.MessageCreate) {
 
 func formatDesc(inputDesc string) (desc string) {
 	splitInput := strings.Split(inputDesc, " ")
-	if len(splitInput) < 40 {
+	if len(splitInput) <= 40 {
 		desc = strings.Join(splitInput, " ")
+	} else {
+		desc = strings.Join(splitInput[:40], " ")
 	}
-	desc = strings.Join(splitInput[:40], " ")
 	return
 }

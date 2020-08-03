@@ -25,14 +25,12 @@ type AnimeSearchStruct struct {
 	} `json:"Media"`
 }
 
-// SearchAnime makes a query to the anilist API based on the name//ID you input
-func SearchAnime(args CharSearchInput) (AnimeSearchStruct, error) {
-	var res AnimeSearchStruct
-
+// SearchAnime makes a query to the anilist API based on the name you input
+func SearchAnime(name string) (response AnimeSearchStruct, err error) {
 	// build request
 	req := graphql.NewRequest(`
-	query ($name: String, $type: MediaType) {
-		Media(search: $name, type: $type) {
+	query ($name: String) {
+		Media(search: $name, type: ANIME) {
 		  id
 		  siteUrl
 		  title {
@@ -50,12 +48,10 @@ func SearchAnime(args CharSearchInput) (AnimeSearchStruct, error) {
 	  }
 	`)
 
-	// Add variable
-	req.Var("type", "ANIME")
-	req.Var("name", args.Name)
+	// Add variables
+	req.Var("name", name)
 
 	// Make request
-	err := graphql.NewClient(graphURL).Run(context.Background(), req, &res)
-
-	return res, err
+	err = graphql.NewClient(graphURL).Run(context.Background(), req, &response)
+	return
 }

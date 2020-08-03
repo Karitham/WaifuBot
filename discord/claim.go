@@ -20,9 +20,20 @@ func enableClaim(in query.CharStruct) {
 }
 
 func drop(data *disgord.MessageCreate) {
-	query := query.CharSearchByPopularity(rand.New(rand.NewSource(time.Now().UnixNano())).Intn(conf.MaxCharDrop))
-	enableClaim(query)
-	printDrop(data, query.Page.Characters[0].Image.Large)
+	resp, err := query.CharSearchByPopularity(
+		rand.New(
+			rand.NewSource(
+				time.Now().UnixNano(),
+			),
+		).Intn(conf.MaxCharDrop),
+	)
+	if err != nil {
+		fmt.Println("Error getting random char : ", err)
+		drop(data)
+		return
+	}
+	enableClaim(resp)
+	printDrop(data, resp.Page.Characters[0].Image.Large)
 }
 
 func printDrop(data *disgord.MessageCreate, image string) {
