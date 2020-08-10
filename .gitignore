@@ -1,7 +1,6 @@
-config.json
+config*.json
 bot*
 *.xml
 *.iml
 .vscode/*
 *test.go
-__debug_bin

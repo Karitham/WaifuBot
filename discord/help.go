@@ -9,28 +9,28 @@ import (
 
 func help(data *disgord.MessageCreate, args []string) {
 	if len(args) > 0 {
-		switch arg := strings.ToLower(args[0]); {
-		case arg == "search" || arg == "s":
+		switch strings.ToLower(args[0]) {
+		case "search", "s":
 			searchHelp(data)
-		case arg == "favourite" || arg == "favorite" || arg == "f":
+		case "favourite", "favorite", "f":
 			favouriteHelp(data)
-		case arg == "trendinganimes" || arg == "ta":
+		case "trendinganimes", "ta":
 			trendingAnimeHelp(data)
-		case arg == "searchanime" || arg == "sa":
+		case "searchanime", "sa":
 			searchAnimeHelp(data)
-		case arg == "give" || arg == "g":
+		case "give", "g":
 			giveCharHelp(data)
-		case arg == "quote" || arg == "q":
+		case "quote", "q":
 			quoteHelp(data)
-		case arg == "profile" || arg == "p":
+		case "profile", "p":
 			profileHelp(data)
-		case arg == "roll" || arg == "r":
+		case "roll", "r":
 			rollHelp(data)
-		case arg == "list" || arg == "l":
+		case "list", "l":
 			listHelp(data)
-		case arg == "invite":
+		case "invite":
 			inviteHelp(data)
-		case arg == "claim" || arg == "c":
+		case "claim", "c":
 			claimHelp(data)
 		default:
 			defaultHelp(data)
@@ -46,7 +46,7 @@ func defaultHelp(data *disgord.MessageCreate) {
 		data.Message.ChannelID,
 		&disgord.CreateMessageParams{
 			Embed: &disgord.Embed{
-				Title: "Help || alias h",
+				Title: "Help , alias h",
 				Description: fmt.Sprintf(
 					"This is the help function.\n\n"+
 						"Use `%shelp functionName` to find out more about each function\n"+

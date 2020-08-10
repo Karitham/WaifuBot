@@ -61,37 +61,37 @@ func reply(s disgord.Session, data *disgord.MessageCreate) {
 	cmd, args := ParseMessage(data)
 
 	// Check if it recognises the command, if not, send back an error message
-	switch {
-	case cmd == "search" || cmd == "s":
+	switch cmd {
+	case "search", "s":
 		search(data, args)
-	case cmd == "favourite" || cmd == "favorite" || cmd == "f":
+	case "favourite", "favorite", "f":
 		favourite(data, args)
-		increment(data) // used to drop waifus
-	case cmd == "trendinganimes" || cmd == "ta":
+		incDropper(data) // used to drop waifus
+	case "trendinganimes", "ta":
 		trendingAnime(data, args)
-		increment(data) // used to drop waifus
-	case cmd == "searchanime" || cmd == "sa":
+		incDropper(data) // used to drop waifus
+	case "searchanime", "sa":
 		searchAnime(data, args)
-		increment(data) // used to drop waifus
-	case cmd == "give" || cmd == "g":
+		incDropper(data) // used to drop waifus
+	case "give", "g":
 		giveChar(data, args)
-		increment(data) // used to drop waifus
-	case cmd == "quote" || cmd == "q":
+		incDropper(data) // used to drop waifus
+	case "quote", "q":
 		quote(data, args)
-		increment(data) // used to drop waifus
-	case cmd == "profile" || cmd == "p":
+		incDropper(data) // used to drop waifus
+	case "profile", "p":
 		profile(data)
-		increment(data) // used to drop waifus
-	case cmd == "roll" || cmd == "r":
+		incDropper(data) // used to drop waifus
+	case "roll", "r":
 		roll(data)
-		increment(data) // used to drop waifus
-	case cmd == "list" || cmd == "l":
+		incDropper(data) // used to drop waifus
+	case "list", "l":
 		list(data, args)
-	case cmd == "invite":
+	case "invite":
 		invite(data)
-	case cmd == "claim" || cmd == "c":
+	case "claim", "c":
 		claim(data, args)
-	case cmd == "help" || cmd == "h":
+	case "help", "h":
 		help(data, args)
 	default:
 		unknown(data)
@@ -123,7 +123,7 @@ func (args CmdArguments) ParseArgToSearch() query.CharSearchInput {
 	return query.CharSearchInput{ID: id, Name: arg}
 }
 
-func increment(data *disgord.MessageCreate) {
+func incDropper(data *disgord.MessageCreate) {
 	// Increment
 	DropIncrement[data.Message.ChannelID]++
 
