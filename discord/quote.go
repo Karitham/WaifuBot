@@ -19,28 +19,27 @@ func quote(data *disgord.MessageCreate, args CmdArguments) {
 			Quote:  argStr,
 		}.SetQuote()
 
-		// Get avatar
-		avatarURL, err := data.Message.Author.AvatarURL(64, false)
-		if err != nil {
-			fmt.Println(err)
-		}
+		avatar := getUserAvatar(data.Message.Author)
 
 		// Send confirmation message
-		client.CreateMessage(
+		_, err := client.CreateMessage(
 			ctx,
 			data.Message.ChannelID,
 			&disgord.CreateMessageParams{
 				Embed: &disgord.Embed{
 					Title:       "New quote set",
-					Thumbnail:   &disgord.EmbedThumbnail{URL: avatarURL},
+					Thumbnail:   &disgord.EmbedThumbnail{URL: avatar},
 					Description: fmt.Sprintf("Your new quote is %s", argStr),
 					Timestamp:   data.Message.Timestamp,
 					Color:       0xffe2fe,
 				},
 			},
 		)
+		if err != nil {
+			fmt.Println("There was an error sending quote message: ", err)
+		}
 	} else {
-		client.CreateMessage(
+		_, err := client.CreateMessage(
 			ctx,
 			data.Message.ChannelID,
 			&disgord.CreateMessageParams{
@@ -51,11 +50,14 @@ func quote(data *disgord.MessageCreate, args CmdArguments) {
 				},
 			},
 		)
+		if err != nil {
+			fmt.Println("There was an error sending error profile message: ", err)
+		}
 	}
 }
 
 func quoteHelp(data *disgord.MessageCreate) {
-	client.CreateMessage(
+	_, err := client.CreateMessage(
 		ctx,
 		data.Message.ChannelID,
 		&disgord.CreateMessageParams{
@@ -75,4 +77,7 @@ func quoteHelp(data *disgord.MessageCreate) {
 			},
 		},
 	)
+	if err != nil {
+		fmt.Println("There was an error sending quote help message: ", err)
+	}
 }

@@ -3,24 +3,12 @@ package discord
 import (
 	"bot/query"
 	"fmt"
-	"strconv"
 
 	"github.com/andersfylling/disgord"
 )
 
 func trendingAnime(data *disgord.MessageCreate, args []string) {
 	var desc string
-
-	// check if there is a page input
-	if len(args) > 0 {
-		page, err := strconv.Atoi(args[0])
-		if page > 1 {
-			page--
-		}
-		if err != nil {
-			fmt.Println(err)
-		}
-	}
 
 	// query the trending anime
 	res, err := query.TrendingSearch()
@@ -34,22 +22,25 @@ func trendingAnime(data *disgord.MessageCreate, args []string) {
 	}
 
 	// Send the message
-	client.CreateMessage(
+	_, er := client.CreateMessage(
 		ctx,
 		data.Message.ChannelID,
 		&disgord.CreateMessageParams{
 			Embed: &disgord.Embed{
-				Title:       fmt.Sprintf("Trending Anime List"),
+				Title:       "Trending Anime List",
 				Description: desc,
 				Timestamp:   data.Message.Timestamp,
 				Color:       0x88ffcc,
 			},
 		},
 	)
+	if er != nil {
+		fmt.Println("There was an error sending trending anime message: ", er)
+	}
 }
 
 func trendingAnimeHelp(data *disgord.MessageCreate) {
-	client.CreateMessage(
+	_, err := client.CreateMessage(
 		ctx,
 		data.Message.ChannelID,
 		&disgord.CreateMessageParams{
@@ -69,4 +60,7 @@ func trendingAnimeHelp(data *disgord.MessageCreate) {
 			},
 		},
 	)
+	if err != nil {
+		fmt.Println("There was an error sending trending anime help message: ", err)
+	}
 }

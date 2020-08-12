@@ -12,13 +12,9 @@ func giveChar(data *disgord.MessageCreate, args CmdArguments) {
 	// Verify if give is valid, also deletes the character from User1's database if valid
 	desc, valid := validGive(data, args)
 
-	// Get avatar
-	avatar, err := data.Message.Author.AvatarURL(128, false)
-	if err != nil {
-		fmt.Println(err)
-	}
+	avatar := getUserAvatar(data.Message.Author)
 
-	if valid == true {
+	if valid {
 		// Get char
 		resp, err := query.CharSearch(args.ParseArgToSearch())
 		if err != nil {
@@ -35,7 +31,7 @@ func giveChar(data *disgord.MessageCreate, args CmdArguments) {
 			}}.AddChar()
 
 		// Send confirmation Message
-		client.CreateMessage(
+		_, er := client.CreateMessage(
 			ctx,
 			data.Message.ChannelID,
 			&disgord.CreateMessageParams{
@@ -49,6 +45,9 @@ func giveChar(data *disgord.MessageCreate, args CmdArguments) {
 				},
 			},
 		)
+		if er != nil {
+			fmt.Println("There was an error giving a character: ", er)
+		}
 	} else {
 		// Send message
 		resp, err := client.CreateMessage(
@@ -80,7 +79,7 @@ func validGive(data *disgord.MessageCreate, arg CmdArguments) (desc string, isVa
 			return fmt.Sprintf("Error, %d is not a valid WaifuID,\nRefer to %shelp to see this command's syntax", resp.ID, conf.Prefix), false
 		case data.Message.Mentions == nil:
 			return fmt.Sprintf("Error, please tag a discord user,\nRefer to %shelp to see this command's syntax", conf.Prefix), false
-		case database.DelWaifuStruct{UserID: data.Message.Author.ID, CharID: resp.ID}.DelChar() == false:
+		case !database.DelWaifuStruct{UserID: data.Message.Author.ID, CharID: resp.ID}.DelChar():
 			return fmt.Sprintf("You do not own the character ID %d,\nVerify if the ID you entered is correct", resp.ID), false
 		default:
 			return "", true
@@ -90,7 +89,7 @@ func validGive(data *disgord.MessageCreate, arg CmdArguments) (desc string, isVa
 }
 
 func giveCharHelp(data *disgord.MessageCreate) {
-	client.CreateMessage(
+	_, err := client.CreateMessage(
 		ctx,
 		data.Message.ChannelID,
 		&disgord.CreateMessageParams{
@@ -110,4 +109,7 @@ func giveCharHelp(data *disgord.MessageCreate) {
 			},
 		},
 	)
+	if err != nil {
+		fmt.Println("There was an error sending help for give char: ", err)
+	}
 }

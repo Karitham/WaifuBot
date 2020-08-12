@@ -41,7 +41,7 @@ func help(data *disgord.MessageCreate, args []string) {
 }
 
 func defaultHelp(data *disgord.MessageCreate) {
-	client.CreateMessage(
+	_, err := client.CreateMessage(
 		ctx,
 		data.Message.ChannelID,
 		&disgord.CreateMessageParams{
@@ -62,4 +62,7 @@ func defaultHelp(data *disgord.MessageCreate) {
 			},
 		},
 	)
+	if err != nil {
+		fmt.Println("There was an error sending default help message: ", err)
+	}
 }

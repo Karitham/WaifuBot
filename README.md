@@ -53,3 +53,7 @@ Try to space your code and follow general programming guidelines
 About comments : The code should speak for itself, only comment big processes / dense places.
 
 See [Project](https://github.com/Karitham/WaifuBot/projects/1) to view the current progress of the bot
+
+## Thanks
+
+Much thanks to people from the gopher discord for all the help with go and Anders for its library.

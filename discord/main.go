@@ -16,7 +16,6 @@ import (
 
 // CmdArguments represents the arguments entered by the user after a command
 type CmdArguments []string
-type msgEvent disgord.Message
 
 // Global Variables to ease working with client/sesion etc
 var ctx = context.Background()
@@ -139,6 +138,23 @@ func incDropper(data *disgord.MessageCreate) {
 	}
 }
 
+func updateEmbed(msg *disgord.Message, embed *disgord.Embed) (msgEvent *disgord.Message) {
+	var err error
+
+	msgEvent, err = client.SetMsgEmbed(
+		ctx,
+		msg.ChannelID,
+		msg.ID,
+		embed,
+	)
+
+	if err != nil {
+		fmt.Println("There was an error updating mesage : ", err)
+	}
+
+	return
+}
+
 func deleteMessage(resp *disgord.Message, sleep time.Duration) {
 	time.Sleep(sleep)
 
@@ -150,4 +166,22 @@ func deleteMessage(resp *disgord.Message, sleep time.Duration) {
 	if err != nil {
 		fmt.Println("error deleting message :", err)
 	}
+}
+
+func getUserAvatar(user *disgord.User) (avatar string) {
+	avatar, err := user.AvatarURL(128, false)
+	if err != nil {
+		fmt.Println("There was an error getting this user's avatar", err)
+	}
+	return
+}
+
+// If there is a mention, display the person's profile instead
+func getUser(data *disgord.MessageCreate) (user disgord.User) {
+	if data.Message.Mentions != nil {
+		user = *data.Message.Mentions[0]
+	} else {
+		user = *data.Message.Author
+	}
+	return
 }
