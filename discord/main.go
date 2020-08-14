@@ -35,7 +35,12 @@ func BotRun(cf config.ConfJSONStruct) {
 	client = disgord.New(disgord.Config{BotToken: cf.BotToken})
 
 	// stay connected to discord
-	defer client.StayConnectedUntilInterrupted(ctx)
+	defer func() {
+		err := client.StayConnectedUntilInterrupted(ctx)
+		if err != nil {
+			fmt.Println("The bot is no longer working, ", err)
+		}
+	}()
 
 	// filter incomming messages & set the prefix
 	filter, _ := std.NewMsgFilter(ctx, client)
@@ -136,23 +141,6 @@ func incDropper(data *disgord.MessageCreate) {
 		drop(data)
 		DropIncrement[data.Message.ChannelID] = 0
 	}
-}
-
-func updateEmbed(msg *disgord.Message, embed *disgord.Embed) (msgEvent *disgord.Message) {
-	var err error
-
-	msgEvent, err = client.SetMsgEmbed(
-		ctx,
-		msg.ChannelID,
-		msg.ID,
-		embed,
-	)
-
-	if err != nil {
-		fmt.Println("There was an error updating mesage : ", err)
-	}
-
-	return
 }
 
 func deleteMessage(resp *disgord.Message, sleep time.Duration) {

@@ -3,37 +3,34 @@ package discord
 import (
 	"bot/database"
 	"fmt"
+	"strconv"
 
 	"github.com/andersfylling/disgord"
 )
 
 func list(data *disgord.MessageCreate, args []string) {
-	/* 	var page int
+	var page int
+	var err error
 
-	   	// check if there is a page input
-	   	if len(args) > 0 {
-	   		page, err = strconv.Atoi(args[0])
-	   		if page > 1 {
-	   			page--
-	   		}
-	   		if err != nil {
-	   			fmt.Println("There was an error parsing list", err)
-	   		}
-	   	} */
+	// check if there is a page input
+	if len(args) > 0 {
+		page, err = strconv.Atoi(args[0])
+		if err != nil {
+			fmt.Println("There was an error parsing list", err)
+		}
+	}
 
 	user := getUser(data)
 
 	// Send the first list
-	msgEvent := sendList(
+	_ = sendList(
 		data,
 		formatListEmbed(
 			getUserAvatar(&user),
-			formatDescList(0, &user),
+			formatDescList(page, &user),
 			&user,
 		),
 	)
-
-	listEvenHandler(msgEvent)
 }
 
 func sendList(data *disgord.MessageCreate, embed *disgord.Embed) (msg *disgord.Message) {
@@ -111,26 +108,4 @@ func listHelp(data *disgord.MessageCreate) {
 	if err != nil {
 		fmt.Println("There was an error sending list help message: ", err)
 	}
-}
-
-func listEvenHandler(msg *disgord.Message) {
-	fmt.Println(client.Pool().EmojiPool())
-}
-
-func initReactions(msg *disgord.Message) (errLeftArrow, errRightArrow error) {
-	errRightArrow = msg.React(
-		ctx,
-		session,
-		disgord.Emoji{
-			Name: "right_arrow",
-		},
-	)
-	errLeftArrow = msg.React(
-		ctx,
-		session,
-		disgord.Emoji{
-			Name: "left_Arrow",
-		},
-	)
-	return
 }
