@@ -1,5 +1,11 @@
 # Waifu Bot
 
+<p align="center">
+  <img src="https://github.com/Karitham/WaifuBot/workflows/golangci-lint/badge.svg">
+</p>
+
+
+
 ## About
 
 This is a waifu/husbando bot in developpement. It is unstable and will stay unstable until 1.0
