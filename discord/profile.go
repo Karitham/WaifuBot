@@ -21,14 +21,10 @@ func profile(data *disgord.MessageCreate) {
 	// Setrieve user information from database
 	db := database.ViewUserData(user.ID)
 
-	// Get avatar URL
-	avatar, err := user.AvatarURL(64, false)
-	if err != nil {
-		fmt.Println(err)
-	}
+	avatar := getUserAvatar(data.Message.Author)
 
 	// Send message
-	client.CreateMessage(
+	_, err := client.CreateMessage(
 		ctx,
 		data.Message.ChannelID,
 		&disgord.CreateMessageParams{
@@ -46,6 +42,9 @@ func profile(data *disgord.MessageCreate) {
 			},
 		},
 	)
+	if err != nil {
+		fmt.Println("There was an error sending profile message: ", err)
+	}
 }
 
 // Format Description
@@ -57,7 +56,7 @@ func desc(db database.OutputStruct) string {
 		Has rolled *%d* Waifus, and has claimed *%d*.
 		%s`,
 		quoteDesc(db.Quote),
-		time.Now().Sub(db.Date).Truncate(time.Second),
+		time.Since(db.Date).Truncate(time.Second),
 		len(db.Waifus), db.ClaimedWaifus,
 		favDesc(db.Favourite.Name),
 	)
@@ -84,7 +83,7 @@ func quoteDesc(quote string) string {
 }
 
 func profileHelp(data *disgord.MessageCreate) {
-	client.CreateMessage(
+	_, err := client.CreateMessage(
 		ctx,
 		data.Message.ChannelID,
 		&disgord.CreateMessageParams{
@@ -107,4 +106,7 @@ func profileHelp(data *disgord.MessageCreate) {
 			},
 		},
 	)
+	if err != nil {
+		fmt.Println("There was an error sending profile help message: ", err)
+	}
 }

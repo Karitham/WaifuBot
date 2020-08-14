@@ -13,7 +13,7 @@ func search(data *disgord.MessageCreate, args CmdArguments) {
 		resp, err := query.CharSearch(args.ParseArgToSearch())
 		if err == nil {
 			desc := fmt.Sprintf("I found character %d\nThis character appears in :\n%s", resp.Character.ID, resp.Character.Media.Nodes[0].Title.Romaji)
-			client.CreateMessage(
+			_, err := client.CreateMessage(
 				ctx,
 				data.Message.ChannelID,
 				&disgord.CreateMessageParams{
@@ -29,6 +29,9 @@ func search(data *disgord.MessageCreate, args CmdArguments) {
 					},
 				},
 			)
+			if err != nil {
+				fmt.Println("There was an error sending search message: ", err)
+			}
 		} else {
 			resp, err := client.SendMsg(ctx, data.Message.ChannelID, err)
 			if err != nil {
@@ -42,7 +45,7 @@ func search(data *disgord.MessageCreate, args CmdArguments) {
 }
 
 func searchHelp(data *disgord.MessageCreate) {
-	client.CreateMessage(
+	_, err := client.CreateMessage(
 		ctx,
 		data.Message.ChannelID,
 		&disgord.CreateMessageParams{
@@ -63,4 +66,7 @@ func searchHelp(data *disgord.MessageCreate) {
 			},
 		},
 	)
+	if err != nil {
+		fmt.Println("There was an error sending search help message: ", err)
+	}
 }

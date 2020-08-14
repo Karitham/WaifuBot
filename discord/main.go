@@ -16,7 +16,6 @@ import (
 
 // CmdArguments represents the arguments entered by the user after a command
 type CmdArguments []string
-type msgEvent disgord.Message
 
 // Global Variables to ease working with client/sesion etc
 var ctx = context.Background()
@@ -36,7 +35,12 @@ func BotRun(cf config.ConfJSONStruct) {
 	client = disgord.New(disgord.Config{BotToken: cf.BotToken})
 
 	// stay connected to discord
-	defer client.StayConnectedUntilInterrupted(ctx)
+	defer func() {
+		err := client.StayConnectedUntilInterrupted(ctx)
+		if err != nil {
+			fmt.Println("The bot is no longer working, ", err)
+		}
+	}()
 
 	// filter incomming messages & set the prefix
 	filter, _ := std.NewMsgFilter(ctx, client)
@@ -150,4 +154,22 @@ func deleteMessage(resp *disgord.Message, sleep time.Duration) {
 	if err != nil {
 		fmt.Println("error deleting message :", err)
 	}
+}
+
+func getUserAvatar(user *disgord.User) (avatar string) {
+	avatar, err := user.AvatarURL(128, false)
+	if err != nil {
+		fmt.Println("There was an error getting this user's avatar", err)
+	}
+	return
+}
+
+// If there is a mention, display the person's profile instead
+func getUser(data *disgord.MessageCreate) (user disgord.User) {
+	if data.Message.Mentions != nil {
+		user = *data.Message.Mentions[0]
+	} else {
+		user = *data.Message.Author
+	}
+	return
 }

@@ -11,17 +11,17 @@ import (
 func searchAnime(data *disgord.MessageCreate, args CmdArguments) {
 	// check if there is a search term
 	if len(args) > 0 {
-		resp, err := query.SearchAnime(args.ParseArgToSearch().Name)
-		if err == nil {
+		resp, queryErr := query.SearchAnime(args.ParseArgToSearch().Name)
+		if queryErr == nil {
 			desc := fmt.Sprintf(
 				"I found the anime ID %d.\n "+
 					"This anime is %s."+
 					"Description : %s...\n ",
 				resp.Media.ID,
 				strings.ToLower(resp.Media.Status),
-				formatDesc(resp.Media.Description),
+				formatDescAnimeSearch(resp.Media.Description),
 			)
-			client.CreateMessage(
+			_, err := client.CreateMessage(
 				ctx,
 				data.Message.ChannelID,
 				&disgord.CreateMessageParams{
@@ -36,11 +36,17 @@ func searchAnime(data *disgord.MessageCreate, args CmdArguments) {
 					},
 				},
 			)
+			if err != nil {
+				fmt.Println("There was an error when searching an anime: ", err)
+			}
 		} else {
-			client.SendMsg(ctx, data.Message.ChannelID, err)
+			_, err := client.SendMsg(ctx, data.Message.ChannelID, queryErr)
+			if err != nil {
+				fmt.Println("there was an error sending error message on anime search: ", err)
+			}
 		}
 	} else {
-		client.CreateMessage(
+		_, err := client.CreateMessage(
 			ctx,
 			data.Message.ChannelID,
 			&disgord.CreateMessageParams{
@@ -51,12 +57,15 @@ func searchAnime(data *disgord.MessageCreate, args CmdArguments) {
 				},
 			},
 		)
+		if err != nil {
+			fmt.Println("there was an error sending error message on anime search: ", err)
+		}
 	}
 
 }
 
 func searchAnimeHelp(data *disgord.MessageCreate) {
-	client.CreateMessage(
+	_, err := client.CreateMessage(
 		ctx,
 		data.Message.ChannelID,
 		&disgord.CreateMessageParams{
@@ -76,9 +85,12 @@ func searchAnimeHelp(data *disgord.MessageCreate) {
 			},
 		},
 	)
+	if err != nil {
+		fmt.Println("Error sending search anime help: ", err)
+	}
 }
 
-func formatDesc(inputDesc string) (desc string) {
+func formatDescAnimeSearch(inputDesc string) (desc string) {
 	splitInput := strings.Split(inputDesc, " ")
 	if len(splitInput) <= 40 {
 		desc = strings.Join(splitInput, " ")

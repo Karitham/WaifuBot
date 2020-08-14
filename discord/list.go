@@ -9,72 +9,82 @@ import (
 )
 
 func list(data *disgord.MessageCreate, args []string) {
-	var user disgord.User
-	var desc, footer string
-	var page, i int
+	var page int
 	var err error
 
 	// check if there is a page input
 	if len(args) > 0 {
 		page, err = strconv.Atoi(args[0])
-		if page > 1 {
-			page--
-		}
 		if err != nil {
-			fmt.Println(err)
+			fmt.Println("There was an error parsing list", err)
 		}
 	}
 
-	// If there is a mention, display the person's profile instead
-	if data.Message.Mentions != nil {
-		user = *data.Message.Mentions[0]
-	} else {
-		user = *data.Message.Author
-	}
-
+	user := getUser(data)
 	// Make the database query
-	WList := database.ViewUserData(user.ID)
+	charList := database.ViewUserData(user.ID)
 
-	// Check if the list is empty, if not, return a formatted description
-	if len(WList.Waifus) < 1 {
-		desc = "This user's list is empty"
-	} else {
-		// Display the correct page
-		for i = 15 * page; i < 15+15*page && i < len(WList.Waifus); i++ {
-			desc += fmt.Sprintf("`%d` : %s\n", WList.Waifus[i].ID, WList.Waifus[i].Name)
-		}
-
-		// if there's a next page, tell the user it's possible to see it
-		if i < len(WList.Waifus) {
-			footer = fmt.Sprintf("Use %slist %d to see the next page", conf.Prefix, page+2)
-		}
-	}
-
-	// get avatar URL
-	avatar, err := user.AvatarURL(128, false)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	// Send the message
-	client.CreateMessage(
-		ctx,
-		data.Message.ChannelID,
-		&disgord.CreateMessageParams{
-			Embed: &disgord.Embed{
-				Title:       fmt.Sprintf("%s's Waifu list", user.Username),
-				Description: desc,
-				Thumbnail:   &disgord.EmbedThumbnail{URL: avatar},
-				Footer:      &disgord.EmbedFooter{Text: footer, IconURL: avatar},
-				Timestamp:   data.Message.Timestamp,
-				Color:       0x88ffcc,
-			},
-		},
+	// Send the first list
+	_ = sendList(
+		data,
+		formatListEmbed(
+			getUserAvatar(&user),
+			len(charList.Waifus)/15,
+			formatDescList(page, charList),
+			&user,
+		),
 	)
 }
 
+func sendList(data *disgord.MessageCreate, embed *disgord.Embed) (msg *disgord.Message) {
+	msg, err := client.CreateMessage(
+		ctx,
+		data.Message.ChannelID,
+		&disgord.CreateMessageParams{
+			Embed: embed,
+		},
+	)
+	if err != nil {
+		fmt.Println("There was an error sending list message : ", err)
+	}
+
+	return
+}
+
+// Format Embed
+func formatListEmbed(avatar string, totalPages int, desc string, user *disgord.User) *disgord.Embed {
+	return &disgord.Embed{
+		Title:       fmt.Sprintf("%s's Waifu list", user.Username),
+		Description: desc,
+		Thumbnail: &disgord.EmbedThumbnail{
+			URL: avatar,
+		},
+		Footer: &disgord.EmbedFooter{
+			Text: fmt.Sprintf("Use list <page> to see a page. There are %d total pages.", totalPages),
+		},
+		Color: 0x88ffcc,
+	}
+}
+
+func formatDescList(page int, charList database.OutputStruct) (desc string) {
+
+	// Check if the list is empty, if not, return a formatted description
+	if len(charList.Waifus) >= 0 {
+		for i := 15 * page; i < 15+15*page && i < len(charList.Waifus); i++ {
+			desc += fmt.Sprintf(
+				"`%d` : %s\n",
+				charList.Waifus[i].ID,
+				charList.Waifus[i].Name,
+			)
+		}
+	} else {
+		desc = "This user's list is empty"
+	}
+	return
+}
+
 func listHelp(data *disgord.MessageCreate) {
-	client.CreateMessage(
+	_, err := client.CreateMessage(
 		ctx,
 		data.Message.ChannelID,
 		&disgord.CreateMessageParams{
@@ -96,4 +106,7 @@ func listHelp(data *disgord.MessageCreate) {
 			},
 		},
 	)
+	if err != nil {
+		fmt.Println("There was an error sending list help message: ", err)
+	}
 }

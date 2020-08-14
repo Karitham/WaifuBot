@@ -12,11 +12,14 @@ func invite(data *disgord.MessageCreate) {
 	// Get URL
 	botURL, err := client.InviteURL(ctx)
 	if err != nil {
-		data.Message.Reply(ctx, session, err)
+		_, er := data.Message.Reply(ctx, session, err)
+		if er != nil {
+			fmt.Println("Error getting bot url: ", er)
+		}
 	}
 
 	// Create embed
-	client.CreateMessage(
+	_, er := client.CreateMessage(
 		ctx,
 		data.Message.ChannelID,
 		&disgord.CreateMessageParams{
@@ -28,10 +31,13 @@ func invite(data *disgord.MessageCreate) {
 			},
 		},
 	)
+	if er != nil {
+		fmt.Println("There was an error sending invite message")
+	}
 }
 
 func inviteHelp(data *disgord.MessageCreate) {
-	client.CreateMessage(
+	_, err := client.CreateMessage(
 		ctx,
 		data.Message.ChannelID,
 		&disgord.CreateMessageParams{
@@ -51,4 +57,7 @@ func inviteHelp(data *disgord.MessageCreate) {
 			},
 		},
 	)
+	if err != nil {
+		fmt.Println("There was a problem sending invite help message: ", err)
+	}
 }

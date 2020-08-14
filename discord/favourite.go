@@ -27,7 +27,7 @@ func favourite(data *disgord.MessageCreate, args CmdArguments) {
 		}.SetFavourite()
 
 		// Send confirmation message
-		client.CreateMessage(
+		_, er := client.CreateMessage(
 			ctx,
 			data.Message.ChannelID,
 			&disgord.CreateMessageParams{
@@ -42,13 +42,16 @@ func favourite(data *disgord.MessageCreate, args CmdArguments) {
 				},
 			},
 		)
+		if er != nil {
+			fmt.Println("There was an error sending favourite message: ", er)
+		}
 	} else {
 		favouriteHelp(data)
 	}
 }
 
 func favouriteHelp(data *disgord.MessageCreate) {
-	client.CreateMessage(
+	_, err := client.CreateMessage(
 		ctx,
 		data.Message.ChannelID,
 		&disgord.CreateMessageParams{
@@ -69,4 +72,7 @@ func favouriteHelp(data *disgord.MessageCreate) {
 			},
 		},
 	)
+	if err != nil {
+		fmt.Println("There was an error sending favourite help message: ", err)
+	}
 }

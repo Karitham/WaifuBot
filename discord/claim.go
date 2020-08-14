@@ -38,7 +38,7 @@ func drop(data *disgord.MessageCreate) {
 
 func printDrop(data *disgord.MessageCreate, image string) {
 	// Sends the message
-	client.CreateMessage(
+	_, err := client.CreateMessage(
 		ctx,
 		data.Message.ChannelID,
 		&disgord.CreateMessageParams{
@@ -55,12 +55,15 @@ func printDrop(data *disgord.MessageCreate, image string) {
 			},
 		},
 	)
+	if err != nil {
+		fmt.Println("There was an error sending drop message: ", err)
+	}
 }
 
 // claim is used to claim a waifu and add it to your database
 func claim(data *disgord.MessageCreate, args []string) {
 	if len(args) > 0 && char.Page.Characters != nil {
-		if strings.ToLower(strings.Join(args, " ")) == strings.ToLower(char.Page.Characters[0].Name.Full) {
+		if strings.EqualFold(strings.Join(args, " "), char.Page.Characters[0].Name.Full) {
 			// Add to db
 			database.InputChar{
 				UserID: data.Message.Author.ID,
@@ -74,10 +77,7 @@ func claim(data *disgord.MessageCreate, args []string) {
 			// Increment claimed waifu
 			database.ClaimIncrementStruct{UserID: data.Message.Author.ID, Increment: 1}.ClaimIncrement()
 			// Send confirmation message
-			avatar, err := data.Message.Author.AvatarURL(128, false)
-			if err != nil {
-				fmt.Println(err)
-			}
+			avatar := getUserAvatar(data.Message.Author)
 
 			// Create desc
 			desc := fmt.Sprintf(
@@ -88,7 +88,7 @@ func claim(data *disgord.MessageCreate, args []string) {
 				char.Page.Characters[0].Media.Nodes[0].Title.Romaji,
 			)
 
-			client.CreateMessage(
+			_, err := client.CreateMessage(
 				ctx,
 				data.Message.ChannelID,
 				&disgord.CreateMessageParams{
@@ -102,7 +102,12 @@ func claim(data *disgord.MessageCreate, args []string) {
 						},
 						Timestamp: data.Message.Timestamp,
 						Color:     0xFF924B,
-					}})
+					},
+				},
+			)
+			if err != nil {
+				fmt.Println("There was an error claiming character: ", err)
+			}
 			// Reset the char value
 			char = query.CharStruct{}
 		} else {
@@ -150,7 +155,7 @@ func getCharInitials() (initials string) {
 }
 
 func claimHelp(data *disgord.MessageCreate) {
-	client.CreateMessage(
+	_, err := client.CreateMessage(
 		ctx,
 		data.Message.ChannelID,
 		&disgord.CreateMessageParams{
@@ -170,4 +175,7 @@ func claimHelp(data *disgord.MessageCreate) {
 			},
 		},
 	)
+	if err != nil {
+		fmt.Println("There was an error sending claim help message: ", err)
+	}
 }

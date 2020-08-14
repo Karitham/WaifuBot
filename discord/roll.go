@@ -15,7 +15,7 @@ func roll(data *disgord.MessageCreate) {
 	ableToRoll := database.ViewUserData(data.Message.Author.ID).Date.Add(conf.TimeBetweenRolls * time.Hour)
 
 	// verify if the roll is legal
-	if ableToRoll.Sub(time.Now()) < 0 {
+	if time.Until(ableToRoll) < 0 {
 		// Makes the querry and adds the character to the database
 		resp := RandomToDB(data)
 
@@ -23,7 +23,7 @@ func roll(data *disgord.MessageCreate) {
 		desc := fmt.Sprintf("You rolled character `%d`\nIt appears in :\n- %s", resp.Page.Characters[0].ID, resp.Page.Characters[0].Media.Nodes[0].Title.Romaji)
 
 		// Sends the message
-		client.CreateMessage(
+		_, err := client.CreateMessage(
 			ctx,
 			data.Message.ChannelID,
 			&disgord.CreateMessageParams{
@@ -36,7 +36,12 @@ func roll(data *disgord.MessageCreate) {
 					},
 					Timestamp: data.Message.Timestamp,
 					Color:     0x57D4FF,
-				}})
+				},
+			},
+		)
+		if err != nil {
+			fmt.Println("There was an error sending roll message: ", err)
+		}
 	} else {
 		illegalRoll(data, ableToRoll)
 	}
@@ -75,7 +80,7 @@ func illegalRoll(data *disgord.MessageCreate, ableToRoll time.Time) {
 		&disgord.CreateMessageParams{
 			Embed: &disgord.Embed{
 				Title:       "Illegal roll",
-				Description: fmt.Sprintf("You can roll in %s", ableToRoll.Sub(time.Now()).Truncate(time.Second)),
+				Description: fmt.Sprintf("You can roll in %s", time.Until(ableToRoll).Truncate(time.Second)),
 				Timestamp:   data.Message.Timestamp,
 				Color:       0xcc0000,
 			},
@@ -88,7 +93,7 @@ func illegalRoll(data *disgord.MessageCreate, ableToRoll time.Time) {
 }
 
 func rollHelp(data *disgord.MessageCreate) {
-	client.CreateMessage(
+	_, err := client.CreateMessage(
 		ctx,
 		data.Message.ChannelID,
 		&disgord.CreateMessageParams{
@@ -108,4 +113,7 @@ func rollHelp(data *disgord.MessageCreate) {
 			},
 		},
 	)
+	if err != nil {
+		fmt.Println("There was an error sending roll help message: ", err)
+	}
 }
