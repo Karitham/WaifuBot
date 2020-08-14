@@ -21,13 +21,16 @@ func list(data *disgord.MessageCreate, args []string) {
 	}
 
 	user := getUser(data)
+	// Make the database query
+	charList := database.ViewUserData(user.ID)
 
 	// Send the first list
 	_ = sendList(
 		data,
 		formatListEmbed(
 			getUserAvatar(&user),
-			formatDescList(page, &user),
+			len(charList.Waifus)/15,
+			formatDescList(page, charList),
 			&user,
 		),
 	)
@@ -49,7 +52,7 @@ func sendList(data *disgord.MessageCreate, embed *disgord.Embed) (msg *disgord.M
 }
 
 // Format Embed
-func formatListEmbed(avatar string, desc string, user *disgord.User) *disgord.Embed {
+func formatListEmbed(avatar string, totalPages int, desc string, user *disgord.User) *disgord.Embed {
 	return &disgord.Embed{
 		Title:       fmt.Sprintf("%s's Waifu list", user.Username),
 		Description: desc,
@@ -57,15 +60,13 @@ func formatListEmbed(avatar string, desc string, user *disgord.User) *disgord.Em
 			URL: avatar,
 		},
 		Footer: &disgord.EmbedFooter{
-			Text: "Use the reactions to see next page // page before",
+			Text: fmt.Sprintf("Use list <page> to see a page. There are %d total pages.", totalPages),
 		},
 		Color: 0x88ffcc,
 	}
 }
 
-func formatDescList(page int, user *disgord.User) (desc string) {
-	// Make the database query
-	charList := database.ViewUserData(user.ID)
+func formatDescList(page int, charList database.OutputStruct) (desc string) {
 
 	// Check if the list is empty, if not, return a formatted description
 	if len(charList.Waifus) >= 0 {
