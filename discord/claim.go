@@ -49,7 +49,12 @@ func printDrop(data *disgord.MessageCreate, image string) {
 					URL: image,
 				},
 				Footer: &disgord.EmbedFooter{
-					Text: fmt.Sprintf("This characters initials are : %s", getCharInitials()),
+					Text: fmt.Sprintf(
+						"This characters initials are : %s",
+						formatCharInitials(
+							getCharInitials(char.Page.Characters[0].Name.Full),
+						),
+					),
 				},
 				Color: 0xF2FF2E,
 			},
@@ -58,6 +63,13 @@ func printDrop(data *disgord.MessageCreate, image string) {
 	if err != nil {
 		fmt.Println("There was an error sending drop message: ", err)
 	}
+}
+
+func formatCharInitials(initials []string) (formatted string) {
+	for _, v := range initials {
+		formatted = formatted + v + "."
+	}
+	return
 }
 
 // claim is used to claim a waifu and add it to your database
@@ -147,9 +159,9 @@ func claim(data *disgord.MessageCreate, args []string) {
 	}
 }
 
-func getCharInitials() (initials string) {
-	for _, v := range strings.Split(char.Page.Characters[0].Name.Full, " ") {
-		initials = fmt.Sprintf("%s%s.", initials, strings.ToUpper(string(v[0])))
+func getCharInitials(name string) (initials []string) {
+	for _, v := range strings.Split(strings.TrimSpace(name), " ") {
+		initials = append(initials, strings.ToUpper(string(v[0])))
 	}
 	return
 }
