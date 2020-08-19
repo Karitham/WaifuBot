@@ -12,6 +12,7 @@ type ConfJSONStruct struct {
 	Prefix              string        `json:"Prefix"`
 	BotToken            string        `json:"Bot_Token"`
 	MongoURL            string        `json:"Mongo_URL"`
+	Status              string        `json:"Bot_Status"`
 	MaxCharRoll         int           `json:"Max_Character_Roll"`
 	MaxCharDrop         int           `json:"Max_Character_Drop"`
 	TimeBetweenRolls    time.Duration `json:"Time_Between_Rolls"`

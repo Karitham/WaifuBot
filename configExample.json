@@ -2,6 +2,7 @@
   "Prefix": "w.",
   "Bot_Token": "thIsIsaDiscorDToken.Xw41Og.Ix0IhJlhgEbEyK_CJwrGgucn9rk",
   "Mongo_URL": "mongodb://localhost:27017",
+  "Bot_Status": "WaifuBot | w.help",
   "Max_Character_Roll": 15000,
   "Max_Character_Drop": 5000,
   "Delete_Illegal_Roll_After": 3,

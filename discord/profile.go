@@ -57,7 +57,7 @@ func desc(db database.OutputStruct) string {
 		%s`,
 		quoteDesc(db.Quote),
 		time.Since(db.Date).Truncate(time.Second),
-		len(db.Waifus), db.ClaimedWaifus,
+		(len(db.Waifus))-db.ClaimedWaifus, db.ClaimedWaifus,
 		favDesc(db.Favourite.Name),
 	)
 }

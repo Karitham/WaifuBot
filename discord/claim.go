@@ -72,6 +72,13 @@ func formatCharInitials(initials []string) (formatted string) {
 	return
 }
 
+func getCharInitials(name string) (initials []string) {
+	for _, v := range strings.Split(strings.TrimSpace(name), " ") {
+		initials = append(initials, strings.ToUpper(string(v[0])))
+	}
+	return
+}
+
 // claim is used to claim a waifu and add it to your database
 func claim(data *disgord.MessageCreate, args []string) {
 	if len(args) > 0 && char.Page.Characters != nil {
@@ -157,13 +164,6 @@ func claim(data *disgord.MessageCreate, args []string) {
 		}
 		go deleteMessage(resp, conf.DelWrongClaimAfter)
 	}
-}
-
-func getCharInitials(name string) (initials []string) {
-	for _, v := range strings.Split(strings.TrimSpace(name), " ") {
-		initials = append(initials, strings.ToUpper(string(v[0])))
-	}
-	return
 }
 
 func claimHelp(data *disgord.MessageCreate) {

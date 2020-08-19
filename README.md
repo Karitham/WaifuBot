@@ -4,8 +4,6 @@
   <img src="https://github.com/Karitham/WaifuBot/workflows/golangci-lint/badge.svg">
 </p>
 
-
-
 ## About
 
 This is a waifu/husbando bot in developpement. It is unstable and will stay unstable until 1.0
@@ -34,6 +32,16 @@ You can add the bot to your server [using this link](https://discord.com/oauth2/
 
 I'm open to new feature requests, please follow the template given and/or formulate a clear request
 
+## Contribution
+
+If you want to contribute, just try to follow a clear style just as the rest of the code
+
+Try to space your code and follow general programming guidelines
+
+About comments : The code should speak for itself, only comment big processes / dense places.
+
+See [Project](https://github.com/Karitham/WaifuBot/projects/1) to view the current progress of the bot
+
 # Using it for yourself
 
 ## Requirements
@@ -49,16 +57,6 @@ Rename `configExample.json` to `config.json` and change the values according to 
 ## Running the bot
 
 You can run the bot by either doing `go run .` or building ( `go build` ) it and then running the `bot` executable binary.
-
-## Contribution
-
-If you want to contribute, just try to follow a clear style just as the rest of the code
-
-Try to space your code and follow general programming guidelines
-
-About comments : The code should speak for itself, only comment big processes / dense places.
-
-See [Project](https://github.com/Karitham/WaifuBot/projects/1) to view the current progress of the bot
 
 ## Thanks
 
