@@ -5,7 +5,6 @@ import (
 	"bot/query"
 	"context"
 	"fmt"
-	"log"
 	"math/rand"
 	"strconv"
 	"strings"
@@ -33,15 +32,21 @@ func BotRun(cf config.ConfJSONStruct) {
 	conf = cf
 
 	// init the client
-	client = disgord.New(disgord.Config{BotToken: cf.BotToken})
+	client = disgord.New(
+		disgord.Config{
+			BotToken: cf.BotToken,
+			Presence: &disgord.UpdateStatusPayload{
+				Since: nil,
+				Game: &disgord.Activity{
+					Name: conf.Status,
+					Type: 0,
+				},
+				Status: "online",
+				AFK:    false,
+			},
+		},
+	)
 
-	// Connect the client
-	err := client.Connect(ctx)
-	if err != nil {
-		log.Panicln("There was an error connecting the client: ", err)
-	}
-
-	// Stay connected to discord
 	defer func() {
 		err := client.StayConnectedUntilInterrupted(ctx)
 		if err != nil {
@@ -65,14 +70,7 @@ func BotRun(cf config.ConfJSONStruct) {
 		reply, // call reply func
 	) // handles copy
 
-	// Set bot status
-	er := client.UpdateStatusString(conf.Status)
-	if er != nil {
-		fmt.Println("There was an error updating status: ", er)
-	}
-
 	fmt.Println("The bot is currently running")
-
 }
 
 func reply(s disgord.Session, data *disgord.MessageCreate) {
