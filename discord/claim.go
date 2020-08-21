@@ -11,12 +11,27 @@ import (
 	"github.com/andersfylling/disgord"
 )
 
+// CharStruct handles data for RandomChar function
+type CharStruct struct {
+	ID         int64
+	SiteURL    string
+	LargeImage string
+	Name       []string
+	MediaTitle string
+}
+
 // char currently stored to be claimed
-var char query.CharStruct
+var char = make(map[disgord.Snowflake]CharStruct)
 
 // enableClaim is used to make the new character claimable by the user
-func enableClaim(in query.CharStruct) {
-	char = in
+func enableClaim(data *disgord.MessageCreate, in query.CharStruct) {
+	char[data.Message.ChannelID] = CharStruct{
+		ID:         in.Page.Characters[0].ID,
+		SiteURL:    in.Page.Characters[0].SiteURL,
+		LargeImage: in.Page.Characters[0].Image.Large,
+		Name:       formatCharName(in.Page.Characters[0].Name.Full),
+		MediaTitle: in.Page.Characters[0].Media.Nodes[0].Title.Romaji,
+	}
 }
 
 func drop(data *disgord.MessageCreate) {
@@ -32,12 +47,12 @@ func drop(data *disgord.MessageCreate) {
 		drop(data)
 		return
 	}
-	enableClaim(resp)
-	printDrop(data, resp.Page.Characters[0].Image.Large)
+	enableClaim(data, resp)
+	printDrop(data)
 }
 
-func printDrop(data *disgord.MessageCreate, image string) {
-	// Sends the message
+// Sends the message
+func printDrop(data *disgord.MessageCreate) {
 	_, err := client.CreateMessage(
 		ctx,
 		data.Message.ChannelID,
@@ -46,14 +61,12 @@ func printDrop(data *disgord.MessageCreate, image string) {
 				Title:       "A new character appeared",
 				Description: fmt.Sprintf("use %sclaim to get this character for yourself", conf.Prefix),
 				Image: &disgord.EmbedImage{
-					URL: image,
+					URL: char[data.Message.ChannelID].LargeImage,
 				},
 				Footer: &disgord.EmbedFooter{
 					Text: fmt.Sprintf(
 						"This characters initials are : %s",
-						formatCharInitials(
-							getCharInitials(char.Page.Characters[0].Name.Full),
-						),
+						getCharInitials(char[data.Message.ChannelID].Name),
 					),
 				},
 				Color: 0xF2FF2E,
@@ -65,33 +78,36 @@ func printDrop(data *disgord.MessageCreate, image string) {
 	}
 }
 
-func formatCharInitials(initials []string) (formatted string) {
-	for _, v := range initials {
-		formatted = formatted + v + "."
+func formatCharName(c string) (name []string) {
+	for _, v := range strings.Split(c, " ") {
+		if len(v) > 0 {
+			name = append(name, v)
+		}
 	}
 	return
 }
 
-func getCharInitials(name string) (initials []string) {
-	for _, v := range strings.Split(strings.TrimSpace(name), " ") {
-		if len(v) > 0 {
-			initials = append(initials, strings.ToUpper(string(v[0])))
-		}
+func getCharInitials(name []string) (initials string) {
+	for _, v := range name {
+		initials = initials + strings.ToUpper(string(v[0])) + "."
 	}
 	return
 }
 
 // claim is used to claim a waifu and add it to your database
 func claim(data *disgord.MessageCreate, args []string) {
-	if len(args) > 0 && char.Page.Characters != nil {
-		if strings.EqualFold(strings.Join(args, " "), char.Page.Characters[0].Name.Full) {
+	if len(args) > 0 && char[data.Message.ChannelID].Name != nil {
+		if strings.EqualFold(
+			strings.Join(args, " "),
+			strings.Join(char[data.Message.ChannelID].Name, " "),
+		) {
 			// Add to db
 			database.InputChar{
 				UserID: data.Message.Author.ID,
 				CharList: database.CharLayout{
-					ID:    char.Page.Characters[0].ID,
-					Name:  char.Page.Characters[0].Name.Full,
-					Image: char.Page.Characters[0].Image.Large,
+					ID:    char[data.Message.ChannelID].ID,
+					Name:  strings.Join(char[data.Message.ChannelID].Name, " "),
+					Image: char[data.Message.ChannelID].LargeImage,
 				},
 			}.AddChar()
 
@@ -105,8 +121,8 @@ func claim(data *disgord.MessageCreate, args []string) {
 				"Well done %s, you claimed %s\n"+
 					"It appears in :\n- %s",
 				data.Message.Author.Username,
-				char.Page.Characters[0].Name.Full,
-				char.Page.Characters[0].Media.Nodes[0].Title.Romaji,
+				strings.Join(char[data.Message.ChannelID].Name, " "),
+				char[data.Message.ChannelID].MediaTitle,
 			)
 
 			_, err := client.CreateMessage(
@@ -115,11 +131,11 @@ func claim(data *disgord.MessageCreate, args []string) {
 				&disgord.CreateMessageParams{
 					Embed: &disgord.Embed{
 						Title:       "Claim successfull",
-						URL:         char.Page.Characters[0].SiteURL,
+						URL:         char[data.Message.ChannelID].SiteURL,
 						Description: desc,
 						Thumbnail:   &disgord.EmbedThumbnail{URL: avatar},
 						Image: &disgord.EmbedImage{
-							URL: char.Page.Characters[0].Image.Large,
+							URL: char[data.Message.ChannelID].LargeImage,
 						},
 						Timestamp: data.Message.Timestamp,
 						Color:     0xFF924B,
@@ -130,7 +146,7 @@ func claim(data *disgord.MessageCreate, args []string) {
 				fmt.Println("There was an error claiming character: ", err)
 			}
 			// Reset the char value
-			char = query.CharStruct{}
+			char[data.Message.ChannelID] = CharStruct{}
 		} else {
 			resp, err := client.CreateMessage(
 				ctx,

@@ -82,25 +82,25 @@ func reply(s disgord.Session, data *disgord.MessageCreate) {
 		search(data, args)
 	case "favourite", "favorite", "f":
 		favourite(data, args)
-		incDropper(data) // used to drop waifus
+		incDropper(data)
 	case "trendinganimes", "ta":
 		trendingAnime(data, args)
-		incDropper(data) // used to drop waifus
+		incDropper(data)
 	case "searchanime", "sa":
 		searchAnime(data, args)
-		incDropper(data) // used to drop waifus
+		incDropper(data)
 	case "give", "g":
 		giveChar(data, args)
-		incDropper(data) // used to drop waifus
+		incDropper(data)
 	case "quote", "q":
 		quote(data, args)
-		incDropper(data) // used to drop waifus
+		incDropper(data)
 	case "profile", "p":
 		profile(data)
-		incDropper(data) // used to drop waifus
+		incDropper(data)
 	case "roll", "r":
 		roll(data)
-		incDropper(data) // used to drop waifus
+		incDropper(data)
 	case "list", "l":
 		list(data, args)
 	case "invite":
