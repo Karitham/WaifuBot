@@ -39,9 +39,9 @@ func BotRun(cf config.ConfJSONStruct) {
 				Since: nil,
 				Game: &disgord.Activity{
 					Name: conf.Status,
-					Type: 0,
+					Type: disgord.ActivityTypeGame,
 				},
-				Status: "online",
+				Status: disgord.StatusOnline,
 				AFK:    false,
 			},
 		},

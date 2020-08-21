@@ -74,7 +74,9 @@ func formatCharInitials(initials []string) (formatted string) {
 
 func getCharInitials(name string) (initials []string) {
 	for _, v := range strings.Split(strings.TrimSpace(name), " ") {
-		initials = append(initials, strings.ToUpper(string(v[0])))
+		if len(v) > 0 {
+			initials = append(initials, strings.ToUpper(string(v[0])))
+		}
 	}
 	return
 }

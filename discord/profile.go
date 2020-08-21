@@ -48,7 +48,7 @@ func profile(data *disgord.MessageCreate) {
 }
 
 // Format Description
-func desc(db database.OutputStruct) string {
+func desc(db database.UserDataStruct) string {
 	return fmt.Sprintf(
 		`
 		%s

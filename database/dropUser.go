@@ -9,10 +9,10 @@ import (
 )
 
 // DropUser a user via USER ID
-func (input InputChar) DropUser() mongo.DeleteResult {
-	deleteOneResult, err := Collection.DeleteOne(context.TODO(), bson.M{"UserID": input.UserID})
+func (input InputChar) DropUser() (deletedResult *mongo.DeleteResult) {
+	deletedResult, err := Collection.DeleteOne(context.TODO(), bson.M{"UserID": input.UserID})
 	if err != nil {
 		fmt.Println(err)
 	}
-	return *deleteOneResult
+	return
 }

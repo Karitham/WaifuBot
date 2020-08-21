@@ -66,7 +66,7 @@ func formatListEmbed(avatar string, totalPages int, desc string, user *disgord.U
 	}
 }
 
-func formatDescList(page int, charList database.OutputStruct) (desc string) {
+func formatDescList(page int, charList database.UserDataStruct) (desc string) {
 
 	// Check if the list is empty, if not, return a formatted description
 	if len(charList.Waifus) >= 0 {

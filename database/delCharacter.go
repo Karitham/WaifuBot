@@ -17,7 +17,7 @@ type DelWaifuStruct struct {
 }
 
 // DelChar removes a waifu from the database
-func (input DelWaifuStruct) DelChar() bool {
+func (input DelWaifuStruct) DelChar() (WaifuWasRemoved bool) {
 	var decoded bson.M
 
 	// Find the character and delete it

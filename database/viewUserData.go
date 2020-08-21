@@ -10,8 +10,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-// OutputStruct is a representation of the data inside the database, it's used to retrieve data
-type OutputStruct struct {
+// UserDataStruct is a representation of the data inside the database, it's used to retrieve data
+type UserDataStruct struct {
 	ID            int          `bson:"_id"`
 	Quote         string       `bson:"Quote,omitempty"`
 	Favourite     CharLayout   `bson:"Favourite,omitempty"`
@@ -28,14 +28,13 @@ type CharLayout struct {
 }
 
 // ViewUserData returns a list of waifus the user has collected
-func ViewUserData(id disgord.Snowflake) OutputStruct {
-	var output OutputStruct
+func ViewUserData(id disgord.Snowflake) (userData UserDataStruct) {
 	bytesWaifu, err := Collection.FindOne(context.TODO(), bson.M{"_id": id}).DecodeBytes()
 	if err != mongo.ErrNoDocuments {
-		err = bson.Unmarshal(bytesWaifu, &output)
-		if err != bson.ErrDecodeToNil && err != nil {
-			fmt.Println(err)
+		er := bson.Unmarshal(bytesWaifu, &userData)
+		if er != bson.ErrDecodeToNil && err != nil {
+			fmt.Println(er)
 		}
 	}
-	return output
+	return
 }
