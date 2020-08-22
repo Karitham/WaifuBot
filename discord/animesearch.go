@@ -15,8 +15,8 @@ func searchAnime(data *disgord.MessageCreate, args CmdArguments) {
 		if queryErr == nil {
 			desc := fmt.Sprintf(
 				"I found the anime ID %d.\n "+
-					"This anime is %s."+
-					"Description : %s...\n ",
+					"This anime is %s.\n"+
+					"\n%s...\n ",
 				resp.Media.ID,
 				strings.ToLower(resp.Media.Status),
 				formatDescAnimeSearch(resp.Media.Description),
