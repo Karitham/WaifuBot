@@ -3,13 +3,14 @@ package database
 import (
 	"context"
 	"fmt"
+
 	"github.com/andersfylling/snowflake/v4"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// InputChar represents how to send data to the database
+// InputClaimChar represents how to send data to the database
 type InputClaimChar struct {
 	UserID   snowflake.Snowflake `bson:"_id"`
 	CharList CharLayout

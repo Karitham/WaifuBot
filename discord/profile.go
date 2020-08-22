@@ -10,27 +10,22 @@ import (
 
 func profile(data *disgord.MessageCreate) {
 	var user disgord.User
+	var avatar string
+	var name string
 
 	// If a user is mentioned, check the users profile instead
 	if data.Message.Mentions != nil {
 		user = *data.Message.Mentions[0]
+		avatar = getUserAvatar(data.Message.Mentions[0])
+		name = data.Message.Mentions[0].Username
 	} else {
 		user = *data.Message.Author
+		avatar = getUserAvatar(data.Message.Author)
+		name = user.Username
 	}
 
 	// Retrieve user information from database
 	db := database.ViewUserData(user.ID)
-	avatar := getUserAvatar(data.Message.Author)
-	name := user.Username
-
-	// Verifies if the user in question is the author or someone mentioned.
-	if data.Message.Mentions != nil {
-		avatar = getUserAvatar(data.Message.Mentions[0])
-		name = data.Message.Mentions[0].Username
-	} else {
-		avatar = getUserAvatar(data.Message.Author)
-		name = user.Username
-	}
 
 	// Send message
 	_, err := client.CreateMessage(
@@ -100,7 +95,7 @@ func profileHelp(data *disgord.MessageCreate) {
 			Embed: &disgord.Embed{
 				Title: "Profile Help || alias p",
 				Description: fmt.Sprintf(
-					"This is the help section for the Profile functionnality\n\n"+
+					"This is the help section for the Profile function\n\n"+
 						"The Profile option displays the profile of the concerned user.\n"+
 						"Use it like so :\n"+
 						"`%sprofile <@User>`\n"+

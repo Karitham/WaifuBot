@@ -58,8 +58,8 @@ func printDrop(data *disgord.MessageCreate) {
 		data.Message.ChannelID,
 		&disgord.CreateMessageParams{
 			Embed: &disgord.Embed{
-				Title:       "A new character appeared ! Can you guess who it is ?",
-				Description: fmt.Sprintf("use %sclaim to get this character for yourself", conf.Prefix),
+				Title:       "A new character appeared !",
+				Description: fmt.Sprintf("Can you guess who it is ?\nUse %sclaim to get this character for yourself", conf.Prefix),
 				Image: &disgord.EmbedImage{
 					URL: char[data.Message.ChannelID].LargeImage,
 				},
