@@ -4,14 +4,14 @@ import (
 	"bot/database"
 	"bot/query"
 	"fmt"
-
 	"github.com/andersfylling/disgord"
 )
 
 func giveChar(data *disgord.MessageCreate, args CmdArguments) {
-	// Verify if give is valid, also deletes the character from User1's database if valid
+	// Verify if user possesses the Waifu he wants to give, also deletes the character from his database if valid
 	desc, valid := validGive(data, args)
 
+	// Get the author of the database
 	avatar := getUserAvatar(data.Message.Author)
 
 	if valid {
@@ -21,13 +21,13 @@ func giveChar(data *disgord.MessageCreate, args CmdArguments) {
 			fmt.Println(err)
 		}
 
-		// Add the char to the mentionned user's database
-		database.InputChar{
+		// Add the char to the mentioned user's database
+		database.InputClaimChar{
 			UserID: data.Message.Mentions[0].ID,
 			CharList: database.CharLayout{
 				ID:    resp.Character.ID,
-				Image: resp.Character.Image.Large,
 				Name:  resp.Character.Name.Full,
+				Image: resp.Character.Image.Large,
 			}}.AddChar()
 
 		// Send confirmation Message
@@ -36,9 +36,9 @@ func giveChar(data *disgord.MessageCreate, args CmdArguments) {
 			data.Message.ChannelID,
 			&disgord.CreateMessageParams{
 				Embed: &disgord.Embed{
-					Title:       "Give Waifu Succeded",
+					Title:       "Give Waifu Succeeded",
 					Thumbnail:   &disgord.EmbedThumbnail{URL: avatar},
-					Description: fmt.Sprintf("%s gave %s to %s", data.Message.Author.Username, resp.Character.Name.Full, data.Message.Mentions[0].Username),
+					Description: fmt.Sprintf("%s gave %s to %s.", data.Message.Author.Username, resp.Character.Name.Full, data.Message.Mentions[0].Username),
 					Image:       &disgord.EmbedImage{URL: resp.Character.Image.Large},
 					Timestamp:   data.Message.Timestamp,
 					Color:       0x43e99a,
@@ -46,7 +46,7 @@ func giveChar(data *disgord.MessageCreate, args CmdArguments) {
 			},
 		)
 		if er != nil {
-			fmt.Println("There was an error giving a character: ", er)
+			fmt.Println("There was an error giving the character: ", er)
 		}
 	} else {
 		// Send message
@@ -70,7 +70,7 @@ func giveChar(data *disgord.MessageCreate, args CmdArguments) {
 	}
 }
 
-// Verify if give is valid, also deletes the character from User1's database
+// Verify if user possesses the Waifu he wants to give, also deletes the character from his database if valid
 func validGive(data *disgord.MessageCreate, arg CmdArguments) (desc string, isValid bool) {
 	if len(arg) > 0 {
 		resp := arg.ParseArgToSearch()
@@ -88,6 +88,7 @@ func validGive(data *disgord.MessageCreate, arg CmdArguments) (desc string, isVa
 	return "Please enter arguments,\nRefer to help to see how to use this command", false
 }
 
+// Help function for Give
 func giveCharHelp(data *disgord.MessageCreate) {
 	_, err := client.CreateMessage(
 		ctx,
@@ -96,7 +97,8 @@ func giveCharHelp(data *disgord.MessageCreate) {
 			Embed: &disgord.Embed{
 				Title: "Give Help || alias g",
 				Description: fmt.Sprintf(
-					"This is the help for the give functionnality\n\n"+
+					"This is the help for the give functionality\n\n"+
+						"This permits you to give one of your beloved waifus to one of your friends.\n"+
 						"You can give a waifu to another user using the following syntax :\n"+
 						"`%sgive ID @User`",
 					conf.Prefix,
