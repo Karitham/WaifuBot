@@ -58,8 +58,8 @@ func printDrop(data *disgord.MessageCreate) {
 		data.Message.ChannelID,
 		&disgord.CreateMessageParams{
 			Embed: &disgord.Embed{
-				Title:       "A new character appeared",
-				Description: fmt.Sprintf("use %sclaim to get this character for yourself", conf.Prefix),
+				Title:       "A new character appeared !",
+				Description: fmt.Sprintf("Can you guess who it is ?\nUse %sclaim to get this character for yourself", conf.Prefix),
 				Image: &disgord.EmbedImage{
 					URL: char[data.Message.ChannelID].LargeImage,
 				},
@@ -94,7 +94,7 @@ func getCharInitials(name []string) (initials string) {
 	return
 }
 
-// claim is used to claim a waifu and add it to your database
+// Claim is used to claim a waifu and add it to your database
 func claim(data *disgord.MessageCreate, args []string) {
 	if len(args) > 0 && char[data.Message.ChannelID].Name != nil {
 		if strings.EqualFold(
@@ -102,7 +102,7 @@ func claim(data *disgord.MessageCreate, args []string) {
 			strings.Join(char[data.Message.ChannelID].Name, " "),
 		) {
 			// Add to db
-			database.InputChar{
+			database.InputClaimChar{
 				UserID: data.Message.Author.ID,
 				CharList: database.CharLayout{
 					ID:    char[data.Message.ChannelID].ID,
@@ -130,7 +130,7 @@ func claim(data *disgord.MessageCreate, args []string) {
 				data.Message.ChannelID,
 				&disgord.CreateMessageParams{
 					Embed: &disgord.Embed{
-						Title:       "Claim successfull",
+						Title:       "Claim successful",
 						URL:         char[data.Message.ChannelID].SiteURL,
 						Description: desc,
 						Thumbnail:   &disgord.EmbedThumbnail{URL: avatar},
@@ -153,7 +153,7 @@ func claim(data *disgord.MessageCreate, args []string) {
 				data.Message.ChannelID,
 				&disgord.CreateMessageParams{
 					Embed: &disgord.Embed{
-						Title:     "Claim unsucessfull",
+						Title:     "Claim unsuccessful",
 						Timestamp: data.Message.Timestamp,
 						Color:     0x626868,
 					},

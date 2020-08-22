@@ -164,7 +164,7 @@ func deleteMessage(resp *disgord.Message, sleep time.Duration) {
 		resp.ID,
 	)
 	if err != nil {
-		fmt.Println("error deleting message :", err)
+		fmt.Println("Error deleting message :", err)
 	}
 }
 
