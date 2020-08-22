@@ -11,17 +11,26 @@ import (
 func profile(data *disgord.MessageCreate) {
 	var user disgord.User
 
-	// If a user is mentionned, check the users profile instead
+	// If a user is mentioned, check the users profile instead
 	if data.Message.Mentions != nil {
 		user = *data.Message.Mentions[0]
 	} else {
 		user = *data.Message.Author
 	}
 
-	// Setrieve user information from database
+	// Retrieve user information from database
 	db := database.ViewUserData(user.ID)
-
 	avatar := getUserAvatar(data.Message.Author)
+	name := user.Username
+
+	// Verifies if the user in question is the author or someone mentioned.
+	if data.Message.Mentions != nil {
+		avatar = getUserAvatar(data.Message.Mentions[0])
+		name = data.Message.Mentions[0].Username
+	} else {
+		avatar = getUserAvatar(data.Message.Author)
+		name = user.Username
+	}
 
 	// Send message
 	_, err := client.CreateMessage(
@@ -29,7 +38,7 @@ func profile(data *disgord.MessageCreate) {
 		data.Message.ChannelID,
 		&disgord.CreateMessageParams{
 			Embed: &disgord.Embed{
-				Title: data.Message.Author.Username,
+				Title: name,
 				Thumbnail: &disgord.EmbedThumbnail{
 					URL: avatar,
 				},
@@ -47,7 +56,7 @@ func profile(data *disgord.MessageCreate) {
 	}
 }
 
-// Format Description
+// Format description
 func desc(db database.UserDataStruct) string {
 	return fmt.Sprintf(
 		`
@@ -82,6 +91,7 @@ func quoteDesc(quote string) string {
 	)
 }
 
+// Help function for Profile
 func profileHelp(data *disgord.MessageCreate) {
 	_, err := client.CreateMessage(
 		ctx,
@@ -90,12 +100,12 @@ func profileHelp(data *disgord.MessageCreate) {
 			Embed: &disgord.Embed{
 				Title: "Profile Help || alias p",
 				Description: fmt.Sprintf(
-					"This is the help for the Profile functionnality\n\n"+
-						"Profile displays the profile of the concerned user.\n"+
+					"This is the help section for the Profile functionnality\n\n"+
+						"The Profile option displays the profile of the concerned user.\n"+
 						"Use it like so :\n"+
 						"`%sprofile <@User>`\n"+
 						"(fields enclosed in <> are optionals)\n"+
-						"You can tag a user to see his list too",
+						"You can tag a user to see his profile.",
 					conf.Prefix,
 				),
 				Footer: &disgord.EmbedFooter{
