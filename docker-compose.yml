@@ -5,8 +5,10 @@ services:
   # Setup WaifuBot service
   waifubot:
     image: karithamdocker/go-waifubot:latest
+    restart: always
     container_name: waifubot
-    # Bind the config file host:docker
+
+    # Bind the config file <host:docker>
     volumes:
       - "./config.json:/home/waifubot/config.json"
 
@@ -19,13 +21,14 @@ services:
 
   # Setup mongoDB service
   waifudb:
-    image: bitnami/mongodb:latest
+    image: mongo:latest
+    restart: always
     container_name: waifudb
 
     # Bind the database
     volumes:
-      - "/var/lib/mongodb:/bitnami/mongodb"
+      - "/data/db:/data/db"
 
     # Interface mongo ports
     ports:
-      - "127.0.0.1:27017:27017"
+      - "127.0.0.1:37017:27017"
