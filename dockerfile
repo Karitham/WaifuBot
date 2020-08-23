@@ -1,4 +1,4 @@
-FROM alpine
+FROM alpine:latest
 
 # Set a directory for the app
 WORKDIR /home/waifubot
