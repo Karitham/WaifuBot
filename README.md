@@ -1,7 +1,11 @@
 # Waifu Bot
 
 <p align="center">
-  <img src="https://github.com/Karitham/WaifuBot/workflows/golangci-lint/badge.svg">
+  <img alt="Travis (.com)" src="https://img.shields.io/travis/com/karitham/waifubot?style=for-the-badge">
+  
+  <img alt="Docker Pulls" src="https://img.shields.io/docker/pulls/karithamdocker/go-waifubot?style=for-the-badge">
+
+  <img alt="Docker Image Size (latest by date)" src="https://img.shields.io/docker/image-size/karithamdocker/go-waifubot?style=for-the-badge">
 </p>
 
 ## About
@@ -42,7 +46,23 @@ About comments : The code should speak for itself, only comment big processes / 
 
 See [Project](https://github.com/Karitham/WaifuBot/projects/1) to view the current progress of the bot
 
-# Using it for yourself
+# Deploying Yourself
+
+## Requirements
+
+- [Docker](https://docs.docker.com/get-docker/)
+- [docker-compose](https://docs.docker.com/compose/install/)
+- [A discord bot token](discordapp.com/developers)
+
+## Setup
+
+Rename `configExample.json` to `config.json` and change the values according to your needs
+
+## Run
+
+`docker-compose up -d`
+
+# Developpement
 
 ## Requirements
 
@@ -57,24 +77,6 @@ Rename `configExample.json` to `config.json` and change the values according to 
 ## Run
 
 You can run the bot by either doing `go run .` or building ( `go build` ) it and then running the `bot` executable binary.
-
-# Docker
-
-## Requirements
-
-- Docker
-- A working [MongoDB](https://mongodb.com) database / URL to a cluster
-- A [discord bot token](discordapp.com/developers)
-
-## Setup
-
-Rename `configExample.json` to `config.json` and change the values according to your needs
-
-Create a `config.json` file in *~/WaifuBot/Config.json* looking like `configExample.json` but replacing with your own values
-
-## Run
-
-`docker run --network host -d -v ~/WaifuBot/config.json:/home/waifubot/config.json --name waifubot --restart always karithamdocker/go-waifubot`
 
 # Thanks
 
