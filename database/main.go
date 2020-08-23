@@ -1,10 +1,11 @@
 package database
 
 import (
-	"bot/config"
 	"context"
 	"fmt"
 	"log"
+
+	"github.com/Karitham/WaifuBot/config"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"

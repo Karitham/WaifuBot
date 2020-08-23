@@ -1,9 +1,9 @@
 package main
 
 import (
-	"bot/config"
-	"bot/database"
-	"bot/discord"
+	"github.com/Karitham/WaifuBot/config"
+	"github.com/Karitham/WaifuBot/database"
+	"github.com/Karitham/WaifuBot/discord"
 )
 
 func main() {
