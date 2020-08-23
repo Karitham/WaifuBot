@@ -1,5 +1,5 @@
 # Version to use of docker-compose
-version: "3.8"
+version: "3"
 
 services:
   # Setup WaifuBot service
