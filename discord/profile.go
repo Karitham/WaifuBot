@@ -1,9 +1,10 @@
 package discord
 
 import (
-	"bot/database"
 	"fmt"
 	"time"
+
+	"github.com/Karitham/WaifuBot/database"
 
 	"github.com/andersfylling/disgord"
 )

@@ -13,4 +13,4 @@ RUN go build -i
 EXPOSE 27017 
 
 # Run the app
-CMD [ "./bot" ]
+CMD [ "./WaifuBot" ]

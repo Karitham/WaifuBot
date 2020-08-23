@@ -1,14 +1,15 @@
 package discord
 
 import (
-	"bot/config"
-	"bot/query"
 	"context"
 	"fmt"
 	"math/rand"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/Karitham/WaifuBot/config"
+	"github.com/Karitham/WaifuBot/query"
 
 	"github.com/andersfylling/disgord"
 	"github.com/andersfylling/disgord/std"
