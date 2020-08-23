@@ -1,5 +1,5 @@
 # Version to use of docker-compose
-version: "3"
+version: "3.8"
 
 services:
   # Setup WaifuBot service
@@ -8,9 +8,7 @@ services:
     container_name: waifubot
     # Bind the config file host:docker
     volumes:
-      - type: bind
-        source: ./config.json
-        target: /home/waifubot/config.json
+      - "./config.json:/home/waifubot/config.json"
 
     # Interface mongo ports
     network_mode: host
@@ -26,9 +24,7 @@ services:
 
     # Bind the database
     volumes:
-      - type: bind
-        source: /var/lib/mongodb
-        target: /data/db
+      - "/var/lib/mongodb:/data/db"
 
     # Interface mongo ports
     ports:
