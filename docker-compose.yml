@@ -1,26 +1,20 @@
 version: "3.8"
 
 services:
-  waifubot:
+  bot:
     image: karithamdocker/go-waifubot:latest
     restart: always
-    container_name: waifubot
-
+    container_name: WaifuBot
     volumes:
       - "./config.json:/home/waifubot/config.json"
-
-    network_mode: host
-
     depends_on:
-      - waifudb
+      - db
 
-  waifudb:
+  db:
     image: mongo:latest
     restart: always
-    container_name: waifudb
-
+    container_name: WaifuDB
     volumes:
       - "/data/db:/data/db"
-
     ports:
-      - "127.0.0.1:27017:27017"
+      - "27017:27017"
