@@ -54,10 +54,28 @@ See [Project](https://github.com/Karitham/WaifuBot/projects/1) to view the curre
 
 Rename `configExample.json` to `config.json` and change the values according to your needs
 
-## Running the bot
+## Run
 
 You can run the bot by either doing `go run .` or building ( `go build` ) it and then running the `bot` executable binary.
 
-## Thanks
+# Docker
+
+## Requirements
+
+- Docker
+- A working [MongoDB](https://mongodb.com) database / URL to a cluster
+- A [discord bot token](discordapp.com/developers)
+
+## Setup
+
+Rename `configExample.json` to `config.json` and change the values according to your needs
+
+Create a `config.json` file in *~/WaifuBot/Config.json* looking like `configExample.json` but replacing with your own values
+
+## Run
+
+`docker run --network host -d -v ~/WaifuBot/config.json:/home/waifubot/config.json --name waifubot --restart always karithamdocker/go-waifubot`
+
+# Thanks
 
 Much thanks to people from the gopher discord for all the help with go and Anders for its library.
