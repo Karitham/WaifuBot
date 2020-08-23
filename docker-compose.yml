@@ -1,34 +1,26 @@
-# Version to use of docker-compose
 version: "3.8"
 
 services:
-  # Setup WaifuBot service
   waifubot:
     image: karithamdocker/go-waifubot:latest
     restart: always
     container_name: waifubot
 
-    # Bind the config file <host:container>
     volumes:
       - "./config.json:/home/waifubot/config.json"
 
-    # Interface mongo ports
     network_mode: host
 
-    # Depends on the db
     depends_on:
       - waifudb
 
-  # Setup mongoDB service
   waifudb:
     image: mongo:latest
     restart: always
     container_name: waifudb
 
-    # Bind the database
     volumes:
       - "/data/db:/data/db"
 
-    # Interface mongo ports
     ports:
       - "127.0.0.1:27017:27017"

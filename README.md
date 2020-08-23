@@ -62,19 +62,17 @@ You can run the bot by either doing `go run .` or building ( `go build` ) it and
 
 ## Requirements
 
-- Docker
-- A working [MongoDB](https://mongodb.com) database / URL to a cluster
-- A [discord bot token](discordapp.com/developers)
+- [Docker](https://docs.docker.com/get-docker/)
+- [docker-compose](https://docs.docker.com/compose/install/)
+- [A discord bot token](discordapp.com/developers)
 
 ## Setup
 
 Rename `configExample.json` to `config.json` and change the values according to your needs
 
-Create a `config.json` file in *~/WaifuBot/Config.json* looking like `configExample.json` but replacing with your own values
-
 ## Run
 
-`docker run --network host -d -v ~/WaifuBot/config.json:/home/waifubot/config.json --name waifubot --restart always karithamdocker/go-waifubot`
+`docker-compose up -d`
 
 # Thanks
 
