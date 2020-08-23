@@ -24,7 +24,7 @@ services:
 
     # Bind the database
     volumes:
-      - "/var/lib/mongodb:/data/db"
+      - "/var/lib/mongodb:/bitnami/mongodb"
 
     # Interface mongo ports
     ports:
