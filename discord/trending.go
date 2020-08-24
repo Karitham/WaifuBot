@@ -31,6 +31,9 @@ func trendingAnime(data *disgord.MessageCreate, args []string) {
 				Title:       "Animes Currently Trending",
 				Description: desc,
 				Color:       0x0e6b0e,
+				Footer: &disgord.EmbedFooter{
+					Text: "This list is created from Anilist's website.",
+				},
 			},
 		},
 	)
