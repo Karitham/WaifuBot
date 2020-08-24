@@ -51,7 +51,7 @@ See [Project](https://github.com/Karitham/WaifuBot/projects/1) to view the curre
 ## Requirements
 
 - [Docker](https://docs.docker.com/get-docker/)
-- [docker-compose](https://docs.docker.com/compose/install/)
+- [docker-compose](https://docs.docker.com/compose/install/) (latest version recommended)
 - [A discord bot token](discordapp.com/developers)
 
 ## Setup
@@ -76,18 +76,6 @@ Rename `configExample.json` to `config.json` and change the values according to 
 ## Run
 
 `docker-compose up -d`
-
-# Developpement
-
-## Requirements
-
-- A recent [Golang](https://golang.org/) version
-- A working [MongoDB](https://mongodb.com) database / URL to a cluster
-- A [discord bot token](discordapp.com/developers)
-
-## Run
-
-You can run the bot by either doing `go run .` or building ( `go build` ) it and then running the `bot` executable binary.
 
 # Thanks
 
