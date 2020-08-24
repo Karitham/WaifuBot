@@ -61,7 +61,7 @@ func printDrop(data *disgord.MessageCreate) {
 			Embed: &disgord.Embed{
 				Title:       "A new character appeared !",
 				Description: fmt.Sprintf("Can you guess who it is ?\nUse %sclaim to get this character for yourself", conf.Prefix),
-				Image: &disgord.EmbedImage{
+				Thumbnail: &disgord.EmbedThumbnail{
 					URL: char[data.Message.ChannelID].LargeImage,
 				},
 				Footer: &disgord.EmbedFooter{
@@ -114,8 +114,6 @@ func claim(data *disgord.MessageCreate, args []string) {
 
 			// Increment claimed waifu
 			database.ClaimIncrementStruct{UserID: data.Message.Author.ID, Increment: 1}.ClaimIncrement()
-			// Send confirmation message
-			avatar := getUserAvatar(data.Message.Author)
 
 			// Create desc
 			desc := fmt.Sprintf(
@@ -134,10 +132,7 @@ func claim(data *disgord.MessageCreate, args []string) {
 						Title:       "Claim successful",
 						URL:         char[data.Message.ChannelID].SiteURL,
 						Description: desc,
-						Thumbnail:   &disgord.EmbedThumbnail{URL: avatar},
-						Image: &disgord.EmbedImage{
-							URL: char[data.Message.ChannelID].LargeImage,
-						},
+						Thumbnail:   &disgord.EmbedThumbnail{URL: char[data.Message.ChannelID].LargeImage},
 						Timestamp: data.Message.Timestamp,
 						Color:     0xFF924B,
 					},
