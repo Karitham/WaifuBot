@@ -19,6 +19,9 @@ func list(data *disgord.MessageCreate, args []string) {
 		if err != nil {
 			fmt.Println("There was an error parsing list", err)
 		}
+		if page < 0 {
+			page = 0
+		}
 	}
 
 	user := getUser(data)
@@ -68,7 +71,6 @@ func formatListEmbed(avatar string, totalPages int, desc string, user *disgord.U
 }
 
 func formatDescList(page int, charList database.UserDataStruct) (desc string) {
-
 	// Check if the list is empty, if not, return a formatted description
 	if len(charList.Waifus) >= 0 {
 		for i := 15 * page; i < 15+15*page && i < len(charList.Waifus); i++ {
