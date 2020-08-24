@@ -58,7 +58,7 @@ See [Project](https://github.com/Karitham/WaifuBot/projects/1) to view the curre
 
 Rename `configExample.json` to `config.json` and change the values according to your needs
 
-```json
+```js
 {
   "Prefix": "w.", // This is the prefix for the bot
   "Bot_Token": "thIsIsaDiscorDToken.Xw41Og.Ix0IhJlhgEbEyK_CJwrGgucn9rk", // Place your discord bot token here
