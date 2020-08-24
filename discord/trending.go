@@ -32,7 +32,8 @@ func trendingAnime(data *disgord.MessageCreate, args []string) {
 				Description: desc,
 				Color:       0x0e6b0e,
 				Footer: &disgord.EmbedFooter{
-					Text: "This list is created from Anilist's website.",
+					IconURL: "https://anilist.co/img/icons/favicon-32x32.png",
+					Text: "Trending anime list created from anilist",
 				},
 			},
 		},
