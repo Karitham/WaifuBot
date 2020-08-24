@@ -32,7 +32,7 @@ func roll(data *disgord.MessageCreate) {
 					Title:       resp.Page.Characters[0].Name.Full,
 					URL:         resp.Page.Characters[0].SiteURL,
 					Description: desc,
-					Thumbnail: &disgord.EmbedThumbnail{
+					Image: &disgord.EmbedImage{
 						URL: resp.Page.Characters[0].Image.Large,
 					},
 					Timestamp: data.Message.Timestamp,
