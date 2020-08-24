@@ -6,8 +6,8 @@ import (
 	"github.com/machinebox/graphql"
 )
 
-// AnimeSearchStruct handles data from CharByName queries
-type AnimeSearchStruct struct {
+// MediaSearchStruct handles data from either manga or anime searches
+type MediaSearchStruct struct {
 	Media struct {
 		SiteURL   string `json:"siteUrl"`
 		Status    string `json:"status"`
@@ -22,12 +22,12 @@ type AnimeSearchStruct struct {
 	} `json:"Media"`
 }
 
-// SearchAnime makes a query to the anilist API based on the name you input
-func SearchAnime(name string) (response AnimeSearchStruct, err error) {
+// SearchMedia makes a query to the anilist API based on the name you input
+func SearchMedia(name string, format string) (response MediaSearchStruct, err error) {
 	// build request
 	req := graphql.NewRequest(`
-	query ($name: String) {
-		Media(search: $name, type: ANIME) {
+	query ($name: String, $type: MediaType = ANIME) {
+		Media(search: $name, type: $type) {
 		  siteUrl
 		  status
 		  meanScore
@@ -44,6 +44,7 @@ func SearchAnime(name string) (response AnimeSearchStruct, err error) {
 
 	// Add variables
 	req.Var("name", name)
+	req.Var("type", format)
 
 	// Make request
 	err = graphql.NewClient(graphURL).Run(context.Background(), req, &response)

@@ -14,10 +14,14 @@ func help(data *disgord.MessageCreate, args []string) {
 			searchHelp(data)
 		case "favourite", "favorite", "f":
 			favouriteHelp(data)
-		case "trendinganimes", "ta":
+		case "trendinganime", "ta":
 			trendingAnimeHelp(data)
+		case "trendingmanga", "tm":
+			trendingMangaHelp(data)
 		case "searchanime", "sa":
 			searchAnimeHelp(data)
+		case "searchmanga", "sm":
+			searchMangaHelp(data)
 		case "give", "g":
 			giveCharHelp(data)
 		case "quote", "q":
@@ -50,7 +54,7 @@ func defaultHelp(data *disgord.MessageCreate) {
 				Description: fmt.Sprintf(
 					"This is the help function.\n\n"+
 						"Use `%shelp functionName` to find out more about each function\n"+
-						"Current available functions : ```\nsearch, favourite, trendingAnime, searchAnime, give, quote, profile, roll, list, invite, claim \n```"+
+						"Current available functions : ```\nsearch, favourite, trendingAnime, trendingManga, searchAnime, searchManga, give, quote, profile, roll, list, invite, claim \n```"+
 						"You can also read the source code here : https://github.com/Karitham/WaifuBot",
 					conf.Prefix,
 				),

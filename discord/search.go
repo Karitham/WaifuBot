@@ -72,12 +72,12 @@ func searchHelp(data *disgord.MessageCreate) {
 	}
 }
 
-func searchAnime(data *disgord.MessageCreate, args CmdArguments) {
+func searchMedia(data *disgord.MessageCreate, format string, args CmdArguments) {
 	// check if there is a search term
 	if len(args) > 0 {
-		resp, queryErr := query.SearchAnime(args.ParseArgToSearch().Name)
+		resp, queryErr := query.SearchMedia(args.ParseArgToSearch().Name, format)
 		if queryErr == nil {
-			desc := fmt.Sprintf("\n%s...\n ", formatDescAnimeSearch(resp.Media.Description))
+			desc := fmt.Sprintf("\n%s...\n ", formatDescMediaSearch(resp.Media.Description))
 			_, err := client.CreateMessage(
 				ctx,
 				data.Message.ChannelID,
@@ -103,7 +103,7 @@ func searchAnime(data *disgord.MessageCreate, args CmdArguments) {
 				},
 			)
 			if err != nil {
-				fmt.Println("There was an error when searching an anime: ", err)
+				fmt.Println("There was an error when sending search anime message: ", err)
 			}
 		} else {
 			_, err := client.SendMsg(ctx, data.Message.ChannelID, queryErr)
@@ -146,8 +146,7 @@ func searchAnimeHelp(data *disgord.MessageCreate) {
 				Footer: &disgord.EmbedFooter{
 					Text: fmt.Sprintf("Help requested by %s", data.Message.Author.Username),
 				},
-				Timestamp: data.Message.Timestamp,
-				Color:     0xeec400,
+				Color: 0xeec400,
 			},
 		},
 	)
@@ -156,7 +155,32 @@ func searchAnimeHelp(data *disgord.MessageCreate) {
 	}
 }
 
-func formatDescAnimeSearch(inputDesc string) (desc string) {
+func searchMangaHelp(data *disgord.MessageCreate) {
+	_, err := client.CreateMessage(
+		ctx,
+		data.Message.ChannelID,
+		&disgord.CreateMessageParams{
+			Embed: &disgord.Embed{
+				Title: "Manga Search Help || alias sm",
+				Description: fmt.Sprintf(
+					"This is the help for search manga functionnality\n\n"+
+						"You can search a manga by its name using the following syntax\n"+
+						"`%ssearchManga Name`\n",
+					conf.Prefix,
+				),
+				Footer: &disgord.EmbedFooter{
+					Text: fmt.Sprintf("Help requested by %s", data.Message.Author.Username),
+				},
+				Color: 0xeec400,
+			},
+		},
+	)
+	if err != nil {
+		fmt.Println("Error sending search manga help: ", err)
+	}
+}
+
+func formatDescMediaSearch(inputDesc string) (desc string) {
 	splitInput := strings.Split(inputDesc, " ")
 	if len(splitInput) <= 40 {
 		desc = strings.Join(splitInput, " ")
