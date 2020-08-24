@@ -96,6 +96,12 @@ func reply(s disgord.Session, data *disgord.MessageCreate) {
 	case "searchmanga", "sm":
 		searchMedia(data, "MANGA", args)
 		incDropper(data)
+	case "trendingmanga", "tm":
+		trendingManga(data, args)
+		incDropper(data)
+	case "searchmanga", "sm":
+		searchManga(data, args)
+		incDropper(data)
 	case "give", "g":
 		giveChar(data, args)
 		incDropper(data)
