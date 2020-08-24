@@ -9,19 +9,16 @@ import (
 // AnimeSearchStruct handles data from CharByName queries
 type AnimeSearchStruct struct {
 	Media struct {
-		ID      int    `json:"id"`
-		SiteURL string `json:"siteUrl"`
-		Title   struct {
+		SiteURL   string `json:"siteUrl"`
+		Status    string `json:"status"`
+		MeanScore int    `json:"meanScore"`
+		Title     struct {
 			Romaji string `json:"romaji"`
 		} `json:"title"`
 		CoverImage struct {
-			Large string `json:"large"`
+			Medium string `json:"medium"`
 		} `json:"coverImage"`
-		Status       string `json:"status"`
-		Episodes     int    `json:"episodes"`
-		Description  string `json:"description"`
-		AverageScore int    `json:"averageScore"`
-		IsAdult      bool   `json:"isAdult"`
+		Description string `json:"description"`
 	} `json:"Media"`
 }
 
@@ -31,19 +28,16 @@ func SearchAnime(name string) (response AnimeSearchStruct, err error) {
 	req := graphql.NewRequest(`
 	query ($name: String) {
 		Media(search: $name, type: ANIME) {
-		  id
 		  siteUrl
+		  status
+		  meanScore
 		  title {
 			romaji
 		  }
 		  coverImage {
-			large
+			medium
 		  }
-		  status
-		  episodes
 		  description
-		  averageScore
-		  isAdult
 		}
 	  }
 	`)

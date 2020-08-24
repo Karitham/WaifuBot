@@ -14,8 +14,9 @@ func invite(data *disgord.MessageCreate) {
 	if err != nil {
 		_, er := data.Message.Reply(ctx, session, err)
 		if er != nil {
-			fmt.Println("Error getting bot url: ", er)
+			fmt.Println("Error sending error message: ", er)
 		}
+		fmt.Println("Error getting bot url: ", err)
 	}
 
 	// Create embed

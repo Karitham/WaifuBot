@@ -1,9 +1,10 @@
 package discord
 
 import (
-	"bot/database"
 	"fmt"
 	"strconv"
+
+	"github.com/Karitham/WaifuBot/database"
 
 	"github.com/andersfylling/disgord"
 )
@@ -29,7 +30,7 @@ func list(data *disgord.MessageCreate, args []string) {
 		data,
 		formatListEmbed(
 			getUserAvatar(&user),
-			len(charList.Waifus)/15,
+			(len(charList.Waifus)-1)/15,
 			formatDescList(page, charList),
 			&user,
 		),

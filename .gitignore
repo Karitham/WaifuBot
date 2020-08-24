@@ -1,6 +1,7 @@
 config*.json
-bot*
+WaifuBot*
 *.xml
+other.yml
 *.iml
 .vscode/*
 *test.go

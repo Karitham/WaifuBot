@@ -1,48 +1,49 @@
 package discord
 
 import (
-	"bot/query"
 	"fmt"
-	"strings"
-
+	"github.com/Karitham/WaifuBot/query"
 	"github.com/andersfylling/disgord"
+	"strings"
 )
 
-func searchAnime(data *disgord.MessageCreate, args CmdArguments) {
+func searchManga(data *disgord.MessageCreate, args CmdArguments) {
 	// check if there is a search term
 	if len(args) > 0 {
-		resp, queryErr := query.SearchAnime(args.ParseArgToSearch().Name)
+		resp, queryErr := query.SearchManga(args.ParseArgToSearch().Name)
 		if queryErr == nil {
-			desc := fmt.Sprintf(
-				"I found the anime ID %d.\n "+
-					"This anime is %s.\n"+
-					"\n%s...\n ",
-				resp.Media.ID,
-				strings.ToLower(resp.Media.Status),
-				formatDescAnimeSearch(resp.Media.Description),
-			)
+			desc := fmt.Sprintf("\n%s...\n ", formatDescMangaSearch(resp.Media.Description))
 			_, err := client.CreateMessage(
 				ctx,
 				data.Message.ChannelID,
 				&disgord.CreateMessageParams{
+					Content: resp.Media.SiteURL,
 					Embed: &disgord.Embed{
 						Title:       resp.Media.Title.Romaji,
 						URL:         resp.Media.SiteURL,
 						Description: desc,
-						Color:       0x225577,
-						Image: &disgord.EmbedImage{
-							URL: resp.Media.CoverImage.Large,
+						Color:       0x1663be,
+						Thumbnail: &disgord.EmbedThumbnail{
+							URL: resp.Media.CoverImage.Medium,
+						},
+						Footer: &disgord.EmbedFooter{
+							IconURL: "https://anilist.co/img/icons/favicon-32x32.png",
+							Text: fmt.Sprintf(
+								"Score : %d%% | Status : %s",
+								resp.Media.MeanScore,
+								resp.Media.Status,
+							),
 						},
 					},
 				},
 			)
 			if err != nil {
-				fmt.Println("There was an error when searching an anime: ", err)
+				fmt.Println("There was an error when searching a manga: ", err)
 			}
 		} else {
 			_, err := client.SendMsg(ctx, data.Message.ChannelID, queryErr)
 			if err != nil {
-				fmt.Println("there was an error sending error message on anime search: ", err)
+				fmt.Println("There was an error trying to send an error message on manga search: ", err)
 			}
 		}
 	} else {
@@ -64,17 +65,17 @@ func searchAnime(data *disgord.MessageCreate, args CmdArguments) {
 
 }
 
-func searchAnimeHelp(data *disgord.MessageCreate) {
+func searchMangaHelp(data *disgord.MessageCreate) {
 	_, err := client.CreateMessage(
 		ctx,
 		data.Message.ChannelID,
 		&disgord.CreateMessageParams{
 			Embed: &disgord.Embed{
-				Title: "Anime Search Help || alias sa",
+				Title: "Manga Search Help || alias sm",
 				Description: fmt.Sprintf(
-					"This is the help for search anime functionnality\n\n"+
-						"You can search an anime by its name using the following syntax\n"+
-						"`%ssearchAnime Name`\n",
+					"This is the help for search manga functionnality\n\n"+
+						"You can search an manga by its name using the following syntax\n"+
+						"`%ssearchManga Name`\n",
 					conf.Prefix,
 				),
 				Footer: &disgord.EmbedFooter{
@@ -86,11 +87,11 @@ func searchAnimeHelp(data *disgord.MessageCreate) {
 		},
 	)
 	if err != nil {
-		fmt.Println("Error sending search anime help: ", err)
+		fmt.Println("Error sending search manga help: ", err)
 	}
 }
 
-func formatDescAnimeSearch(inputDesc string) (desc string) {
+func formatDescMangaSearch(inputDesc string) (desc string) {
 	splitInput := strings.Split(inputDesc, " ")
 	if len(splitInput) <= 40 {
 		desc = strings.Join(splitInput, " ")
@@ -99,3 +100,4 @@ func formatDescAnimeSearch(inputDesc string) (desc string) {
 	}
 	return
 }
+

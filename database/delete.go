@@ -21,7 +21,7 @@ func (input DelWaifuStruct) DelChar() (WaifuWasRemoved bool) {
 	var decoded bson.M
 
 	// Find the character and delete it
-	err := Collection.FindOneAndUpdate(
+	err := collection.FindOneAndUpdate(
 		context.TODO(),
 		bson.D{
 			primitive.E{Key: "_id", Value: input.UserID},
@@ -36,14 +36,18 @@ func (input DelWaifuStruct) DelChar() (WaifuWasRemoved bool) {
 	).Decode(&decoded)
 
 	// If the database found something, returns true
-	switch {
-	case err == mongo.ErrNoDocuments:
+	if err != nil {
+		fmt.Println("There was an error delete waifu :", err)
 		return false
-	case err != nil:
-		fmt.Println(err)
-		return false
-	case err == nil:
-		return true
 	}
-	return false
+	return true
+}
+
+// DropUser a user via USER ID
+func (input InputChar) DropUser() (deletedResult *mongo.DeleteResult) {
+	deletedResult, err := collection.DeleteOne(context.TODO(), bson.M{"UserID": input.UserID})
+	if err != nil {
+		fmt.Println(err)
+	}
+	return
 }

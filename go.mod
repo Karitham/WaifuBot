@@ -1,4 +1,4 @@
-module bot
+module github.com/Karitham/WaifuBot
 
 go 1.14
 

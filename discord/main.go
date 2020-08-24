@@ -1,14 +1,15 @@
 package discord
 
 import (
-	"bot/config"
-	"bot/query"
 	"context"
 	"fmt"
 	"math/rand"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/Karitham/WaifuBot/config"
+	"github.com/Karitham/WaifuBot/query"
 
 	"github.com/andersfylling/disgord"
 	"github.com/andersfylling/disgord/std"
@@ -89,6 +90,12 @@ func reply(s disgord.Session, data *disgord.MessageCreate) {
 	case "searchanime", "sa":
 		searchAnime(data, args)
 		incDropper(data)
+	case "trendingmanga", "tm":
+		trendingManga(data, args)
+		incDropper(data)
+	case "searchmanga", "sm":
+		searchManga(data, args)
+		incDropper(data)
 	case "give", "g":
 		giveChar(data, args)
 		incDropper(data)
@@ -137,6 +144,25 @@ func (args CmdArguments) ParseArgToSearch() query.CharSearchInput {
 		fmt.Println(err)
 	}
 	return query.CharSearchInput{ID: id, Name: arg}
+}
+
+func unknown(data *disgord.MessageCreate) {
+	resp, err := client.CreateMessage(
+		ctx,
+		data.Message.ChannelID,
+		&disgord.CreateMessageParams{
+			Embed: &disgord.Embed{
+				Title:       "Unknown command",
+				Description: fmt.Sprintf("Type %shelp to see the commands available", conf.Prefix),
+				Timestamp:   data.Message.Timestamp,
+				Color:       0xcc0000,
+			},
+		},
+	)
+	if err != nil {
+		fmt.Println("error while creating message :", err)
+	}
+	go deleteMessage(resp, time.Minute)
 }
 
 func incDropper(data *disgord.MessageCreate) {

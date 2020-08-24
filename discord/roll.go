@@ -1,11 +1,12 @@
 package discord
 
 import (
-	"bot/database"
-	"bot/query"
 	"fmt"
 	"math/rand"
 	"time"
+
+	"github.com/Karitham/WaifuBot/database"
+	"github.com/Karitham/WaifuBot/query"
 
 	"github.com/andersfylling/disgord"
 )
@@ -31,7 +32,7 @@ func roll(data *disgord.MessageCreate) {
 					Title:       resp.Page.Characters[0].Name.Full,
 					URL:         resp.Page.Characters[0].SiteURL,
 					Description: desc,
-					Image: &disgord.EmbedImage{
+					Thumbnail: &disgord.EmbedThumbnail{
 						URL: resp.Page.Characters[0].Image.Large,
 					},
 					Timestamp: data.Message.Timestamp,

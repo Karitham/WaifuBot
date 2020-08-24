@@ -1,12 +1,13 @@
 package discord
 
 import (
-	"bot/database"
-	"bot/query"
 	"fmt"
 	"math/rand"
 	"strings"
 	"time"
+
+	"github.com/Karitham/WaifuBot/database"
+	"github.com/Karitham/WaifuBot/query"
 
 	"github.com/andersfylling/disgord"
 )
@@ -58,9 +59,9 @@ func printDrop(data *disgord.MessageCreate) {
 		data.Message.ChannelID,
 		&disgord.CreateMessageParams{
 			Embed: &disgord.Embed{
-				Title:       "A new character appeared ! Can you guess who it is ?",
-				Description: fmt.Sprintf("use %sclaim to get this character for yourself", conf.Prefix),
-				Image: &disgord.EmbedImage{
+				Title:       "A new character appeared !",
+				Description: fmt.Sprintf("Can you guess who it is ?\nUse %sclaim to get this character for yourself", conf.Prefix),
+				Thumbnail: &disgord.EmbedThumbnail{
 					URL: char[data.Message.ChannelID].LargeImage,
 				},
 				Footer: &disgord.EmbedFooter{
@@ -113,8 +114,6 @@ func claim(data *disgord.MessageCreate, args []string) {
 
 			// Increment claimed waifu
 			database.ClaimIncrementStruct{UserID: data.Message.Author.ID, Increment: 1}.ClaimIncrement()
-			// Send confirmation message
-			avatar := getUserAvatar(data.Message.Author)
 
 			// Create desc
 			desc := fmt.Sprintf(
@@ -133,10 +132,7 @@ func claim(data *disgord.MessageCreate, args []string) {
 						Title:       "Claim successful",
 						URL:         char[data.Message.ChannelID].SiteURL,
 						Description: desc,
-						Thumbnail:   &disgord.EmbedThumbnail{URL: avatar},
-						Image: &disgord.EmbedImage{
-							URL: char[data.Message.ChannelID].LargeImage,
-						},
+						Thumbnail:   &disgord.EmbedThumbnail{URL: char[data.Message.ChannelID].LargeImage},
 						Timestamp: data.Message.Timestamp,
 						Color:     0xFF924B,
 					},
