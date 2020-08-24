@@ -19,7 +19,7 @@ func trendingAnime(data *disgord.MessageCreate, args []string) {
 
 	// return a formatted description
 	for i := range res.Page.Media {
-		desc += fmt.Sprintf("`%d` : %s\n", res.Page.Media[i].ID, res.Page.Media[i].Title.UserPreferred)
+		desc += fmt.Sprintln(res.Page.Media[i].Title.Romaji)
 	}
 
 	// Send the message
@@ -28,10 +28,9 @@ func trendingAnime(data *disgord.MessageCreate, args []string) {
 		data.Message.ChannelID,
 		&disgord.CreateMessageParams{
 			Embed: &disgord.Embed{
-				Title:       "Trending Anime List",
+				Title:       "Animes Currently Trending",
 				Description: desc,
-				Timestamp:   data.Message.Timestamp,
-				Color:       0x88ffcc,
+				Color:       0x0e6b0e,
 			},
 		},
 	)

@@ -10,16 +10,9 @@ import (
 type TvTrendingStruct struct {
 	Page struct {
 		Media []struct {
-			ID      int    `json:"id"`
-			SiteURL string `json:"siteUrl"`
-			Title   struct {
-				UserPreferred string `json:"userPreferred"`
+			Title struct {
+				Romaji string `json:"romaji"`
 			}
-			CoverImage struct {
-				Large string `json:"large"`
-			}
-			AverageScore int `json:"averageScore"`
-			Popularity   int `json:"popularity"`
 		}
 	}
 }
@@ -31,23 +24,15 @@ func TrendingSearch() (response TvTrendingStruct, err error) {
 	query {
 		Page(perPage: 10, page: 1) {
 		  media(type: ANIME, sort: [TRENDING_DESC, POPULARITY_DESC]) {
-			id
-			siteUrl
 			title {
-			  userPreferred
+			  romaji
 			}
-			coverImage {
-			  large
-			}
-			averageScore
-			popularity
 		  }
 		}
 	  }
 	  
 	`)
 
-	// Execute query
 	err = graphql.NewClient(graphURL).Run(context.Background(), req, &response)
 	return
 }
