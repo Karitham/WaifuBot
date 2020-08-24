@@ -10,7 +10,7 @@
 
 ## About
 
-This is a waifu/husbando bot in developpement. It is unstable and will stay unstable until 1.0
+This is a waifu/husbando discord bot, it is pretty stable but some commands might change.
 
 It uses [Disgord go lib](github.com/andersfylling/disgord), [Anilist's GraphQL API](https://github.com/AniList/ApiV2-GraphQL-Docs) and [mongoDB](https://mongodb.com)
 
@@ -58,6 +58,21 @@ See [Project](https://github.com/Karitham/WaifuBot/projects/1) to view the curre
 
 Rename `configExample.json` to `config.json` and change the values according to your needs
 
+```json
+{
+  "Prefix": "w.", // This is the prefix for the bot
+  "Bot_Token": "thIsIsaDiscorDToken.Xw41Og.Ix0IhJlhgEbEyK_CJwrGgucn9rk", // Place your discord bot token here
+  "Mongo_URL": "mongodb://db:27017", // This is the mongoDB URI, don't change this unless you know what you are doing
+  "Bot_Status": "WaifuBot | w.help", // This is the status displayed by the bot when running
+  "Max_Character_Roll": 15000, // Mean the roll function can query in the 15000 most popular character. DOn't go higher than 75000
+  "Max_Character_Drop": 5000, // Just like the roll function, but for dropping characters (so they are more popular)
+  "Delete_Illegal_Roll_After": 3, // Delete illegal roll message to have a cleaner chat. Duration in minutes
+  "Delete_Wrong_Claim_After": 1, // Delete wrong claims message. Duration in minute
+  "Time_Between_Rolls": 12, // Time interval between each user roll
+  "Drops_On_Interact": 20 // Lowering this value increases drop rate, the opposite works too
+}
+```
+
 ## Run
 
 `docker-compose up -d`
@@ -69,10 +84,6 @@ Rename `configExample.json` to `config.json` and change the values according to 
 - A recent [Golang](https://golang.org/) version
 - A working [MongoDB](https://mongodb.com) database / URL to a cluster
 - A [discord bot token](discordapp.com/developers)
-
-## Setup
-
-Rename `configExample.json` to `config.json` and change the values according to your needs
 
 ## Run
 

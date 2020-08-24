@@ -29,7 +29,7 @@ type CharLayout struct {
 
 // ViewUserData returns a list of waifus the user has collected
 func ViewUserData(id disgord.Snowflake) (userData UserDataStruct) {
-	bytesWaifu, err := Collection.FindOne(context.TODO(), bson.M{"_id": id}).DecodeBytes()
+	bytesWaifu, err := collection.FindOne(context.TODO(), bson.M{"_id": id}).DecodeBytes()
 	if err != mongo.ErrNoDocuments {
 		er := bson.Unmarshal(bytesWaifu, &userData)
 		if er != bson.ErrDecodeToNil && err != nil {
