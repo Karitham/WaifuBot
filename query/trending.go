@@ -6,8 +6,8 @@ import (
 	"github.com/machinebox/graphql"
 )
 
-// TvTrendingStruct handles data from the queries
-type TvTrendingStruct struct {
+// TrendingMediaStruct handles data from the queries
+type TrendingMediaStruct struct {
 	Page struct {
 		Media []struct {
 			Title struct {
@@ -17,54 +17,22 @@ type TvTrendingStruct struct {
 	}
 }
 
-// TrendingSearch makes a query to the AniList GraphQL API to scrape the 10 best trending animes right now
-func TrendingSearch() (response TvTrendingStruct, err error) {
+// TrendingMediaQuery makes a query to the AniList GraphQL API to scrape the 10 best trending animes right now
+func TrendingMediaQuery(format string) (response TrendingMediaStruct, err error) {
 	// Build request
 	req := graphql.NewRequest(`
-	query {
+	query ($type: MediaType = ANIME) {
 		Page(perPage: 10, page: 1) {
-		  media(type: ANIME, sort: [TRENDING_DESC, POPULARITY_DESC]) {
+		  media(type: $type, sort: [TRENDING_DESC, POPULARITY_DESC]) {
 			title {
 			  romaji
 			}
 		  }
 		}
 	  }
-	  
 	`)
+	req.Var("type", format)
 
 	err = graphql.NewClient(graphURL).Run(context.Background(), req, &response)
 	return
 }
-
-
-// MangaTrendingStruct handles data from the queries
-type MangaTrendingStruct struct {
-	Page struct {
-		Media []struct {
-			Title struct {
-				Romaji string `json:"romaji"`
-			}
-		}
-	}
-}
-
-// MangaTrendingSearch makes a query to the AniList GraphQL API to scrape the 10 best trending manga right now
-func MangaTrendingSearch() (response MangaTrendingStruct, err error) {
-	// Build request
-	req := graphql.NewRequest(`
-	query {
-		Page(perPage: 10, page: 1) {
-		  media(type: MANGA, sort: [TRENDING_DESC, POPULARITY_DESC]) {
-			title {
-			  romaji
-			}
-		  }
-		}
-	  }
-	  
-	`)
-
-	err = graphql.NewClient(graphURL).Run(context.Background(), req, &response)
-	return
-} 
