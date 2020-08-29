@@ -177,7 +177,7 @@ func incDropper(data *disgord.MessageCreate) {
 	// Drop
 	if r == 0 {
 		drop(data)
-		DropIncrement[data.Message.ChannelID] = 0
+		DropIncrement[data.Message.ChannelID] = conf.DropsOnInteract
 	}
 }
 
