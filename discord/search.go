@@ -77,7 +77,7 @@ func searchMedia(data *disgord.MessageCreate, format string, args CmdArguments) 
 	if len(args) > 0 {
 		resp, queryErr := query.SearchMedia(args.ParseArgToSearch().Name, format)
 		var formattedAdultString string = "❌"
-		if resp.Media.IsAdult != false {
+		if resp.Media.IsAdult {
 			formattedAdultString = "✔️"
 		}
 		if queryErr == nil {
@@ -98,7 +98,7 @@ func searchMedia(data *disgord.MessageCreate, format string, args CmdArguments) 
 						Footer: &disgord.EmbedFooter{
 							IconURL: "https://anilist.co/img/icons/favicon-32x32.png",
 							Text: fmt.Sprintf(
-								"Score : %d%% | Status : %s | Adults only : %s",
+								"Score : %d%% | Status : %s | Adult : %s",
 								resp.Media.MeanScore,
 								resp.Media.Status,
 								formattedAdultString,

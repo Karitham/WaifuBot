@@ -10,43 +10,30 @@ const graphURL string = "https://graphql.anilist.co"
 
 // CharSearchStruct handles data from CharByName queries
 type CharSearchStruct struct {
-	Character struct {
-		ID      int64  `json:"id"` // Anilist ID linked to the character
-		SiteURL string `json:"siteUrl"` // Anilist URL linked to the character
-		Name    struct { // Name structure
-			Full string `json:"full"` // Permits the user to see the full name of the character
-		}
-		Image struct { // Image structure
-			Large string `json:"large"` // Permits the user to see what the character looks like
-		}
-		Media struct { // Media structure
-			Nodes []struct {
-				Title struct { // Permits to see from which Anime the character comes from
-					Romaji string `json:"romaji"` // Permits to see the romanized name of the anime/manga.
-				}
-			}
-		}
-	}
+	Character CharacterStruct
 }
 
 // CharStruct handles data for RandomChar function
 type CharStruct struct {
 	Page struct {
-		Characters []struct {
-			ID      int64  `json:"id"`
-			SiteURL string `json:"siteUrl"`
-			Image   struct {
-				Large string `json:"large"`
-			}
-			Name struct {
-				Full string `json:"full"`
-			}
-			Media struct {
-				Nodes []struct {
-					Title struct {
-						Romaji string `json:"romaji"`
-					}
-				}
+		Characters []CharacterStruct
+	}
+}
+
+// CharacterStruct represent character object
+type CharacterStruct struct {
+	ID      int64  `json:"id"`
+	SiteURL string `json:"siteUrl"`
+	Image   struct {
+		Large string `json:"large"`
+	}
+	Name struct {
+		Full string `json:"full"`
+	}
+	Media struct {
+		Nodes []struct {
+			Title struct {
+				Romaji string `json:"romaji"`
 			}
 		}
 	}
