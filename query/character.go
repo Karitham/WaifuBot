@@ -11,18 +11,18 @@ const graphURL string = "https://graphql.anilist.co"
 // CharSearchStruct handles data from CharByName queries
 type CharSearchStruct struct {
 	Character struct {
-		ID      int64  `json:"id"`
-		SiteURL string `json:"siteUrl"`
-		Name    struct {
-			Full string `json:"full"`
+		ID      int64  `json:"id"` // Anilist ID linked to the character
+		SiteURL string `json:"siteUrl"` // Anilist URL linked to the character
+		Name    struct { // Name structure
+			Full string `json:"full"` // Permits the user to see the full name of the character
 		}
-		Image struct {
-			Large string `json:"large"`
+		Image struct { // Image structure
+			Large string `json:"large"` // Permits the user to see what the character looks like
 		}
-		Media struct {
+		Media struct { // Media structure
 			Nodes []struct {
-				Title struct {
-					Romaji string `json:"romaji"`
+				Title struct { // Permits to see from which Anime the character comes from
+					Romaji string `json:"romaji"` // Permits to see the romanized name of the anime/manga.
 				}
 			}
 		}
@@ -58,7 +58,7 @@ type CharSearchInput struct {
 	Name string
 }
 
-// CharSearch makes a query to the anilist API based on the name//ID you input
+// CharSearch makes a query to the Anilist API based on the name/ID you input
 func CharSearch(input CharSearchInput) (response CharSearchStruct, err error) {
 	// build query
 	req := graphql.NewRequest(`

@@ -37,7 +37,7 @@ func trendingMedia(data *disgord.MessageCreate, format string, args []string) {
 				Color:       0x0e6b0e,
 				Footer: &disgord.EmbedFooter{
 					IconURL: "https://anilist.co/img/icons/favicon-32x32.png",
-					Text:    "Trending " + formattedType + "list created from anilist",
+					Text:    "Trending " + formattedType + "list created from Anilist",
 				},
 			},
 		},

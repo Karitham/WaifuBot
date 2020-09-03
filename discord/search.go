@@ -53,10 +53,10 @@ func searchHelp(data *disgord.MessageCreate) {
 			Embed: &disgord.Embed{
 				Title: "Character Search Help || alias s",
 				Description: fmt.Sprintf(
-					"This is the help for search character functionnality\n\n"+
+					"This is the help for search character functionality\n\n"+
 						"You can search a character using :\n"+
 						"`%ssearch Name/ID`\n"+
-						"You can search by either Name OR ID",
+						"You can search by either its name or its Anilist ID",
 					conf.Prefix,
 				),
 				Footer: &disgord.EmbedFooter{
@@ -76,6 +76,10 @@ func searchMedia(data *disgord.MessageCreate, format string, args CmdArguments) 
 	// check if there is a search term
 	if len(args) > 0 {
 		resp, queryErr := query.SearchMedia(args.ParseArgToSearch().Name, format)
+		var formattedAdultString string = "❌"
+		if resp.Media.IsAdult != false {
+			formattedAdultString = "✔️"
+		}
 		if queryErr == nil {
 			desc := fmt.Sprintf("\n%s...\n ", formatDescMediaSearch(resp.Media.Description))
 			_, err := client.CreateMessage(
@@ -94,9 +98,10 @@ func searchMedia(data *disgord.MessageCreate, format string, args CmdArguments) 
 						Footer: &disgord.EmbedFooter{
 							IconURL: "https://anilist.co/img/icons/favicon-32x32.png",
 							Text: fmt.Sprintf(
-								"Score : %d%% | Status : %s",
+								"Score : %d%% | Status : %s | Adults only : %s",
 								resp.Media.MeanScore,
 								resp.Media.Status,
+								formattedAdultString,
 							),
 						},
 					},
@@ -108,7 +113,7 @@ func searchMedia(data *disgord.MessageCreate, format string, args CmdArguments) 
 		} else {
 			_, err := client.SendMsg(ctx, data.Message.ChannelID, queryErr)
 			if err != nil {
-				fmt.Println("there was an error sending error message on anime search: ", err)
+				fmt.Println("There was an error sending error message on anime search: ", err)
 			}
 		}
 	} else {
@@ -124,7 +129,7 @@ func searchMedia(data *disgord.MessageCreate, format string, args CmdArguments) 
 			},
 		)
 		if err != nil {
-			fmt.Println("there was an error sending error message on anime search: ", err)
+			fmt.Println("There was an error sending error message on anime search: ", err)
 		}
 	}
 
@@ -138,7 +143,7 @@ func searchAnimeHelp(data *disgord.MessageCreate) {
 			Embed: &disgord.Embed{
 				Title: "Anime Search Help || alias sa",
 				Description: fmt.Sprintf(
-					"This is the help for search anime functionnality\n\n"+
+					"This is the help for the search anime functionnality\n\n"+
 						"You can search an anime by its name using the following syntax\n"+
 						"`%ssearchAnime Name`\n",
 					conf.Prefix,
@@ -163,7 +168,7 @@ func searchMangaHelp(data *disgord.MessageCreate) {
 			Embed: &disgord.Embed{
 				Title: "Manga Search Help || alias sm",
 				Description: fmt.Sprintf(
-					"This is the help for search manga functionnality\n\n"+
+					"This is the help for the search manga functionnality\n\n"+
 						"You can search a manga by its name using the following syntax\n"+
 						"`%ssearchManga Name`\n",
 					conf.Prefix,
