@@ -3,7 +3,6 @@ package discord
 import (
 	"fmt"
 	"log"
-	"strconv"
 	"time"
 
 	"github.com/Karitham/WaifuBot/database"
@@ -12,7 +11,10 @@ import (
 )
 
 func list(data *disgord.MessageCreate, args []string) {
-	page := parseListArgs(args)
+	page := CmdArguments(args).ParseArgToSearch().ID
+	if page < 0 {
+		page = 0
+	}
 	user := getUser(data)
 	charList := database.ViewUserData(user.ID)
 
@@ -60,20 +62,6 @@ func sendList(data *disgord.MessageCreate, embed *disgord.Embed) (msg *disgord.M
 		log.Println("There was an error sending list message : ", err)
 	}
 
-	return
-}
-
-func parseListArgs(args []string) (page int) {
-	var err error
-	if len(args) > 0 {
-		page, err = strconv.Atoi(args[0])
-		if err != nil {
-			log.Println("There was an error parsing list", err)
-		}
-		if page < 0 {
-			page = 0
-		}
-	}
 	return
 }
 
