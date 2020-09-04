@@ -32,7 +32,7 @@ You can add the bot to your server [using this link](https://discord.com/oauth2/
 | `trendingManga` | `tm`  | View currently trending manga                     |
 | `searchAnime`   | `sa`  | Search for an anime                               |
 | `searchManga`   | `sm`  | Search for an manga                               |
-| `invite`        |       | Send invite link to invite the bot to your server |
+| `invite`        | `i`   | Send invite link to invite the bot to your server |
 
 ## Feature Requests
 

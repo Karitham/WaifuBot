@@ -12,7 +12,7 @@ import (
 
 func favourite(data *disgord.MessageCreate, args CmdArguments) {
 	if len(args) > 0 {
-		// Query Char using search to Anilists graphQL api
+		// Query Char using search to Anilist's GraphQL API
 		resp, err := query.CharSearch(args.ParseArgToSearch())
 		if err != nil {
 			log.Println(err)
@@ -29,7 +29,7 @@ func favourite(data *disgord.MessageCreate, args CmdArguments) {
 		}.SetFavourite()
 
 		// Send confirmation message
-		_, er := client.CreateMessage(
+		_, err = client.CreateMessage(
 			ctx,
 			data.Message.ChannelID,
 			&disgord.CreateMessageParams{
@@ -44,8 +44,8 @@ func favourite(data *disgord.MessageCreate, args CmdArguments) {
 				},
 			},
 		)
-		if er != nil {
-			log.Println("There was an error sending favourite message: ", er)
+		if err != nil {
+			log.Println("There was an error sending favourite message: ", err)
 		}
 	} else {
 		favouriteHelp(data)

@@ -94,16 +94,16 @@ func reply(s disgord.Session, data *disgord.MessageCreate) {
 	case "favourite", "favorite", "f":
 		favourite(data, args)
 		incDropper(data)
-	case "trendinganime", "ta":
+	case "trendinganime", "animetrending","ta":
 		trendingMedia(data, "ANIME", args)
 		incDropper(data)
-	case "trendingmanga", "tm":
+	case "trendingmanga", "mangatrending", "tm":
 		trendingMedia(data, "MANGA", args)
 		incDropper(data)
-	case "searchanime", "sa":
+	case "searchanime", "animesearch", "sa":
 		searchMedia(data, "ANIME", args)
 		incDropper(data)
-	case "searchmanga", "sm":
+	case "searchmanga", "mangasearch", "sm":
 		searchMedia(data, "MANGA", args)
 		incDropper(data)
 	case "give", "g":
@@ -120,7 +120,7 @@ func reply(s disgord.Session, data *disgord.MessageCreate) {
 		incDropper(data)
 	case "list", "l":
 		list(data, args)
-	case "invite":
+	case "invite", "i":
 		invite(data)
 	case "claim", "c":
 		claim(data, args)
@@ -170,7 +170,7 @@ func unknown(data *disgord.MessageCreate) {
 		},
 	)
 	if err != nil {
-		log.Println("error while creating message :", err)
+		log.Println("Error while creating message :", err)
 	}
 	go deleteMessage(resp, time.Minute)
 }
@@ -200,14 +200,14 @@ func deleteMessage(resp *disgord.Message, sleep time.Duration) {
 		resp.ID,
 	)
 	if err != nil {
-		log.Println("Error deleting message :", err)
+		log.Println("Error while deleting message :", err)
 	}
 }
 
 func getUserAvatar(user *disgord.User) (avatar string) {
 	avatar, err := user.AvatarURL(128, false)
 	if err != nil {
-		log.Println("There was an error getting this user's avatar", err)
+		log.Println("There was an error while getting this user's avatar", err)
 	}
 	return
 }

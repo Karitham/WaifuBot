@@ -13,15 +13,15 @@ import (
 )
 
 func roll(data *disgord.MessageCreate) {
-	// checkTimings verify if your query is legal
+	// checkTimings verifies if your query is legal
 	ableToRoll := database.ViewUserData(data.Message.Author.ID).Date.Add(conf.TimeBetweenRolls * time.Hour)
 
-	// verify if the roll is legal
+	// Verify if the roll is legal
 	if time.Until(ableToRoll) < 0 {
-		// Makes the querry and adds the character to the database
+		// Makes the query and adds the character to the database
 		resp := RandomToDB(data)
 
-		// Create a descrption adapated to the character retrieved
+		// Create a description adapted to the retrieved character
 		desc := fmt.Sprintf("You rolled character `%d`\nIt appears in :\n- %s", resp.Page.Characters[0].ID, resp.Page.Characters[0].Media.Nodes[0].Title.Romaji)
 
 		// Sends the message

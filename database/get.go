@@ -31,9 +31,9 @@ type CharLayout struct {
 func ViewUserData(id disgord.Snowflake) (userData UserDataStruct) {
 	bytesWaifu, err := collection.FindOne(context.TODO(), bson.M{"_id": id}).DecodeBytes()
 	if err != mongo.ErrNoDocuments {
-		er := bson.Unmarshal(bytesWaifu, &userData)
-		if er != bson.ErrDecodeToNil && err != nil {
-			log.Println(er)
+		err := bson.Unmarshal(bytesWaifu, &userData)
+		if err != bson.ErrDecodeToNil && err != nil {
+			log.Println(err)
 		}
 	}
 	return

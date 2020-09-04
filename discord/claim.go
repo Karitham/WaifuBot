@@ -113,10 +113,10 @@ func claim(data *disgord.MessageCreate, args []string) {
 				},
 			}.AddChar()
 
-			// Increment claimed waifu
+			// Increment the number of claimed waifus
 			database.ClaimIncrementStruct{UserID: data.Message.Author.ID, Increment: 1}.ClaimIncrement()
 
-			// Create desc
+			// Create the description
 			desc := fmt.Sprintf(
 				"Well done %s, you claimed %s\n"+
 					"It appears in :\n- %s",
@@ -151,8 +151,15 @@ func claim(data *disgord.MessageCreate, args []string) {
 				&disgord.CreateMessageParams{
 					Embed: &disgord.Embed{
 						Title:     "Claim unsuccessful",
+						Description: "It isn't the good person ! Try again !",
 						Timestamp: data.Message.Timestamp,
 						Color:     0x626868,
+						Footer: &disgord.EmbedFooter{
+							Text: fmt.Sprintf(
+								"This characters initials are : %s",
+								getCharInitials(char[data.Message.ChannelID].Name),
+							),
+						},
 					},
 				},
 			)

@@ -79,7 +79,7 @@ func searchMedia(data *disgord.MessageCreate, format string, args CmdArguments) 
 	// check if there is a search term
 	if len(args) > 0 {
 		resp, queryErr := query.SearchMedia(args.ParseArgToSearch().Name, format)
-		var formattedAdultString string = "❌"
+		var formattedAdultString = "❌"
 		if resp.Media.IsAdult {
 			formattedAdultString = "✔️"
 		}
