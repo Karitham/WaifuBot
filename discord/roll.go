@@ -2,6 +2,7 @@ package discord
 
 import (
 	"fmt"
+	"log"
 	"math/rand"
 	"time"
 
@@ -41,7 +42,7 @@ func roll(data *disgord.MessageCreate) {
 			},
 		)
 		if err != nil {
-			fmt.Println("There was an error sending roll message: ", err)
+			log.Println("There was an error sending roll message: ", err)
 		}
 	} else {
 		illegalRoll(data, ableToRoll)
@@ -58,7 +59,7 @@ func RandomToDB(data *disgord.MessageCreate) (resp query.CharStruct) {
 			),
 		).Intn(conf.MaxCharRoll))
 	if err != nil {
-		fmt.Println("Error getting random char : ", err)
+		log.Println("Error getting random char : ", err)
 		return
 	}
 
@@ -88,7 +89,7 @@ func illegalRoll(data *disgord.MessageCreate, ableToRoll time.Time) {
 		},
 	)
 	if err != nil {
-		fmt.Println("Create message returned error :", err)
+		log.Println("Create message returned error :", err)
 	}
 	go deleteMessage(resp, conf.DelIllegalRollAfter)
 }
@@ -115,6 +116,6 @@ func rollHelp(data *disgord.MessageCreate) {
 		},
 	)
 	if err != nil {
-		fmt.Println("There was an error sending roll help message: ", err)
+		log.Println("There was an error sending roll help message: ", err)
 	}
 }

@@ -2,6 +2,7 @@ package discord
 
 import (
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/Karitham/WaifuBot/database"
@@ -37,7 +38,7 @@ func quote(data *disgord.MessageCreate, args CmdArguments) {
 			},
 		)
 		if err != nil {
-			fmt.Println("There was an error sending quote message: ", err)
+			log.Println("There was an error sending quote message: ", err)
 		}
 	} else {
 		_, err := client.CreateMessage(
@@ -52,7 +53,7 @@ func quote(data *disgord.MessageCreate, args CmdArguments) {
 			},
 		)
 		if err != nil {
-			fmt.Println("There was an error sending error profile message: ", err)
+			log.Println("There was an error sending error profile message: ", err)
 		}
 	}
 }
@@ -79,6 +80,6 @@ func quoteHelp(data *disgord.MessageCreate) {
 		},
 	)
 	if err != nil {
-		fmt.Println("There was an error sending quote help message: ", err)
+		log.Println("There was an error sending quote help message: ", err)
 	}
 }

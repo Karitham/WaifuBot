@@ -2,7 +2,7 @@ package database
 
 import (
 	"context"
-	"fmt"
+	"log"
 	"time"
 
 	"github.com/andersfylling/disgord"
@@ -46,7 +46,7 @@ func (input InputClaimChar) AddChar() {
 		opts,
 	).Decode(&decoded)
 	if err != mongo.ErrNoDocuments && err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 }
 
@@ -64,7 +64,7 @@ func (input ClaimIncrementStruct) ClaimIncrement() {
 		opts,
 	).DecodeBytes()
 	if err != mongo.ErrNoDocuments && err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 }
 
@@ -84,6 +84,6 @@ func (input InputChar) AddChar() {
 		opts,
 	).Decode(&decoded)
 	if err != mongo.ErrNoDocuments && err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 }

@@ -70,6 +70,7 @@ Rename `configExample.json` to `config.json` and change the values according to 
   "Max_Character_Drop": 5000, // Just like the roll function, but for dropping characters (so they are more popular)
   "Delete_Illegal_Roll_After": 3, // Delete illegal roll message to have a cleaner chat. Duration in minutes
   "Delete_Wrong_Claim_After": 1, // Delete wrong claims message. Duration in minute
+  "List_Max_Update_Time": 2, // How long can the bot update the last list embed sent. Duration in minute
   "Time_Between_Rolls": 12, // Time interval between each user roll
   "Drops_On_Interact": 20 // Lowering this value increases drop rate, the opposite works too
 }

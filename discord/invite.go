@@ -2,6 +2,7 @@ package discord
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/andersfylling/disgord"
 )
@@ -13,12 +14,11 @@ func invite(data *disgord.MessageCreate) {
 	botURL, err := client.InviteURL(ctx)
 	if err != nil {
 		_, er := data.Message.Reply(ctx, session, err)
+		log.Println("Error getting bot url: ", err)
 		if er != nil {
-			fmt.Println("Error sending error message: ", er)
+			log.Println("Error sending error message: ", er)
 		}
-		fmt.Println("Error getting bot url: ", err)
 	}
-
 	// Create embed
 	_, er := client.CreateMessage(
 		ctx,
@@ -59,6 +59,6 @@ func inviteHelp(data *disgord.MessageCreate) {
 		},
 	)
 	if err != nil {
-		fmt.Println("There was a problem sending invite help message: ", err)
+		log.Println("There was a problem sending invite help message: ", err)
 	}
 }

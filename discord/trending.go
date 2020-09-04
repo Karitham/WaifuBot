@@ -2,6 +2,7 @@ package discord
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/Karitham/WaifuBot/query"
 
@@ -18,7 +19,7 @@ func trendingMedia(data *disgord.MessageCreate, format string, args []string) {
 	// query the trending anime
 	res, err := query.TrendingMediaQuery(format)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 
 	// return a formatted description
@@ -43,7 +44,7 @@ func trendingMedia(data *disgord.MessageCreate, format string, args []string) {
 		},
 	)
 	if er != nil {
-		fmt.Println("There was an error sending trending media message: ", er)
+		log.Println("There was an error sending trending media message: ", er)
 	}
 }
 
@@ -68,7 +69,7 @@ func trendingAnimeHelp(data *disgord.MessageCreate) {
 		},
 	)
 	if err != nil {
-		fmt.Println("There was an error sending trending anime help message: ", err)
+		log.Println("There was an error sending trending anime help message: ", err)
 	}
 }
 
@@ -93,6 +94,6 @@ func trendingMangaHelp(data *disgord.MessageCreate) {
 		},
 	)
 	if err != nil {
-		fmt.Println("There was an error sending trending manga help message: ", err)
+		log.Println("There was an error sending trending manga help message: ", err)
 	}
 }

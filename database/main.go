@@ -2,7 +2,6 @@ package database
 
 import (
 	"context"
-	"fmt"
 	"log"
 
 	"github.com/Karitham/WaifuBot/config"
@@ -32,5 +31,5 @@ func Init(config config.ConfJSONStruct) {
 	}
 
 	collection = client.Database("waifubot").Collection("waifus")
-	fmt.Println("Connected to MongoDB!")
+	log.Println("Connected to MongoDB!")
 }
