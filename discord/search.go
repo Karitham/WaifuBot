@@ -7,6 +7,8 @@ import (
 	"github.com/Karitham/WaifuBot/query"
 
 	"github.com/andersfylling/disgord"
+
+	"github.com/microcosm-cc/bluemonday"
 )
 
 func search(data *disgord.MessageCreate, args CmdArguments) {
@@ -77,9 +79,11 @@ func searchMedia(data *disgord.MessageCreate, format string, args CmdArguments) 
 	if len(args) > 0 {
 		resp, queryErr := query.SearchMedia(args.ParseArgToSearch().Name, format)
 		var formattedAdultString string = "❌"
-		if resp.Media.IsAdult != false {
+		if resp.Media.IsAdult {
 			formattedAdultString = "✔️"
 		}
+		cleanDesc := bluemonday.NewPolicy()
+		cleanDesc.AllowNoAttrs()
 		if queryErr == nil {
 			desc := fmt.Sprintf("\n%s...\n ", formatDescMediaSearch(resp.Media.Description))
 			_, err := client.CreateMessage(
@@ -90,7 +94,7 @@ func searchMedia(data *disgord.MessageCreate, format string, args CmdArguments) 
 					Embed: &disgord.Embed{
 						Title:       resp.Media.Title.Romaji,
 						URL:         resp.Media.SiteURL,
-						Description: desc,
+						Description: cleanDesc.Sanitize(desc),
 						Color:       0x1663be,
 						Thumbnail: &disgord.EmbedThumbnail{
 							URL: resp.Media.CoverImage.Medium,
@@ -98,7 +102,7 @@ func searchMedia(data *disgord.MessageCreate, format string, args CmdArguments) 
 						Footer: &disgord.EmbedFooter{
 							IconURL: "https://anilist.co/img/icons/favicon-32x32.png",
 							Text: fmt.Sprintf(
-								"Score : %d%% | Status : %s | Adults only : %s",
+								"Score : %d%% | Status : %s | Adult : %s",
 								resp.Media.MeanScore,
 								resp.Media.Status,
 								formattedAdultString,

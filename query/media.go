@@ -9,17 +9,17 @@ import (
 // MediaSearchStruct handles data from either manga or anime searches
 type MediaSearchStruct struct {
 	Media struct {
-		SiteURL   string `json:"siteUrl"` // Anilist URL linked to the media
-		Status    string `json:"status"` // Verifies the status of the anime/manga as of today
-		MeanScore int    `json:"meanScore"` // Looks after user's appreciation of the anime/manga
-		IsAdult   bool   `json:"isAdult"` // Verifies if the anime/manga is for mature audiences only
-		Title     struct { // Title structure
-			Romaji string `json:"romaji"` // Permits the user to see the romanized name of the anime/manga.
+		SiteURL   string `json:"siteUrl"`
+		Status    string `json:"status"`
+		MeanScore int    `json:"meanScore"`
+		IsAdult   bool   `json:"isAdult"`
+		Title     struct {
+			Romaji string `json:"romaji"`
 		} `json:"title"`
-		CoverImage struct { // Image structure
-			Medium string `json:"medium"` // Permits the user to see the cover of the anime / manga.
+		CoverImage struct {
+			Medium string `json:"medium"`
 		} `json:"coverImage"`
-		Description string `json:"description"` // Permits to look after the description of the anime / manga.
+		Description string `json:"description"`
 	} `json:"Media"`
 }
 
