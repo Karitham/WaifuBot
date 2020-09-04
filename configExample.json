@@ -7,6 +7,7 @@
   "Max_Character_Drop": 5000,
   "Delete_Illegal_Roll_After": 3,
   "Delete_Wrong_Claim_After": 1,
+  "List_Max_Update_Time": 2,
   "Time_Between_Rolls": 12,
   "Drops_On_Interact": 20
 }

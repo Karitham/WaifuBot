@@ -28,6 +28,15 @@ var conf config.ConfJSONStruct
 // DropIncrement controls the dropping
 var DropIncrement = make(map[disgord.Snowflake]int)
 
+// ListCache is used as a cache for updating list
+var ListCache = make(map[disgord.Snowflake]*disgord.Message)
+
+type embedUpdate struct {
+	ChannelID disgord.Snowflake
+	MessageID disgord.Snowflake
+	Embed     disgord.Embed
+}
+
 // BotRun the bot and handle events
 func BotRun(cf config.ConfJSONStruct) {
 	// sets the config for the whole disc package
@@ -209,6 +218,14 @@ func getUser(data *disgord.MessageCreate) (user disgord.User) {
 		user = *data.Message.Mentions[0]
 	} else {
 		user = *data.Message.Author
+	}
+	return
+}
+
+func setEmbedTo(update embedUpdate) (msg *disgord.Message) {
+	msg, err := client.SetMsgEmbed(ctx, update.ChannelID, update.MessageID, &update.Embed)
+	if err != nil {
+		log.Println("Couldn't update embed :", err)
 	}
 	return
 }

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"strconv"
+	"time"
 
 	"github.com/Karitham/WaifuBot/database"
 
@@ -11,26 +12,30 @@ import (
 )
 
 func list(data *disgord.MessageCreate, args []string) {
-	var page int
-	var err error
-
-	// check if there is a page input
-	if len(args) > 0 {
-		page, err = strconv.Atoi(args[0])
-		if err != nil {
-			log.Println("There was an error parsing list", err)
-		}
-		if page < 0 {
-			page = 0
-		}
-	}
-
+	page := parseListArgs(args)
 	user := getUser(data)
-	// Make the database query
 	charList := database.ViewUserData(user.ID)
 
-	// Send the first list
-	_ = sendList(
+	// If a list has been sent not too long ago, replace said list
+	val, ok := ListCache[user.ID]
+	if ok && time.Since(val.Timestamp.Time.Add(conf.ListMaxUpdateTime)) <= 0 {
+		msg := setEmbedTo(
+			embedUpdate{
+				ChannelID: val.ChannelID,
+				MessageID: val.ID,
+				Embed: *formatListEmbed(
+					getUserAvatar(&user),
+					(len(charList.Waifus)-1)/15,
+					formatDescList(page, charList),
+					&user,
+				),
+			},
+		)
+		ListCache[user.ID] = msg
+		return
+	}
+	// Send List
+	msg := sendList(
 		data,
 		formatListEmbed(
 			getUserAvatar(&user),
@@ -39,6 +44,7 @@ func list(data *disgord.MessageCreate, args []string) {
 			&user,
 		),
 	)
+	ListCache[user.ID] = msg
 }
 
 func sendList(data *disgord.MessageCreate, embed *disgord.Embed) (msg *disgord.Message) {
@@ -53,6 +59,20 @@ func sendList(data *disgord.MessageCreate, embed *disgord.Embed) (msg *disgord.M
 		log.Println("There was an error sending list message : ", err)
 	}
 
+	return
+}
+
+func parseListArgs(args []string) (page int) {
+	var err error
+	if len(args) > 0 {
+		page, err = strconv.Atoi(args[0])
+		if err != nil {
+			log.Println("There was an error parsing list", err)
+		}
+		if page < 0 {
+			page = 0
+		}
+	}
 	return
 }
 
