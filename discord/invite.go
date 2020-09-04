@@ -11,9 +11,9 @@ import (
 func invite(data *disgord.MessageCreate) {
 
 	// Get URL
-	botURL, err := client.InviteURL(ctx)
+	user, err := client.GetCurrentUser(ctx)
 	if err != nil {
-		_, err := data.Message.Reply(ctx, session, err)
+		_, err = data.Message.Reply(ctx, session, err)
 		log.Println("Error getting bot url: ", err)
 		if err != nil {
 			log.Println("Error sending error message: ", err)
@@ -24,11 +24,20 @@ func invite(data *disgord.MessageCreate) {
 		ctx,
 		data.Message.ChannelID,
 		&disgord.CreateMessageParams{
-			Content :  "Invite link : <"+botURL+">",
+			Embed: &disgord.Embed{
+				Title: "Invite",
+				URL: fmt.Sprintf(
+					"https://discord.com/oauth2/authorize?scope=bot&client_id=%s&permissions=%d",
+					user.ID.String(),
+					67497024,
+				),
+				Timestamp: data.Message.Timestamp,
+				Color:     0x49b675,
+			},
 		},
 	)
 	if err != nil {
-		log.Println("There was an error sending invite message", err)
+		fmt.Println("There was an error sending invite message")
 	}
 }
 
@@ -38,11 +47,10 @@ func inviteHelp(data *disgord.MessageCreate) {
 		data.Message.ChannelID,
 		&disgord.CreateMessageParams{
 			Embed: &disgord.Embed{
-				Title: "Invite Help || alias i",
+				Title: "Invite Help",
 				Description: fmt.Sprintf(
-					"This is the help for the Invite functionality\n\n"+
-						"This function can be used to get an invite link to be able to add the bot to your server\n"+
-						"For this, simply use this command :" +
+					"This is the help for the Invite functionnality\n\n"+
+						"Invite is used to get an invite link to be able to add the bot to your server, just use\n"+
 						"`%sinvite`",
 					conf.Prefix,
 				),
