@@ -2,8 +2,8 @@ package config
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
+	"log"
 	"time"
 )
 
@@ -18,6 +18,7 @@ type ConfJSONStruct struct {
 	TimeBetweenRolls    time.Duration `json:"Time_Between_Rolls"`
 	DelIllegalRollAfter time.Duration `json:"Delete_Illegal_Roll_After"`
 	DelWrongClaimAfter  time.Duration `json:"Delete_Wrong_Claim_After"`
+	ListMaxUpdateTime   time.Duration `json:"List_Max_Update_Time"`
 	DropsOnInteract     int           `json:"Drops_On_Interact"`
 }
 
@@ -26,12 +27,12 @@ func Retrieve(file string) ConfJSONStruct {
 	var config ConfJSONStruct
 	body, err := ioutil.ReadFile(file)
 	if err != nil {
-		fmt.Println("error reading config file :", err)
+		log.Println("error reading config file :", err)
 	}
 
 	err = json.Unmarshal(body, &config)
 	if err != nil {
-		fmt.Println("error unmarshalling config :", err)
+		log.Println("error unmarshalling config :", err)
 	}
 	return configTime(config)
 }
@@ -40,5 +41,6 @@ func Retrieve(file string) ConfJSONStruct {
 func configTime(conf ConfJSONStruct) ConfJSONStruct {
 	conf.DelIllegalRollAfter *= time.Minute
 	conf.DelWrongClaimAfter *= time.Minute
+	conf.ListMaxUpdateTime *= time.Minute
 	return conf
 }
