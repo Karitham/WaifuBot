@@ -2,6 +2,7 @@ package discord
 
 import (
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/Karitham/WaifuBot/query"
@@ -31,12 +32,12 @@ func search(data *disgord.MessageCreate, args CmdArguments) {
 				},
 			)
 			if err != nil {
-				fmt.Println("There was an error sending search message: ", err)
+				log.Println("There was an error sending search message: ", err)
 			}
 		} else {
 			resp, err := client.SendMsg(ctx, data.Message.ChannelID, err)
 			if err != nil {
-				fmt.Println("Create message returned error :", err)
+				log.Println("Create message returned error :", err)
 			}
 			go deleteMessage(resp, conf.DelIllegalRollAfter)
 		}
@@ -68,7 +69,7 @@ func searchHelp(data *disgord.MessageCreate) {
 		},
 	)
 	if err != nil {
-		fmt.Println("There was an error sending search help message: ", err)
+		log.Println("There was an error sending search help message: ", err)
 	}
 }
 
@@ -108,12 +109,12 @@ func searchMedia(data *disgord.MessageCreate, format string, args CmdArguments) 
 				},
 			)
 			if err != nil {
-				fmt.Println("There was an error when sending search anime message: ", err)
+				log.Println("There was an error when sending search anime message: ", err)
 			}
 		} else {
 			_, err := client.SendMsg(ctx, data.Message.ChannelID, queryErr)
 			if err != nil {
-				fmt.Println("There was an error sending error message on anime search: ", err)
+				log.Println("There was an error sending error message on anime search: ", err)
 			}
 		}
 	} else {
@@ -129,7 +130,7 @@ func searchMedia(data *disgord.MessageCreate, format string, args CmdArguments) 
 			},
 		)
 		if err != nil {
-			fmt.Println("There was an error sending error message on anime search: ", err)
+			log.Println("There was an error sending error message on anime search: ", err)
 		}
 	}
 
@@ -156,7 +157,7 @@ func searchAnimeHelp(data *disgord.MessageCreate) {
 		},
 	)
 	if err != nil {
-		fmt.Println("Error sending search anime help: ", err)
+		log.Println("Error sending search anime help: ", err)
 	}
 }
 
@@ -181,7 +182,7 @@ func searchMangaHelp(data *disgord.MessageCreate) {
 		},
 	)
 	if err != nil {
-		fmt.Println("Error sending search manga help: ", err)
+		log.Println("Error sending search manga help: ", err)
 	}
 }
 

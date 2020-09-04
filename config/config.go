@@ -2,8 +2,8 @@ package config
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
+	"log"
 	"time"
 )
 
@@ -26,12 +26,12 @@ func Retrieve(file string) ConfJSONStruct {
 	var config ConfJSONStruct
 	body, err := ioutil.ReadFile(file)
 	if err != nil {
-		fmt.Println("error reading config file :", err)
+		log.Println("error reading config file :", err)
 	}
 
 	err = json.Unmarshal(body, &config)
 	if err != nil {
-		fmt.Println("error unmarshalling config :", err)
+		log.Println("error unmarshalling config :", err)
 	}
 	return configTime(config)
 }

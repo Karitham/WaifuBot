@@ -3,6 +3,7 @@ package discord
 import (
 	"context"
 	"fmt"
+	"log"
 	"math/rand"
 	"strconv"
 	"strings"
@@ -51,7 +52,7 @@ func BotRun(cf config.ConfJSONStruct) {
 	defer func() {
 		err := client.StayConnectedUntilInterrupted(ctx)
 		if err != nil {
-			fmt.Println("The bot is no longer working, ", err)
+			log.Println("The bot is no longer working, ", err)
 		}
 	}()
 
@@ -71,7 +72,7 @@ func BotRun(cf config.ConfJSONStruct) {
 		reply, // call reply func
 	) // handles copy
 
-	fmt.Println("The bot is currently running")
+	log.Println("The bot is currently running")
 }
 
 func reply(s disgord.Session, data *disgord.MessageCreate) {
@@ -141,7 +142,7 @@ func (args CmdArguments) ParseArgToSearch() query.CharSearchInput {
 	id, err := strconv.Atoi(args[0])
 	arg := strings.Join(args, " ")
 	if err != nil && id != 0 {
-		fmt.Println(err)
+		log.Println(err)
 	}
 	return query.CharSearchInput{ID: id, Name: arg}
 }
@@ -160,7 +161,7 @@ func unknown(data *disgord.MessageCreate) {
 		},
 	)
 	if err != nil {
-		fmt.Println("error while creating message :", err)
+		log.Println("error while creating message :", err)
 	}
 	go deleteMessage(resp, time.Minute)
 }
@@ -190,14 +191,14 @@ func deleteMessage(resp *disgord.Message, sleep time.Duration) {
 		resp.ID,
 	)
 	if err != nil {
-		fmt.Println("Error deleting message :", err)
+		log.Println("Error deleting message :", err)
 	}
 }
 
 func getUserAvatar(user *disgord.User) (avatar string) {
 	avatar, err := user.AvatarURL(128, false)
 	if err != nil {
-		fmt.Println("There was an error getting this user's avatar", err)
+		log.Println("There was an error getting this user's avatar", err)
 	}
 	return
 }

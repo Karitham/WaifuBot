@@ -2,7 +2,7 @@ package database
 
 import (
 	"context"
-	"fmt"
+	"log"
 
 	"github.com/andersfylling/disgord"
 	"github.com/andersfylling/snowflake/v4"
@@ -37,7 +37,7 @@ func (input FavouriteStruct) SetFavourite() {
 		opts,
 	).DecodeBytes()
 	if err != mongo.ErrNoDocuments && err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 }
 
@@ -55,6 +55,6 @@ func (input NewQuote) SetQuote() {
 		opts,
 	).DecodeBytes()
 	if err != mongo.ErrNoDocuments && err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 }

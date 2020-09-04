@@ -2,6 +2,7 @@ package discord
 
 import (
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/Karitham/WaifuBot/database"
@@ -48,7 +49,7 @@ func profile(data *disgord.MessageCreate) {
 		},
 	)
 	if err != nil {
-		fmt.Println("There was an error sending profile message: ", err)
+		log.Println("There was an error sending profile message: ", err)
 	}
 }
 
@@ -113,6 +114,6 @@ func profileHelp(data *disgord.MessageCreate) {
 		},
 	)
 	if err != nil {
-		fmt.Println("There was an error sending profile help message: ", err)
+		log.Println("There was an error sending profile help message: ", err)
 	}
 }

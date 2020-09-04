@@ -2,6 +2,7 @@ package discord
 
 import (
 	"fmt"
+	"log"
 	"strconv"
 
 	"github.com/Karitham/WaifuBot/database"
@@ -17,7 +18,7 @@ func list(data *disgord.MessageCreate, args []string) {
 	if len(args) > 0 {
 		page, err = strconv.Atoi(args[0])
 		if err != nil {
-			fmt.Println("There was an error parsing list", err)
+			log.Println("There was an error parsing list", err)
 		}
 		if page < 0 {
 			page = 0
@@ -49,7 +50,7 @@ func sendList(data *disgord.MessageCreate, embed *disgord.Embed) (msg *disgord.M
 		},
 	)
 	if err != nil {
-		fmt.Println("There was an error sending list message : ", err)
+		log.Println("There was an error sending list message : ", err)
 	}
 
 	return
@@ -110,6 +111,6 @@ func listHelp(data *disgord.MessageCreate) {
 		},
 	)
 	if err != nil {
-		fmt.Println("There was an error sending list help message: ", err)
+		log.Println("There was an error sending list help message: ", err)
 	}
 }

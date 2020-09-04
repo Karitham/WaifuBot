@@ -2,7 +2,7 @@ package database
 
 import (
 	"context"
-	"fmt"
+	"log"
 	"time"
 
 	"github.com/andersfylling/disgord"
@@ -33,7 +33,7 @@ func ViewUserData(id disgord.Snowflake) (userData UserDataStruct) {
 	if err != mongo.ErrNoDocuments {
 		er := bson.Unmarshal(bytesWaifu, &userData)
 		if er != bson.ErrDecodeToNil && err != nil {
-			fmt.Println(er)
+			log.Println(er)
 		}
 	}
 	return

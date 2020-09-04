@@ -2,7 +2,7 @@ package database
 
 import (
 	"context"
-	"fmt"
+	"log"
 
 	"github.com/andersfylling/disgord"
 	"go.mongodb.org/mongo-driver/bson"
@@ -37,7 +37,7 @@ func (input DelWaifuStruct) DelChar() (WaifuWasRemoved bool) {
 
 	// If the database found something, returns true
 	if err != nil {
-		fmt.Println("There was an error delete waifu :", err)
+		log.Println("There was an error delete waifu :", err)
 		return false
 	}
 	return true
@@ -47,7 +47,7 @@ func (input DelWaifuStruct) DelChar() (WaifuWasRemoved bool) {
 func (input InputChar) DropUser() (deletedResult *mongo.DeleteResult) {
 	deletedResult, err := collection.DeleteOne(context.TODO(), bson.M{"UserID": input.UserID})
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 	return
 }

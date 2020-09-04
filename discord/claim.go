@@ -2,6 +2,7 @@ package discord
 
 import (
 	"fmt"
+	"log"
 	"math/rand"
 	"strings"
 	"time"
@@ -44,7 +45,7 @@ func drop(data *disgord.MessageCreate) {
 		).Intn(conf.MaxCharDrop),
 	)
 	if err != nil {
-		fmt.Println("Error getting random char : ", err)
+		log.Println("Error getting random char : ", err)
 		drop(data)
 		return
 	}
@@ -75,7 +76,7 @@ func printDrop(data *disgord.MessageCreate) {
 		},
 	)
 	if err != nil {
-		fmt.Println("There was an error sending drop message: ", err)
+		log.Println("There was an error sending drop message: ", err)
 	}
 }
 
@@ -133,13 +134,13 @@ func claim(data *disgord.MessageCreate, args []string) {
 						URL:         char[data.Message.ChannelID].SiteURL,
 						Description: desc,
 						Thumbnail:   &disgord.EmbedThumbnail{URL: char[data.Message.ChannelID].LargeImage},
-						Timestamp: data.Message.Timestamp,
-						Color:     0xFF924B,
+						Timestamp:   data.Message.Timestamp,
+						Color:       0xFF924B,
 					},
 				},
 			)
 			if err != nil {
-				fmt.Println("There was an error claiming character: ", err)
+				log.Println("There was an error claiming character: ", err)
 			}
 			// Reset the char value
 			char[data.Message.ChannelID] = CharStruct{}
@@ -156,7 +157,7 @@ func claim(data *disgord.MessageCreate, args []string) {
 				},
 			)
 			if err != nil {
-				fmt.Println("Create message returned error :", err)
+				log.Println("Create message returned error :", err)
 			}
 			go deleteMessage(resp, conf.DelWrongClaimAfter)
 		}
@@ -174,7 +175,7 @@ func claim(data *disgord.MessageCreate, args []string) {
 			},
 		)
 		if err != nil {
-			fmt.Println("Create message returned error :", err)
+			log.Println("Create message returned error :", err)
 		}
 		go deleteMessage(resp, conf.DelWrongClaimAfter)
 	}
@@ -202,6 +203,6 @@ func claimHelp(data *disgord.MessageCreate) {
 		},
 	)
 	if err != nil {
-		fmt.Println("There was an error sending claim help message: ", err)
+		log.Println("There was an error sending claim help message: ", err)
 	}
 }

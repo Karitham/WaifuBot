@@ -2,6 +2,7 @@ package discord
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/Karitham/WaifuBot/database"
 	"github.com/Karitham/WaifuBot/query"
@@ -19,7 +20,7 @@ func giveChar(data *disgord.MessageCreate, args CmdArguments) {
 		// Get char
 		resp, err := query.CharSearch(args.ParseArgToSearch())
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 		}
 
 		// Add the char to the mentioned user's database
@@ -37,17 +38,15 @@ func giveChar(data *disgord.MessageCreate, args CmdArguments) {
 			data.Message.ChannelID,
 			&disgord.CreateMessageParams{
 				Embed: &disgord.Embed{
-					Title:       "Give Waifu Succeeded",
-					Thumbnail:   &disgord.EmbedThumbnail{URL: avatar},
-					Description: fmt.Sprintf("%s gave %s to %s.", data.Message.Author.Username, resp.Character.Name.Full, data.Message.Mentions[0].Username),
-					Image:       &disgord.EmbedImage{URL: resp.Character.Image.Large},
-					Timestamp:   data.Message.Timestamp,
+					Title:       "Waifu Give",
+					Description: fmt.Sprintf("You gave %s to %s.", resp.Character.Name.Full, data.Message.Mentions[0].Username),
+					Thumbnail:   &disgord.EmbedThumbnail{URL: resp.Character.Image.Large},
 					Color:       0x43e99a,
 				},
 			},
 		)
 		if er != nil {
-			fmt.Println("There was an error giving the character: ", er)
+			log.Println("There was an error giving the character: ", er)
 		}
 	} else {
 		// Send message
@@ -65,7 +64,7 @@ func giveChar(data *disgord.MessageCreate, args CmdArguments) {
 			},
 		)
 		if err != nil {
-			fmt.Println("Create message returned error :", err)
+			log.Println("Create message returned error :", err)
 		}
 		go deleteMessage(resp, conf.DelIllegalRollAfter)
 	}
@@ -113,6 +112,6 @@ func giveCharHelp(data *disgord.MessageCreate) {
 		},
 	)
 	if err != nil {
-		fmt.Println("There was an error sending help for give char: ", err)
+		log.Println("There was an error sending help for give char: ", err)
 	}
 }

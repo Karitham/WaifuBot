@@ -2,6 +2,7 @@ package discord
 
 import (
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/andersfylling/disgord"
@@ -67,6 +68,6 @@ func defaultHelp(data *disgord.MessageCreate) {
 		},
 	)
 	if err != nil {
-		fmt.Println("There was an error sending default help message: ", err)
+		log.Println("There was an error sending default help message: ", err)
 	}
 }

@@ -2,6 +2,7 @@ package discord
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/Karitham/WaifuBot/database"
 	"github.com/Karitham/WaifuBot/query"
@@ -14,7 +15,7 @@ func favourite(data *disgord.MessageCreate, args CmdArguments) {
 		// Query Char using search to Anilists graphQL api
 		resp, err := query.CharSearch(args.ParseArgToSearch())
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 		}
 
 		// Set favourite in database
@@ -35,8 +36,8 @@ func favourite(data *disgord.MessageCreate, args CmdArguments) {
 				Embed: &disgord.Embed{
 					Title:       "New favourite waifu set",
 					Description: fmt.Sprintf("Your new favourite waifu is %s", resp.Character.Name.Full),
-					Image: &disgord.EmbedImage{
-						URL: resp.Character.Image.Large,
+					Footer: &disgord.EmbedFooter{
+						IconURL: resp.Character.Image.Large,
 					},
 					Timestamp: data.Message.Timestamp,
 					Color:     0xffe2fe,
@@ -44,7 +45,7 @@ func favourite(data *disgord.MessageCreate, args CmdArguments) {
 			},
 		)
 		if er != nil {
-			fmt.Println("There was an error sending favourite message: ", er)
+			log.Println("There was an error sending favourite message: ", er)
 		}
 	} else {
 		favouriteHelp(data)
@@ -74,6 +75,6 @@ func favouriteHelp(data *disgord.MessageCreate) {
 		},
 	)
 	if err != nil {
-		fmt.Println("There was an error sending favourite help message: ", err)
+		log.Println("There was an error sending favourite help message: ", err)
 	}
 }
