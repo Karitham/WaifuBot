@@ -33,20 +33,20 @@ func giveChar(data *disgord.MessageCreate, args CmdArguments) {
 			}}.AddChar()
 
 		// Send confirmation Message
-		_, er := client.CreateMessage(
+		_, err = client.CreateMessage(
 			ctx,
 			data.Message.ChannelID,
 			&disgord.CreateMessageParams{
 				Embed: &disgord.Embed{
-					Title:       "Waifu Give",
-					Description: fmt.Sprintf("You gave %s to %s.", resp.Character.Name.Full, data.Message.Mentions[0].Username),
+					Title:       "Waifu Given",
+					Description: fmt.Sprintf("You gave %s to %s successfully.", resp.Character.Name.Full, data.Message.Mentions[0].Username),
 					Thumbnail:   &disgord.EmbedThumbnail{URL: resp.Character.Image.Large},
 					Color:       0x43e99a,
 				},
 			},
 		)
-		if er != nil {
-			log.Println("There was an error giving the character: ", er)
+		if err != nil {
+			log.Println("There was an error giving the character: ", err)
 		}
 	} else {
 		// Send message

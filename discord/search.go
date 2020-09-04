@@ -8,6 +8,8 @@ import (
 	"github.com/Karitham/WaifuBot/query"
 
 	"github.com/andersfylling/disgord"
+
+	"github.com/microcosm-cc/bluemonday"
 )
 
 func search(data *disgord.MessageCreate, args CmdArguments) {
@@ -77,10 +79,12 @@ func searchMedia(data *disgord.MessageCreate, format string, args CmdArguments) 
 	// check if there is a search term
 	if len(args) > 0 {
 		resp, queryErr := query.SearchMedia(args.ParseArgToSearch().Name, format)
-		var formattedAdultString string = "❌"
+		var formattedAdultString = "❌"
 		if resp.Media.IsAdult {
 			formattedAdultString = "✔️"
 		}
+		cleanDesc := bluemonday.NewPolicy()
+		cleanDesc.AllowNoAttrs()
 		if queryErr == nil {
 			desc := fmt.Sprintf("\n%s...\n ", formatDescMediaSearch(resp.Media.Description))
 			_, err := client.CreateMessage(
@@ -91,7 +95,7 @@ func searchMedia(data *disgord.MessageCreate, format string, args CmdArguments) 
 					Embed: &disgord.Embed{
 						Title:       resp.Media.Title.Romaji,
 						URL:         resp.Media.SiteURL,
-						Description: desc,
+						Description: cleanDesc.Sanitize(desc),
 						Color:       0x1663be,
 						Thumbnail: &disgord.EmbedThumbnail{
 							URL: resp.Media.CoverImage.Medium,

@@ -11,7 +11,7 @@ import (
 
 func trendingMedia(data *disgord.MessageCreate, format string, args []string) {
 	var desc string
-	var formattedType string = "Anime "
+	var formattedType = "Anime "
 	if format != "ANIME" {
 		formattedType = "Manga "
 	}

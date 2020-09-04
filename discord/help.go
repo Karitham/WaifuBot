@@ -15,13 +15,13 @@ func help(data *disgord.MessageCreate, args []string) {
 			searchHelp(data)
 		case "favourite", "favorite", "f":
 			favouriteHelp(data)
-		case "trendinganime", "ta":
+		case "trendinganime", "animetrending","ta":
 			trendingAnimeHelp(data)
-		case "trendingmanga", "tm":
+		case "trendingmanga", "mangatrending", "tm":
 			trendingMangaHelp(data)
-		case "searchanime", "sa":
+		case "searchanime", "animesearch", "sa":
 			searchAnimeHelp(data)
-		case "searchmanga", "sm":
+		case "searchmanga", "mangasearch", "sm":
 			searchMangaHelp(data)
 		case "give", "g":
 			giveCharHelp(data)
@@ -33,7 +33,7 @@ func help(data *disgord.MessageCreate, args []string) {
 			rollHelp(data)
 		case "list", "l":
 			listHelp(data)
-		case "invite":
+		case "invite", "i":
 			inviteHelp(data)
 		case "claim", "c":
 			claimHelp(data)
@@ -51,7 +51,7 @@ func defaultHelp(data *disgord.MessageCreate) {
 		data.Message.ChannelID,
 		&disgord.CreateMessageParams{
 			Embed: &disgord.Embed{
-				Title: "Help , alias h",
+				Title: "Help Function || alias h",
 				Description: fmt.Sprintf(
 					"This is the help function.\n\n"+
 						"Use `%shelp functionName` to find out more about each function\n"+
