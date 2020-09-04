@@ -11,28 +11,32 @@ import (
 func invite(data *disgord.MessageCreate) {
 
 	// Get URL
-	botURL, err := client.InviteURL(ctx)
+	user, err := client.GetCurrentUser(ctx)
 	if err != nil {
-		_, er := data.Message.Reply(ctx, session, err)
+		_, err = data.Message.Reply(ctx, session, err)
 		log.Println("Error getting bot url: ", err)
-		if er != nil {
-			log.Println("Error sending error message: ", er)
+		if err != nil {
+			log.Println("Error sending error message: ", err)
 		}
 	}
 	// Create embed
-	_, er := client.CreateMessage(
+	_, err = client.CreateMessage(
 		ctx,
 		data.Message.ChannelID,
 		&disgord.CreateMessageParams{
 			Embed: &disgord.Embed{
-				Title:     "Invite",
-				URL:       botURL,
+				Title: "Invite",
+				URL: fmt.Sprintf(
+					"https://discord.com/oauth2/authorize?scope=bot&client_id=%s&permissions=%d",
+					user.ID.String(),
+					67497024,
+				),
 				Timestamp: data.Message.Timestamp,
 				Color:     0x49b675,
 			},
 		},
 	)
-	if er != nil {
+	if err != nil {
 		fmt.Println("There was an error sending invite message")
 	}
 }
