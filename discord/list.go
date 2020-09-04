@@ -19,6 +19,7 @@ func list(data *disgord.MessageCreate, args []string) {
 	// If a list has been sent not too long ago, replace said list
 	val, ok := ListCache[user.ID]
 	if ok && time.Since(val.Timestamp.Time.Add(conf.ListMaxUpdateTime)) <= 0 {
+		deleteMessage(data.Message, 0)
 		msg := setEmbedTo(
 			embedUpdate{
 				ChannelID: val.ChannelID,
