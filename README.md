@@ -54,7 +54,7 @@ See [Project](https://github.com/Karitham/WaifuBot/projects/1) to view the curre
 
 - [Docker](https://docs.docker.com/get-docker/)
 - [docker-compose](https://docs.docker.com/compose/install/) (latest version recommended)
-- [A discord bot token](discordapp.com/developers)
+- [A discord bot token](https://discordapp.com/developers)
 
 ## Setup
 
