@@ -14,7 +14,7 @@ import (
 
 func roll(data *disgord.MessageCreate) {
 	// checkTimings verifies if your query is legal
-	ableToRoll := database.ViewUserData(data.Message.Author.ID).Date.Add(conf.TimeBetweenRolls * time.Hour)
+	ableToRoll := database.ViewUserData(data.Message.Author.ID).Date.Add(conf.TimeBetweenRolls)
 
 	// Verify if the roll is legal
 	if time.Until(ableToRoll) < 0 {
