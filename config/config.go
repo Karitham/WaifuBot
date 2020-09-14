@@ -30,7 +30,7 @@ func Retrieve(filename string) (config ConfStruct) {
 	}
 	config.DeleteIllegalRollAfter *= time.Minute
 	config.DeleteWrongClaimAfter *= time.Minute
-	config.TimeBetweenRolls *= time.Hour
 	config.ListMaxUpdateTime *= time.Minute
+	config.TimeBetweenRolls *= time.Hour
 	return config
 }
