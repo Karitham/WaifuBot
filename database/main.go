@@ -5,7 +5,6 @@ import (
 	"log"
 
 	"github.com/Karitham/WaifuBot/config"
-
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -14,7 +13,7 @@ var collection *mongo.Collection
 var client *mongo.Client
 
 // Init is used to start the database
-func Init(config config.ConfJSONStruct) {
+func Init(config config.ConfStruct) {
 	var err error
 
 	// Connect to MongoDB

@@ -1,46 +1,36 @@
 package config
 
 import (
-	"encoding/json"
-	"io/ioutil"
 	"log"
 	"time"
+
+	"github.com/jinzhu/configor"
 )
 
-// ConfJSONStruct is used to unmarshal the config.json
-type ConfJSONStruct struct {
-	Prefix              string        `json:"Prefix"`
-	BotToken            string        `json:"Bot_Token"`
-	MongoURL            string        `json:"Mongo_URL"`
-	Status              string        `json:"Bot_Status"`
-	MaxCharRoll         int           `json:"Max_Character_Roll"`
-	MaxCharDrop         int           `json:"Max_Character_Drop"`
-	TimeBetweenRolls    time.Duration `json:"Time_Between_Rolls"`
-	DelIllegalRollAfter time.Duration `json:"Delete_Illegal_Roll_After"`
-	DelWrongClaimAfter  time.Duration `json:"Delete_Wrong_Claim_After"`
-	ListMaxUpdateTime   time.Duration `json:"List_Max_Update_Time"`
-	DropsOnInteract     int           `json:"Drops_On_Interact"`
+// ConfStruct is used to unmarshal the config.json
+type ConfStruct struct {
+	Prefix                 string        `yaml:"Prefix"`
+	BotToken               string        `yaml:"Bot_Token"`
+	MongoURL               string        `yaml:"Mongo_URL"`
+	BotStatus              string        `yaml:"Bot_Status"`
+	MaxCharacterRoll       int           `yaml:"Max_Character_Roll"`
+	MaxCharacterDrop       int           `yaml:"Max_Character_Drop"`
+	DeleteIllegalRollAfter time.Duration `yaml:"Delete_Illegal_Roll_After"`
+	DeleteWrongClaimAfter  time.Duration `yaml:"Delete_Wrong_Claim_After"`
+	TimeBetweenRolls       time.Duration `yaml:"Time_Between_Rolls"`
+	ListMaxUpdateTime      time.Duration `yaml:"List_Max_Update_Time"`
+	DropsOnInteract        int           `yaml:"Drops_On_Interact"`
 }
 
-// Retrieve reads config from file
-func Retrieve(file string) ConfJSONStruct {
-	var config ConfJSONStruct
-	body, err := ioutil.ReadFile(file)
+// Retrieve retrieves the config from the file
+func Retrieve(filename string) (config ConfStruct) {
+	err := configor.Load(&config, filename)
 	if err != nil {
-		log.Println("error reading config file :", err)
+		log.Println(err)
 	}
-
-	err = json.Unmarshal(body, &config)
-	if err != nil {
-		log.Println("error unmarshalling config :", err)
-	}
-	return configTime(config)
-}
-
-// Configure message delete time
-func configTime(conf ConfJSONStruct) ConfJSONStruct {
-	conf.DelIllegalRollAfter *= time.Minute
-	conf.DelWrongClaimAfter *= time.Minute
-	conf.ListMaxUpdateTime *= time.Minute
-	return conf
+	config.DeleteIllegalRollAfter *= time.Minute
+	config.DeleteWrongClaimAfter *= time.Minute
+	config.TimeBetweenRolls *= time.Hour
+	config.ListMaxUpdateTime *= time.Minute
+	return config
 }

@@ -42,7 +42,7 @@ func drop(data *disgord.MessageCreate) {
 			rand.NewSource(
 				time.Now().UnixNano(),
 			),
-		).Intn(conf.MaxCharDrop),
+		).Intn(conf.MaxCharacterDrop),
 	)
 	if err != nil {
 		log.Println("Error getting random char : ", err)
@@ -150,10 +150,10 @@ func claim(data *disgord.MessageCreate, args []string) {
 				data.Message.ChannelID,
 				&disgord.CreateMessageParams{
 					Embed: &disgord.Embed{
-						Title:     "Claim unsuccessful",
+						Title:       "Claim unsuccessful",
 						Description: "It isn't the good person ! Try again !",
-						Timestamp: data.Message.Timestamp,
-						Color:     0x626868,
+						Timestamp:   data.Message.Timestamp,
+						Color:       0x626868,
 						Footer: &disgord.EmbedFooter{
 							Text: fmt.Sprintf(
 								"This characters initials are : %s",
@@ -166,7 +166,7 @@ func claim(data *disgord.MessageCreate, args []string) {
 			if err != nil {
 				log.Println("Create message returned error :", err)
 			}
-			go deleteMessage(resp, conf.DelWrongClaimAfter)
+			go deleteMessage(resp, conf.DeleteWrongClaimAfter)
 		}
 	} else {
 		resp, err := client.CreateMessage(
@@ -184,7 +184,7 @@ func claim(data *disgord.MessageCreate, args []string) {
 		if err != nil {
 			log.Println("Create message returned error :", err)
 		}
-		go deleteMessage(resp, conf.DelWrongClaimAfter)
+		go deleteMessage(resp, conf.DeleteWrongClaimAfter)
 	}
 }
 

@@ -57,7 +57,7 @@ func RandomToDB(data *disgord.MessageCreate) (resp query.CharStruct) {
 			rand.NewSource(
 				time.Now().UnixNano(),
 			),
-		).Intn(conf.MaxCharRoll))
+		).Intn(conf.MaxCharacterRoll))
 	if err != nil {
 		log.Println("Error getting random char : ", err)
 		return
@@ -91,7 +91,7 @@ func illegalRoll(data *disgord.MessageCreate, ableToRoll time.Time) {
 	if err != nil {
 		log.Println("Create message returned error :", err)
 	}
-	go deleteMessage(resp, conf.DelIllegalRollAfter)
+	go deleteMessage(resp, conf.DeleteIllegalRollAfter)
 }
 
 func rollHelp(data *disgord.MessageCreate) {
