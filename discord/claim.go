@@ -166,7 +166,7 @@ func claim(data *disgord.MessageCreate, args []string) {
 			if err != nil {
 				log.Println("Create message returned error :", err)
 			}
-			go deleteMessage(resp, conf.DeleteWrongClaimAfter)
+			go deleteMessage(resp, conf.DeleteWrongClaimAfter.Duration)
 		}
 	} else {
 		resp, err := client.CreateMessage(
@@ -184,7 +184,7 @@ func claim(data *disgord.MessageCreate, args []string) {
 		if err != nil {
 			log.Println("Create message returned error :", err)
 		}
-		go deleteMessage(resp, conf.DeleteWrongClaimAfter)
+		go deleteMessage(resp, conf.DeleteWrongClaimAfter.Duration)
 	}
 }
 

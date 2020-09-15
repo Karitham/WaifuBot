@@ -66,7 +66,7 @@ func giveChar(data *disgord.MessageCreate, args CmdArguments) {
 		if err != nil {
 			log.Println("Create message returned error :", err)
 		}
-		go deleteMessage(resp, conf.DeleteIllegalRollAfter)
+		go deleteMessage(resp, conf.DeleteIllegalRollAfter.Duration)
 	}
 }
 

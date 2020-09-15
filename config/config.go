@@ -4,33 +4,36 @@ import (
 	"log"
 	"time"
 
-	"github.com/jinzhu/configor"
+	"github.com/BurntSushi/toml"
 )
 
 // ConfStruct is used to unmarshal the config.json
 type ConfStruct struct {
-	Prefix                 string        `yaml:"Prefix"`
-	BotToken               string        `yaml:"Bot_Token"`
-	MongoURL               string        `yaml:"Mongo_URL"`
-	BotStatus              string        `yaml:"Bot_Status"`
-	MaxCharacterRoll       int           `yaml:"Max_Character_Roll"`
-	MaxCharacterDrop       int           `yaml:"Max_Character_Drop"`
-	DeleteIllegalRollAfter time.Duration `yaml:"Delete_Illegal_Roll_After"`
-	DeleteWrongClaimAfter  time.Duration `yaml:"Delete_Wrong_Claim_After"`
-	TimeBetweenRolls       time.Duration `yaml:"Time_Between_Rolls"`
-	ListMaxUpdateTime      time.Duration `yaml:"List_Max_Update_Time"`
-	DropsOnInteract        int           `yaml:"Drops_On_Interact"`
+	Prefix                 string   `toml:"Prefix"`
+	BotToken               string   `toml:"Bot_Token"`
+	MongoURL               string   `toml:"Mongo_URL"`
+	BotStatus              string   `toml:"Bot_Status"`
+	MaxCharacterRoll       int      `toml:"Max_Character_Roll"`
+	MaxCharacterDrop       int      `toml:"Max_Character_Drop"`
+	DropsOnInteract        int      `toml:"Drops_On_Interact"`
+	DeleteIllegalRollAfter duration `toml:"Delete_Illegal_Roll_After"`
+	DeleteWrongClaimAfter  duration `toml:"Delete_Wrong_Claim_After"`
+	ListMaxUpdateTime      duration `toml:"List_Max_Update_Time"`
+	TimeBetweenRolls       duration `toml:"Time_Between_Rolls"`
+}
+type duration struct {
+	time.Duration
+}
+
+func (d *duration) UnmarshalText(text []byte) (err error) {
+	d.Duration, err = time.ParseDuration(string(text))
+	return
 }
 
 // Retrieve retrieves the config from the file
 func Retrieve(filename string) (config ConfStruct) {
-	err := configor.Load(&config, filename)
-	if err != nil {
-		log.Println(err)
+	if _, err := toml.DecodeFile(filename, &config); err != nil {
+		log.Fatalln("Couldn't read configuration : ", err)
 	}
-	config.DeleteIllegalRollAfter *= time.Minute
-	config.DeleteWrongClaimAfter *= time.Minute
-	config.ListMaxUpdateTime *= time.Minute
-	config.TimeBetweenRolls *= time.Hour
-	return config
+	return
 }

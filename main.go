@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	c := config.Retrieve("config.yml")
+	c := config.Retrieve("config.toml")
 	database.Init(c)
 	discord.BotRun(c)
 }

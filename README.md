@@ -58,7 +58,7 @@ See [Project](https://github.com/Karitham/WaifuBot/projects/1) to view the curre
 
 ## Setup
 
-Rename `configExample.yml` to `config.yml` and change the values according to your needs
+Rename `configExample.toml` to `config.toml` and change the values according to your needs
 
 ## Run
 

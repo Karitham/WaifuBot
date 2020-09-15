@@ -3,12 +3,12 @@ module github.com/Karitham/WaifuBot
 go 1.14
 
 require (
+	github.com/BurntSushi/toml v0.3.1
 	github.com/andersfylling/disgord v0.18.0
 	github.com/andersfylling/snowflake/v4 v4.0.2
 	github.com/golang/protobuf v1.4.2 // indirect
 	github.com/google/go-cmp v0.5.2 // indirect
 	github.com/gorilla/websocket v1.4.2 // indirect
-	github.com/jinzhu/configor v1.2.0
 	github.com/klauspost/compress v1.11.0 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/machinebox/graphql v0.2.2

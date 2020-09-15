@@ -41,7 +41,7 @@ func search(data *disgord.MessageCreate, args CmdArguments) {
 			if err != nil {
 				log.Println("Create message returned error :", err)
 			}
-			go deleteMessage(resp, conf.DeleteWrongClaimAfter)
+			go deleteMessage(resp, conf.DeleteWrongClaimAfter.Duration)
 		}
 	} else {
 		searchHelp(data)
