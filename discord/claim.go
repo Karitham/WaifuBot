@@ -18,7 +18,7 @@ type CharStruct struct {
 	ID         int64
 	SiteURL    string
 	LargeImage string
-	Name       []string
+	Name       string
 	MediaTitle string
 }
 
@@ -31,7 +31,7 @@ func enableClaim(data *disgord.MessageCreate, in query.CharStruct) {
 		ID:         in.Page.Characters[0].ID,
 		SiteURL:    in.Page.Characters[0].SiteURL,
 		LargeImage: in.Page.Characters[0].Image.Large,
-		Name:       formatCharName(in.Page.Characters[0].Name.Full),
+		Name:       strings.Join(strings.Fields(in.Page.Characters[0].Name.Full), ""),
 		MediaTitle: in.Page.Characters[0].Media.Nodes[0].Title.Romaji,
 	}
 }
@@ -80,17 +80,8 @@ func printDrop(data *disgord.MessageCreate) {
 	}
 }
 
-func formatCharName(c string) (name []string) {
-	for _, v := range strings.Split(c, " ") {
-		if len(v) > 0 {
-			name = append(name, v)
-		}
-	}
-	return
-}
-
-func getCharInitials(name []string) (initials string) {
-	for _, v := range name {
+func getCharInitials(name string) (initials string) {
+	for _, v := range strings.Fields(name) {
 		initials = initials + strings.ToUpper(string(v[0])) + "."
 	}
 	return
@@ -98,17 +89,17 @@ func getCharInitials(name []string) (initials string) {
 
 // Claim is used to claim a waifu and add it to your database
 func claim(data *disgord.MessageCreate, args []string) {
-	if len(args) > 0 && char[data.Message.ChannelID].Name != nil {
+	if len(args) > 0 && char[data.Message.ChannelID].Name != "" {
 		if strings.EqualFold(
 			strings.Join(args, " "),
-			strings.Join(char[data.Message.ChannelID].Name, " "),
+			char[data.Message.ChannelID].Name,
 		) {
 			// Add to db
 			database.InputClaimChar{
 				UserID: data.Message.Author.ID,
 				CharList: database.CharLayout{
 					ID:    char[data.Message.ChannelID].ID,
-					Name:  strings.Join(char[data.Message.ChannelID].Name, " "),
+					Name:  char[data.Message.ChannelID].Name,
 					Image: char[data.Message.ChannelID].LargeImage,
 				},
 			}.AddChar()
@@ -121,7 +112,7 @@ func claim(data *disgord.MessageCreate, args []string) {
 				"Well done %s, you claimed %s\n"+
 					"It appears in :\n- %s",
 				data.Message.Author.Username,
-				strings.Join(char[data.Message.ChannelID].Name, " "),
+				char[data.Message.ChannelID].Name,
 				char[data.Message.ChannelID].MediaTitle,
 			)
 

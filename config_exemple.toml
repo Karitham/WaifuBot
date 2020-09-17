@@ -32,6 +32,7 @@ Drops_On_Interact = 20
 Max_Character_Drop = 5000
 
 # Every illegal roll message is deleted after some amount of time
+# Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h".
 # Exemple : "3m" signifies 3 minutes, you can set it to "2h" if you want it to be 2 hours
 Delete_Illegal_Roll_After = "3m"
 
