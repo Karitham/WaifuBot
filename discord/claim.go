@@ -31,7 +31,7 @@ func enableClaim(data *disgord.MessageCreate, in query.CharStruct) {
 		ID:         in.Page.Characters[0].ID,
 		SiteURL:    in.Page.Characters[0].SiteURL,
 		LargeImage: in.Page.Characters[0].Image.Large,
-		Name:       strings.Join(strings.Fields(in.Page.Characters[0].Name.Full), ""),
+		Name:       strings.Join(strings.Fields(in.Page.Characters[0].Name.Full), " "),
 		MediaTitle: in.Page.Characters[0].Media.Nodes[0].Title.Romaji,
 	}
 }
