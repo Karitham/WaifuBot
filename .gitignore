@@ -1,3 +1,5 @@
+.idea/
+
 config*.toml
 .vscode
 .devcontainer
