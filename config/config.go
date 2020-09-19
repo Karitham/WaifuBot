@@ -1,46 +1,39 @@
 package config
 
 import (
-	"encoding/json"
-	"io/ioutil"
 	"log"
 	"time"
+
+	"github.com/BurntSushi/toml"
 )
 
-// ConfJSONStruct is used to unmarshal the config.json
-type ConfJSONStruct struct {
-	Prefix              string        `json:"Prefix"`
-	BotToken            string        `json:"Bot_Token"`
-	MongoURL            string        `json:"Mongo_URL"`
-	Status              string        `json:"Bot_Status"`
-	MaxCharRoll         int           `json:"Max_Character_Roll"`
-	MaxCharDrop         int           `json:"Max_Character_Drop"`
-	TimeBetweenRolls    time.Duration `json:"Time_Between_Rolls"`
-	DelIllegalRollAfter time.Duration `json:"Delete_Illegal_Roll_After"`
-	DelWrongClaimAfter  time.Duration `json:"Delete_Wrong_Claim_After"`
-	ListMaxUpdateTime   time.Duration `json:"List_Max_Update_Time"`
-	DropsOnInteract     int           `json:"Drops_On_Interact"`
+// ConfStruct is used to unmarshal the config.json
+type ConfStruct struct {
+	Prefix                 string   `toml:"Prefix"`
+	BotToken               string   `toml:"Bot_Token"`
+	MongoURL               string   `toml:"Mongo_URL"`
+	BotStatus              string   `toml:"Bot_Status"`
+	MaxCharacterRoll       int      `toml:"Max_Character_Roll"`
+	MaxCharacterDrop       int      `toml:"Max_Character_Drop"`
+	DropsOnInteract        int      `toml:"Drops_On_Interact"`
+	DeleteIllegalRollAfter duration `toml:"Delete_Illegal_Roll_After"`
+	DeleteWrongClaimAfter  duration `toml:"Delete_Wrong_Claim_After"`
+	ListMaxUpdateTime      duration `toml:"List_Max_Update_Time"`
+	TimeBetweenRolls       duration `toml:"Time_Between_Rolls"`
+}
+type duration struct {
+	time.Duration
 }
 
-// Retrieve reads config from file
-func Retrieve(file string) ConfJSONStruct {
-	var config ConfJSONStruct
-	body, err := ioutil.ReadFile(file)
-	if err != nil {
-		log.Println("error reading config file :", err)
-	}
-
-	err = json.Unmarshal(body, &config)
-	if err != nil {
-		log.Println("error unmarshalling config :", err)
-	}
-	return configTime(config)
+func (d *duration) UnmarshalText(text []byte) (err error) {
+	d.Duration, err = time.ParseDuration(string(text))
+	return
 }
 
-// Configure message delete time
-func configTime(conf ConfJSONStruct) ConfJSONStruct {
-	conf.DelIllegalRollAfter *= time.Minute
-	conf.DelWrongClaimAfter *= time.Minute
-	conf.ListMaxUpdateTime *= time.Minute
-	return conf
+// Retrieve retrieves the config from the file
+func Retrieve(filename string) (config ConfStruct) {
+	if _, err := toml.DecodeFile(filename, &config); err != nil {
+		log.Fatalln("Couldn't read configuration : ", err)
+	}
+	return
 }

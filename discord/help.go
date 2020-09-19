@@ -15,7 +15,7 @@ func help(data *disgord.MessageCreate, args []string) {
 			searchHelp(data)
 		case "favourite", "favorite", "f":
 			favouriteHelp(data)
-		case "trendinganime", "animetrending","ta":
+		case "trendinganime", "animetrending", "ta":
 			trendingAnimeHelp(data)
 		case "trendingmanga", "mangatrending", "tm":
 			trendingMangaHelp(data)

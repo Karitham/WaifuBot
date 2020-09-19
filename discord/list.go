@@ -20,9 +20,9 @@ func list(data *disgord.MessageCreate, args []string) {
 
 	// If a list has been sent not too long ago, replace said list
 	val, ok := ListCache[user.ID]
-	if ok && time.Since(val.Timestamp.Time.Add(conf.ListMaxUpdateTime)) <= 0 {
+	if ok && time.Since(val.Timestamp.Time.Add(conf.ListMaxUpdateTime.Duration)) <= 0 {
 		deleteMessage(data.Message, 0)
-		msg := setEmbedTo(
+		setEmbedTo(
 			embedUpdate{
 				ChannelID: val.ChannelID,
 				MessageID: val.ID,
@@ -34,7 +34,6 @@ func list(data *disgord.MessageCreate, args []string) {
 				),
 			},
 		)
-		ListCache[user.ID] = msg
 		return
 	}
 	// Send List
@@ -74,7 +73,7 @@ func formatListEmbed(avatar string, totalPages int, desc string, user *disgord.U
 			URL: avatar,
 		},
 		Footer: &disgord.EmbedFooter{
-			Text: fmt.Sprintf("Use list <page> to see a page. There are %d total pages.", totalPages),
+			Text: fmt.Sprintf("Use list <page> | 	Pages go from 0 to %d.", totalPages),
 		},
 		Color: 0x88ffcc,
 	}

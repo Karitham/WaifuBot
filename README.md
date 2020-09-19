@@ -54,27 +54,11 @@ See [Project](https://github.com/Karitham/WaifuBot/projects/1) to view the curre
 
 - [Docker](https://docs.docker.com/get-docker/)
 - [docker-compose](https://docs.docker.com/compose/install/) (latest version recommended)
-- [A discord bot token](discordapp.com/developers)
+- [A discord bot token](https://discord.com/developers)
 
 ## Setup
 
-Rename `configExample.json` to `config.json` and change the values according to your needs
-
-```js
-{
-  "Prefix": "w.", // This is the prefix for the bot
-  "Bot_Token": "thIsIsaDiscorDToken.Xw41Og.Ix0IhJlhgEbEyK_CJwrGgucn9rk", // Place your discord bot token here
-  "Mongo_URL": "mongodb://db:27017", // This is the mongoDB URI, don't change this unless you know what you are doing
-  "Bot_Status": "WaifuBot | w.help", // This is the status displayed by the bot when running
-  "Max_Character_Roll": 15000, // Mean the roll function can query in the 15000 most popular character. DOn't go higher than 75000
-  "Max_Character_Drop": 5000, // Just like the roll function, but for dropping characters (so they are more popular)
-  "Delete_Illegal_Roll_After": 3, // Delete illegal roll message to have a cleaner chat. Duration in minutes
-  "Delete_Wrong_Claim_After": 1, // Delete wrong claims message. Duration in minute
-  "List_Max_Update_Time": 2, // How long can the bot update the last list embed sent. Duration in minute
-  "Time_Between_Rolls": 12, // Time interval between each user roll
-  "Drops_On_Interact": 20 // Lowering this value increases drop rate, the opposite works too
-}
-```
+Rename `configExample.toml` to `config.toml` and change the values according to your needs
 
 ## Run
 

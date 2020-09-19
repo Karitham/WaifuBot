@@ -1,0 +1,47 @@
+# This is the config file, everything works well when set to default
+# You only need to absolutely change the default "bot token" by your bot token
+
+# Bot prefix.
+Prefix = "w."
+
+# Your discord bot token
+Bot_Token = "thIsIsaDiscorDToken.Xw41Og.Ix0IhJlhgEbEyK_CJwrGgucn9rk"
+
+# URL to mongo database
+# if you using docker-compose, use "mongodb://db:27017"
+# if you are running the bot localy, use "mongodb://localhost:27017"
+# if you are unsure and are just follow the readme, leave this unchanged
+Mongo_URL = "mongodb://db:27017"
+
+# The bot status is what the bot will be displaying as *Currently Playing*
+Bot_Status = "WaifuBot | w.help"
+
+# This is the maximum number of random characters
+# When pulled, the characters are sorted out of popularity
+# That means you can roll out of the 15000 most popular characters
+# The maximum is around 75000 right now, but is growing with the https://anilist.co/ database
+Max_Character_Roll = 15000
+
+# This means that every time the user makes a meaningful action with the bot
+# he has a change to drop a character to claim
+# The more the user interact, the more chance he has to drop a character
+Drops_On_Interact = 20
+
+# The same as the roll, but you can make it lower so people
+# are more likely to know the character
+Max_Character_Drop = 5000
+
+# Every illegal roll message is deleted after some amount of time
+# Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h".
+# Exemple : "3m" signifies 3 minutes, you can set it to "2h" if you want it to be 2 hours
+Delete_Illegal_Roll_After = "3m"
+
+# The time after which a wrong claim report will be deleted
+Delete_Wrong_Claim_After = "1m"
+
+# When a user is checking their list, it refreshes the first embed sent if
+# you are within X minutes of sending it
+List_Max_Update_Time = "30s"
+
+# How much time between each user roll
+Time_Between_Rolls = "12h"

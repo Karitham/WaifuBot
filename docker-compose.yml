@@ -6,7 +6,7 @@ services:
     restart: always
     container_name: WaifuBot
     volumes:
-      - "./config.json:/home/waifubot/config.json"
+      - "./config.toml:/home/waifubot/config.toml"
     depends_on:
       - db
 

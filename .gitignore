@@ -1,7 +1,4 @@
-config*.json
-WaifuBot*
-*.xml
-other.yml
-*.iml
-.vscode/*
-*test.go
+config*.toml
+.vscode
+.devcontainer
+!config_exemple.toml

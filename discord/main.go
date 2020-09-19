@@ -23,7 +23,7 @@ type CmdArguments []string
 var ctx = context.Background()
 var client *disgord.Client
 var session disgord.Session
-var conf config.ConfJSONStruct
+var conf config.ConfStruct
 
 // DropIncrement controls the dropping
 var DropIncrement = make(map[disgord.Snowflake]int)
@@ -38,18 +38,18 @@ type embedUpdate struct {
 }
 
 // BotRun the bot and handle events
-func BotRun(cf config.ConfJSONStruct) {
+func BotRun(c config.ConfStruct) {
 	// sets the config for the whole disc package
-	conf = cf
+	conf = c
 
 	// init the client
 	client = disgord.New(
 		disgord.Config{
-			BotToken: cf.BotToken,
+			BotToken: c.BotToken,
 			Presence: &disgord.UpdateStatusPayload{
 				Since: nil,
 				Game: &disgord.Activity{
-					Name: conf.Status,
+					Name: conf.BotStatus,
 					Type: disgord.ActivityTypeGame,
 				},
 				Status: disgord.StatusOnline,
@@ -67,7 +67,7 @@ func BotRun(cf config.ConfJSONStruct) {
 
 	// Filter incomming messages & set the prefix
 	filter, _ := std.NewMsgFilter(ctx, client)
-	filter.SetPrefix(cf.Prefix)
+	filter.SetPrefix(c.Prefix)
 
 	// create a handler and bind it to new message events
 	go client.On(disgord.EvtMessageCreate,
@@ -94,7 +94,7 @@ func reply(s disgord.Session, data *disgord.MessageCreate) {
 	case "favourite", "favorite", "f":
 		favourite(data, args)
 		incDropper(data)
-	case "trendinganime", "animetrending","ta":
+	case "trendinganime", "animetrending", "ta":
 		trendingMedia(data, "ANIME", args)
 		incDropper(data)
 	case "trendingmanga", "mangatrending", "tm":

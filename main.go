@@ -7,10 +7,7 @@ import (
 )
 
 func main() {
-	// Get the config from config.json
-	conf := config.Retrieve("config.json")
-
-	// Run the services
-	database.Init(conf)
-	discord.BotRun(conf)
+	c := config.Retrieve("config.toml")
+	database.Init(c)
+	discord.BotRun(c)
 }
