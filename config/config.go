@@ -7,9 +7,9 @@ import (
 	"github.com/BurntSushi/toml"
 )
 
-// ConfStruct is used to unmarshal the config.json
+// ConfStruct is used to unmarshal the config.toml
 type ConfStruct struct {
-	Prefix                 string   `toml:"Prefix"`
+	Prefix                 []string `toml:"Prefix"`
 	BotToken               string   `toml:"Bot_Token"`
 	MongoURL               string   `toml:"Mongo_URL"`
 	BotStatus              string   `toml:"Bot_Status"`
