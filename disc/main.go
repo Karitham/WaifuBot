@@ -25,6 +25,7 @@ func Start(cf config.ConfStruct) {
 	wait, err := bot.Start(c.BotToken, commands, func(ctx *bot.Context) error {
 		ctx.HasPrefix = bot.NewPrefix(c.Prefix...)
 		ctx.MustRegisterSubcommand(&Search{})
+		ctx.MustRegisterSubcommand(&Trending{})
 		return nil
 	})
 	if err != nil {

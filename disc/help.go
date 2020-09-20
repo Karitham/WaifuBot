@@ -19,6 +19,5 @@ func (bot *Bot) Help(msg *gateway.MessageCreateEvent) (*discord.Embed, error) {
 			Text: "https://github.com/Karitham/WaifuBot",
 			Icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Octicons-mark-github.svg/1200px-Octicons-mark-github.svg.png",
 		},
-		Color: 0xeec400,
 	}, nil
 }
