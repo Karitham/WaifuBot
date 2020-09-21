@@ -3,7 +3,6 @@ package disc
 import (
 	"errors"
 	"fmt"
-	"strconv"
 
 	"github.com/Karitham/WaifuBot/query"
 	"github.com/diamondburned/arikawa/bot"
@@ -76,14 +75,14 @@ func (s *Search) Character(_ *gateway.MessageCreateEvent, name bot.RawArguments)
 		return nil, errors.New("missing character name / ID")
 	}
 
-	var searchArgs = query.CharSearchInput{
-		Name: string(name),
+	// Parse args
+	n, id := parseArgs(name)
+	searchArgs := query.CharSearchInput{
+		ID:   id,
+		Name: n,
 	}
 
-	if id, err := strconv.Atoi(string(name)); id != 0 && err == nil {
-		searchArgs.ID = id
-	}
-
+	// Search for character
 	r, err := query.CharSearch(searchArgs)
 	if err != nil {
 		return nil, err

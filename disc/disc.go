@@ -2,6 +2,7 @@ package disc
 
 import (
 	"log"
+	"strconv"
 
 	"github.com/Karitham/WaifuBot/config"
 	"github.com/diamondburned/arikawa/bot"
@@ -52,4 +53,13 @@ func Start(cf config.ConfStruct) {
 	if err := wait(); err != nil {
 		log.Fatalln("Gateway fatal error:", err)
 	}
+}
+
+func parseArgs(b bot.RawArguments) (name string, ID int) {
+	name = string(b)
+
+	if id, err := strconv.Atoi(string(name)); id != 0 && err == nil {
+		ID = id
+	}
+	return
 }

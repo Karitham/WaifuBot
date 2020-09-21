@@ -5,16 +5,16 @@ import (
 	"log"
 
 	"github.com/andersfylling/disgord"
-	"github.com/andersfylling/snowflake/v4"
+	"github.com/diamondburned/arikawa/discord"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// FavouriteStruct represents how to send data to the database
-type FavouriteStruct struct {
-	UserID    snowflake.Snowflake `bson:"_id"`
-	Favourite CharLayout
+// FavoriteStruct represents how to send data to the database
+type FavoriteStruct struct {
+	UserID   discord.UserID `bson:"_id"`
+	Favorite CharLayout
 }
 
 // NewQuote represent the data needed to change user quote
@@ -23,8 +23,8 @@ type NewQuote struct {
 	Quote  string
 }
 
-// SetFavourite adds a waifu to the user each time he has a new one
-func (input FavouriteStruct) SetFavourite() {
+// SetFavorite adds a waifu to the user each time he has a new one
+func (input FavoriteStruct) SetFavorite() {
 	opts := options.FindOneAndUpdate().SetUpsert(true)
 	_, err := collection.FindOneAndUpdate(
 		context.TODO(),
@@ -32,7 +32,7 @@ func (input FavouriteStruct) SetFavourite() {
 			"_id": input.UserID,
 		},
 		bson.M{
-			"$set": bson.M{"Favourite": input.Favourite},
+			"$set": bson.M{"Favourite": input.Favorite},
 		},
 		opts,
 	).DecodeBytes()

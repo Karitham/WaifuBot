@@ -5,7 +5,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/andersfylling/disgord"
+	"github.com/diamondburned/arikawa/discord"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -14,7 +14,7 @@ import (
 type UserDataStruct struct {
 	ID            int          `bson:"_id"`
 	Quote         string       `bson:"Quote,omitempty"`
-	Favourite     CharLayout   `bson:"Favourite,omitempty"`
+	Favorite      CharLayout   `bson:"Favourite,omitempty"`
 	ClaimedWaifus int          `bson:"ClaimedWaifus,omitempty"`
 	Date          time.Time    `bson:"Date,omitempty"`
 	Waifus        []CharLayout `bson:"Waifus,omitempty"`
@@ -28,13 +28,15 @@ type CharLayout struct {
 }
 
 // ViewUserData returns a list of waifus the user has collected
-func ViewUserData(id disgord.Snowflake) (userData UserDataStruct) {
+func ViewUserData(id discord.UserID) (userData *UserDataStruct, err error) {
 	bytesWaifu, err := collection.FindOne(context.TODO(), bson.M{"_id": id}).DecodeBytes()
 	if err != mongo.ErrNoDocuments {
 		err := bson.Unmarshal(bytesWaifu, &userData)
 		if err != bson.ErrDecodeToNil && err != nil {
 			log.Println(err)
 		}
+	} else {
+		return nil, err
 	}
 	return
 }
