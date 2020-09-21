@@ -19,7 +19,7 @@ func (b *Bot) Profile(m *gateway.MessageCreateEvent) (*discord.Embed, error) {
 		Title: fmt.Sprintf("%s's profile", m.Author.Username),
 		Description: fmt.Sprintf(
 			"%s\n%s last rolled %s ago.\nThey have rolled %d waifus and claimed %d.\nFavorite waifu is %s",
-			uData.Quote, m.Author.Username, time.Now().Sub(uData.Date).Truncate(time.Minute), len(uData.Waifus), uData.ClaimedWaifus, uData.Favorite.Name,
+			uData.Quote, m.Author.Username, time.Since(uData.Date).Truncate(time.Minute), len(uData.Waifus), uData.ClaimedWaifus, uData.Favorite.Name,
 		),
 		Thumbnail: &discord.EmbedThumbnail{URL: uData.Favorite.Image},
 	}, nil
