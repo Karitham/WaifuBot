@@ -5,8 +5,8 @@ import (
 	"log"
 	"time"
 
-	"github.com/andersfylling/disgord"
 	"github.com/andersfylling/snowflake/v4"
+	"github.com/diamondburned/arikawa/discord"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -20,14 +20,14 @@ type InputClaimChar struct {
 
 // ClaimIncrementStruct is an input struct for the ClaimIncrement function
 type ClaimIncrementStruct struct {
-	UserID    disgord.Snowflake
+	UserID    snowflake.Snowflake
 	Increment int
 }
 
 // InputChar represents how to send data to the database
 type InputChar struct {
-	UserID   snowflake.Snowflake `bson:"_id"`
-	Date     time.Time           `bson:"Date"`
+	UserID   discord.UserID `bson:"_id"`
+	Date     time.Time      `bson:"Date"`
 	CharList CharLayout
 }
 
