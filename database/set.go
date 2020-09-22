@@ -4,7 +4,6 @@ import (
 	"context"
 	"log"
 
-	"github.com/andersfylling/disgord"
 	"github.com/diamondburned/arikawa/discord"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -19,7 +18,7 @@ type FavoriteStruct struct {
 
 // NewQuote represent the data needed to change user quote
 type NewQuote struct {
-	UserID disgord.Snowflake
+	UserID discord.UserID
 	Quote  string
 }
 
