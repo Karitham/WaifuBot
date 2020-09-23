@@ -16,6 +16,7 @@ type ConfStruct struct {
 	MaxCharacterRoll       int      `toml:"Max_Character_Roll"`
 	MaxCharacterDrop       int      `toml:"Max_Character_Drop"`
 	DropsOnInteract        int      `toml:"Drops_On_Interact"`
+	ListLen                int      `toml:"List_Len"`
 	DeleteIllegalRollAfter duration `toml:"Delete_Illegal_Roll_After"`
 	DeleteWrongClaimAfter  duration `toml:"Delete_Wrong_Claim_After"`
 	ListMaxUpdateTime      duration `toml:"List_Max_Update_Time"`
