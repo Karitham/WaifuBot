@@ -70,7 +70,7 @@ func (s *Search) Character(_ *gateway.MessageCreateEvent, name ...string) (strin
 	n := strings.Join(name, " ")
 
 	// Parse args
-	n, id := parseArgs(n)
+	id := parseArgs(n)
 	searchArgs := query.CharSearchInput{
 		ID:   id,
 		Name: n,

@@ -43,7 +43,7 @@ func (b *Bot) Favorite(m *gateway.MessageCreateEvent, name ...string) (string, e
 	}
 	n := strings.Join(name, " ")
 
-	n, id := parseArgs(n)
+	id := parseArgs(n)
 	searchArgs := query.CharSearchInput{
 		ID:   id,
 		Name: n,

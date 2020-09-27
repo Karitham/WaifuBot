@@ -72,10 +72,8 @@ func CharSearch(input CharSearchInput) (response CharSearchStruct, err error) {
 
 	if input.ID != 0 {
 		req.Var("id", input.ID)
-	} else {
-		req.Var("name", input.Name)
 	}
-
+	req.Var("name", input.Name)
 	err = graphql.NewClient(graphURL).Run(context.Background(), req, &response)
 	return
 }

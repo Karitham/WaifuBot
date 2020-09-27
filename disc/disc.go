@@ -27,6 +27,9 @@ func Start(cf config.ConfStruct) {
 	wait, err := bot.Start(c.BotToken, commands, func(ctx *bot.Context) error {
 		ctx.HasPrefix = bot.NewPrefix(c.Prefix...)
 
+		ctx.SilentUnknown.Command = true
+		ctx.SilentUnknown.Subcommand = true
+
 		ctx.MustRegisterSubcommandCustom(&Search{}, "search")
 		ctx.MustRegisterSubcommandCustom(&Trending{}, "trending")
 
@@ -74,8 +77,8 @@ func Start(cf config.ConfStruct) {
 	}
 }
 
-func parseArgs(b string) (name string, ID int) {
-	if id, err := strconv.Atoi(string(name)); id != 0 && err == nil {
+func parseArgs(b string) (ID int) {
+	if id, err := strconv.Atoi(string(b)); id != 0 && err == nil {
 		ID = id
 	}
 	return
