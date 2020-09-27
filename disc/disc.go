@@ -54,7 +54,6 @@ func Start(cf config.ConfStruct) {
 		log.Fatalln("Gateway fatal error:", err)
 	}
 }
-
 func parseArgs(b bot.RawArguments) (name string, ID int) {
 	name = string(b)
 

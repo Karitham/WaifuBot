@@ -1,6 +1,7 @@
 package disc
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 
@@ -17,8 +18,8 @@ func (b *Bot) List(m *gateway.MessageCreateEvent, page bot.RawArguments) (*disco
 
 	if page != "" {
 		p, err = strconv.Atoi(string(page))
-		if err != nil {
-			return nil, err
+		if err != nil && p < 0 {
+			return nil, errors.New("err : invalid page number entered")
 		}
 	}
 
@@ -27,20 +28,25 @@ func (b *Bot) List(m *gateway.MessageCreateEvent, page bot.RawArguments) (*disco
 		return nil, err
 	}
 
-	desc := func(l []database.CharLayout) (d string) {
-		if len(l) > p*15+15 {
-			l = l[p*15 : p*15+15]
-		} else if len(l) > p*15 {
-			l = l[p*15:]
-		}
-		for _, waifu := range l {
-			d += fmt.Sprintf("%d - %s\n", waifu.ID, waifu.Name)
-		}
-		return
-	}(uData.Waifus)
+	embed, err := createListEmbed(m.Author, p, uData.Waifus)
+	if err != nil {
+		return nil, err
+	}
 
+	return embed, nil
+}
+
+func createListEmbed(user discord.User, page int, list []database.CharLayout) (embed *discord.Embed, err error) {
 	return &discord.Embed{
-		Title:       fmt.Sprintf("%s's list page %d", m.Author.Username, p),
-		Description: desc,
+		Title: fmt.Sprintf("%s's list page %d", user.Username, page),
+		Description: func(l []database.CharLayout) (d string) {
+			if len(l) >= 0 {
+				for i := c.ListLen * page; i < c.ListLen+c.ListLen*page && i < len(l); i++ {
+					d += fmt.Sprintf("%d - %s\n", l[i].ID, l[i].Name)
+				}
+				return d
+			}
+			return "This user's list is empty"
+		}(list),
 	}, nil
 }
