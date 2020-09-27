@@ -1,26 +1,21 @@
 package disc
 
 import (
-	"errors"
 	"fmt"
-	"strconv"
 
 	"github.com/Karitham/WaifuBot/database"
-	"github.com/diamondburned/arikawa/bot"
 	"github.com/diamondburned/arikawa/discord"
 	"github.com/diamondburned/arikawa/gateway"
 )
 
-// List shows the user's list
-func (b *Bot) List(m *gateway.MessageCreateEvent, page bot.RawArguments) (*discord.Embed, error) {
-	var p int
-	var err error
+// Page represent a page
+type Page int
 
-	if page != "" {
-		p, err = strconv.Atoi(string(page))
-		if err != nil && p < 0 {
-			return nil, errors.New("err : invalid page number entered")
-		}
+// List shows the user's list
+func (b *Bot) List(m *gateway.MessageCreateEvent, page ...Page) (*discord.Embed, error) {
+	var p = 1
+	if len(page) > 0 {
+		p = int(page[0])
 	}
 
 	uData, err := database.ViewUserData(m.Author.ID)
@@ -28,7 +23,7 @@ func (b *Bot) List(m *gateway.MessageCreateEvent, page bot.RawArguments) (*disco
 		return nil, err
 	}
 
-	embed, err := createListEmbed(m.Author, p, uData.Waifus)
+	embed, err := createListEmbed(m.Author, p-1, uData.Waifus)
 	if err != nil {
 		return nil, err
 	}
@@ -38,7 +33,7 @@ func (b *Bot) List(m *gateway.MessageCreateEvent, page bot.RawArguments) (*disco
 
 func createListEmbed(user discord.User, page int, list []database.CharLayout) (embed *discord.Embed, err error) {
 	return &discord.Embed{
-		Title: fmt.Sprintf("%s's list page %d", user.Username, page),
+		Title: fmt.Sprintf("%s's list", user.Username),
 		Description: func(l []database.CharLayout) (d string) {
 			if len(l) >= 0 {
 				for i := c.ListLen * page; i < c.ListLen+c.ListLen*page && i < len(l); i++ {
@@ -48,5 +43,7 @@ func createListEmbed(user discord.User, page int, list []database.CharLayout) (e
 			}
 			return "This user's list is empty"
 		}(list),
+		Thumbnail: &discord.EmbedThumbnail{URL: user.AvatarURL()},
+		Footer:    &discord.EmbedFooter{Text: fmt.Sprintf("Page %02d/%02d", page+1, ((len(list)-1)/c.ListLen)+1)},
 	}, nil
 }

@@ -13,6 +13,15 @@ import (
 
 // Roll drops a random character and adds it to the database
 func (b *Bot) Roll(m *gateway.MessageCreateEvent) (*discord.Embed, error) {
+	userData, err := database.ViewUserData(m.Author.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	if nextRollTime := time.Until(userData.Date.Add(c.TimeBetweenRolls.Duration)); nextRollTime > 0 {
+		return nil, fmt.Errorf("cannot roll now, roll in %s", nextRollTime.Truncate(time.Second))
+	}
+
 	char, err := query.CharSearchByPopularity(
 		rand.New(
 			rand.NewSource(

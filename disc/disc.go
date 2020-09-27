@@ -28,6 +28,14 @@ func Start(cf config.ConfStruct) {
 		ctx.HasPrefix = bot.NewPrefix(c.Prefix...)
 		ctx.MustRegisterSubcommand(&Search{})
 		ctx.MustRegisterSubcommand(&Trending{})
+
+		ctx.AddAliases("List", "l", "L")
+		ctx.AddAliases("Roll", "r", "R")
+		ctx.AddAliases("Profile", "p", "P")
+		ctx.AddAliases("Help", "h", "H")
+		ctx.AddAliases("Favorite", "f", "F")
+		ctx.AddAliases("Quote", "q", "Q")
+		ctx.AddAliases("Give", "g", "G")
 		return nil
 	})
 	if err != nil {
@@ -56,9 +64,7 @@ func Start(cf config.ConfStruct) {
 	}
 }
 
-func parseArgs(b bot.RawArguments) (name string, ID int) {
-	name = string(b)
-
+func parseArgs(b string) (name string, ID int) {
 	if id, err := strconv.Atoi(string(name)); id != 0 && err == nil {
 		ID = id
 	}

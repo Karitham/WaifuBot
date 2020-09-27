@@ -2,6 +2,7 @@ package disc
 
 import (
 	"errors"
+	"strings"
 
 	"github.com/Karitham/WaifuBot/query"
 	"github.com/diamondburned/arikawa/bot"
@@ -16,8 +17,7 @@ type Search struct {
 // Setup setups the subcommand
 func (s *Search) Setup(sub *bot.Subcommand) {
 	sub.Command = "search"
-
-	sub.Description = "Search for characters, anime and manga"
+	sub.Description = "Search for characters, anime, manga and users"
 
 	sub.ChangeCommandInfo("Manga", "", "search for a manga")
 	sub.ChangeCommandInfo("Anime", "", "search for an anime")
@@ -26,12 +26,14 @@ func (s *Search) Setup(sub *bot.Subcommand) {
 }
 
 // Manga is a subcommand of Search
-func (s *Search) Manga(_ *gateway.MessageCreateEvent, name bot.RawArguments) (string, error) {
-	if name == "" {
+func (s *Search) Manga(_ *gateway.MessageCreateEvent, name ...string) (string, error) {
+	if name == nil {
 		return "", errors.New("missing manga name")
 	}
 
-	r, err := query.MediaSearch(string(name), "MANGA")
+	n := strings.Join(name, " ")
+
+	r, err := query.MediaSearch(n, "MANGA")
 	if err != nil {
 		return "", err
 	}
@@ -40,12 +42,14 @@ func (s *Search) Manga(_ *gateway.MessageCreateEvent, name bot.RawArguments) (st
 }
 
 // Anime is a subcommand of Search
-func (s *Search) Anime(_ *gateway.MessageCreateEvent, name bot.RawArguments) (string, error) {
-	if name == "" {
+func (s *Search) Anime(_ *gateway.MessageCreateEvent, name ...string) (string, error) {
+	if name == nil {
 		return "", errors.New("missing anime name")
 	}
 
-	r, err := query.MediaSearch(string(name), "ANIME")
+	n := strings.Join(name, " ")
+
+	r, err := query.MediaSearch(n, "ANIME")
 	if err != nil {
 		return "", err
 	}
@@ -54,13 +58,15 @@ func (s *Search) Anime(_ *gateway.MessageCreateEvent, name bot.RawArguments) (st
 }
 
 // Character is a subcommand of Search
-func (s *Search) Character(_ *gateway.MessageCreateEvent, name bot.RawArguments) (string, error) {
-	if name == "" {
+func (s *Search) Character(_ *gateway.MessageCreateEvent, name ...string) (string, error) {
+	if name == nil {
 		return "", errors.New("missing character name / ID")
 	}
 
+	n := strings.Join(name, " ")
+
 	// Parse args
-	n, id := parseArgs(name)
+	n, id := parseArgs(n)
 	searchArgs := query.CharSearchInput{
 		ID:   id,
 		Name: n,
@@ -76,12 +82,14 @@ func (s *Search) Character(_ *gateway.MessageCreateEvent, name bot.RawArguments)
 }
 
 // User is a subcommand of Search
-func (s *Search) User(_ *gateway.MessageCreateEvent, name bot.RawArguments) (string, error) {
-	if name == "" {
+func (s *Search) User(_ *gateway.MessageCreateEvent, name ...string) (string, error) {
+	if name == nil {
 		return "", errors.New("missing user name")
 	}
 
-	r, err := query.User(string(name))
+	n := strings.Join(name, " ")
+
+	r, err := query.User(n)
 	if err != nil {
 		return "", err
 	}

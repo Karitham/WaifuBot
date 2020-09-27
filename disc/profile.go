@@ -3,6 +3,7 @@ package disc
 import (
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/Karitham/WaifuBot/database"
@@ -12,12 +13,19 @@ import (
 	"github.com/diamondburned/arikawa/gateway"
 )
 
+// Name represent the name of a character
+type Name bot.RawArguments
+
+// Quote represent a quote
+type Quote bot.RawArguments
+
 // Profile displays user profile
 func (b *Bot) Profile(m *gateway.MessageCreateEvent) (*discord.Embed, error) {
 	uData, err := database.ViewUserData(m.Author.ID)
 	if err != nil {
 		return nil, err
 	}
+
 	return &discord.Embed{
 		Title: fmt.Sprintf("%s's profile", m.Author.Username),
 		Description: fmt.Sprintf(
@@ -29,19 +37,18 @@ func (b *Bot) Profile(m *gateway.MessageCreateEvent) (*discord.Embed, error) {
 }
 
 // Favorite sets a waifu as favorite
-func (b *Bot) Favorite(m *gateway.MessageCreateEvent, name bot.RawArguments) (string, error) {
-	if name == "" {
+func (b *Bot) Favorite(m *gateway.MessageCreateEvent, name ...string) (string, error) {
+	if name == nil {
 		return "", errors.New("no character name entered")
 	}
+	n := strings.Join(name, " ")
 
-	// Parse args
-	n, id := parseArgs(name)
+	n, id := parseArgs(n)
 	searchArgs := query.CharSearchInput{
 		ID:   id,
 		Name: n,
 	}
 
-	// Search for character
 	char, err := query.CharSearch(searchArgs)
 	if err != nil {
 		return "", err
@@ -57,15 +64,17 @@ func (b *Bot) Favorite(m *gateway.MessageCreateEvent, name bot.RawArguments) (st
 }
 
 // Quote sets a quote on the user profile
-func (b *Bot) Quote(m *gateway.MessageCreateEvent, name bot.RawArguments) (string, error) {
-	if name == "" {
+func (b *Bot) Quote(m *gateway.MessageCreateEvent, quote ...string) (string, error) {
+	if quote == nil {
 		return "", errors.New("no quote entered")
 	}
 
+	q := strings.Join(quote, " ")
+
 	database.NewQuote{
 		UserID: m.Author.ID,
-		Quote:  string(name),
+		Quote:  q,
 	}.SetQuote()
 
-	return fmt.Sprintf("New quote set :\n%s", string(name)), nil
+	return fmt.Sprintf("New quote set :\n%s", q), nil
 }

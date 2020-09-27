@@ -4,24 +4,22 @@ import (
 	"context"
 	"log"
 
-	"github.com/andersfylling/disgord"
+	"github.com/diamondburned/arikawa/discord"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-// DelWaifuStruct is what data to send to remove a waifu from the database
-type DelWaifuStruct struct {
-	UserID disgord.Snowflake `bson:"_id"`
+// CharDelStruct is what data to send to remove a waifu from the database
+type CharDelStruct struct {
+	UserID discord.UserID `bson:"_id"`
 	CharID int
 }
 
 // DelChar removes a waifu from the database
-func (input DelWaifuStruct) DelChar() (WaifuWasRemoved bool) {
-	var decoded bson.M
-
+func (input CharDelStruct) DelChar() (ChangedData UserDataStruct, err error) {
 	// Find the character and delete it
-	err := collection.FindOneAndUpdate(
+	err = collection.FindOneAndUpdate(
 		context.TODO(),
 		bson.D{
 			primitive.E{Key: "_id", Value: input.UserID},
@@ -33,14 +31,11 @@ func (input DelWaifuStruct) DelChar() (WaifuWasRemoved bool) {
 			},
 		},
 		},
-	).Decode(&decoded)
-
-	// If the database found something, returns true
+	).Decode(&ChangedData)
 	if err != nil {
-		log.Println("There was an error delete waifu :", err)
-		return false
+		return UserDataStruct{}, err
 	}
-	return true
+	return ChangedData, nil
 }
 
 // DropUser a user via USER ID
