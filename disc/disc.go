@@ -1,6 +1,7 @@
 package disc
 
 import (
+	"fmt"
 	"log"
 	"strconv"
 
@@ -54,6 +55,7 @@ func Start(cf config.ConfStruct) {
 		log.Fatalln("Gateway fatal error:", err)
 	}
 }
+
 func parseArgs(b bot.RawArguments) (name string, ID int) {
 	name = string(b)
 
@@ -61,4 +63,16 @@ func parseArgs(b bot.RawArguments) (name string, ID int) {
 		ID = id
 	}
 	return
+}
+
+// Invite sends invite link
+func (b *Bot) Invite(_ *gateway.MessageCreateEvent) (*discord.Embed, error) {
+	return &discord.Embed{
+		Title: "Invite",
+		URL: fmt.Sprintf(
+			"https://discord.com/oauth2/authorize?scope=bot&client_id=%d&permissions=%d",
+			b.Ctx.Ready.User.ID,
+			67497024,
+		),
+	}, nil
 }
