@@ -26,34 +26,44 @@ func Start(cf config.ConfStruct) {
 	// Start the bot
 	wait, err := bot.Start(c.BotToken, commands, func(ctx *bot.Context) error {
 		ctx.HasPrefix = bot.NewPrefix(c.Prefix...)
-		ctx.MustRegisterSubcommand(&Search{})
-		ctx.MustRegisterSubcommand(&Trending{})
+
+		ctx.MustRegisterSubcommandCustom(&Search{}, "search")
+		ctx.MustRegisterSubcommandCustom(&Trending{}, "trending")
+
+		ctx.ChangeCommandInfo("Roll", "", "roll a random character")
+		ctx.ChangeCommandInfo("Profile", "", "display user profile")
+		ctx.ChangeCommandInfo("Favorite", "", "set a char as favorite")
+		ctx.ChangeCommandInfo("Quote", "", "set profile quote")
+		ctx.ChangeCommandInfo("List", "", "display user characters")
+		ctx.ChangeCommandInfo("Help", "", "display general help")
+		ctx.ChangeCommandInfo("Give", "", "give a char to a user")
+		ctx.ChangeCommandInfo("Invite", "", "send invite link")
 
 		ctx.AddAliases("List", "l", "L")
+		ctx.AddAliases("Invite", "i", "I")
 		ctx.AddAliases("Roll", "r", "R")
 		ctx.AddAliases("Profile", "p", "P")
 		ctx.AddAliases("Help", "h", "H")
 		ctx.AddAliases("Favorite", "f", "F")
 		ctx.AddAliases("Quote", "q", "Q")
 		ctx.AddAliases("Give", "g", "G")
+
+		ctx.Gateway.Identifier.IdentifyData = gateway.IdentifyData{
+			Token: c.BotToken,
+
+			Presence: &gateway.UpdateStatusData{
+				Game: &discord.Activity{
+					Name: c.BotStatus,
+					Type: discord.GameActivity,
+				},
+				Status: discord.OnlineStatus,
+			},
+		}
+
 		return nil
 	})
 	if err != nil {
 		log.Fatalln(err)
-	}
-
-	// Set status
-	err = commands.Ctx.Gateway.UpdateStatus(
-		gateway.UpdateStatusData{
-			Game: &discord.Activity{
-				Name: c.BotStatus,
-				Type: discord.GameActivity,
-			},
-			Status: discord.OnlineStatus,
-		},
-	)
-	if err != nil {
-		log.Println("couldn't set status : ", err)
 	}
 
 	log.Println("Bot started")

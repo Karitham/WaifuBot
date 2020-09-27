@@ -16,8 +16,12 @@ type Search struct {
 
 // Setup setups the subcommand
 func (s *Search) Setup(sub *bot.Subcommand) {
-	sub.Command = "search"
 	sub.Description = "Search for characters, anime, manga and users"
+
+	sub.AddAliases("Anime", "a", "A")
+	sub.AddAliases("Manga", "m", "M")
+	sub.AddAliases("Character", "c", "C")
+	sub.AddAliases("User", "u", "U")
 
 	sub.ChangeCommandInfo("Manga", "", "search for a manga")
 	sub.ChangeCommandInfo("Anime", "", "search for an anime")
@@ -27,7 +31,7 @@ func (s *Search) Setup(sub *bot.Subcommand) {
 
 // Manga is a subcommand of Search
 func (s *Search) Manga(_ *gateway.MessageCreateEvent, name ...string) (string, error) {
-	if name == nil {
+	if len(name) < 1 {
 		return "", errors.New("missing manga name")
 	}
 
@@ -43,7 +47,7 @@ func (s *Search) Manga(_ *gateway.MessageCreateEvent, name ...string) (string, e
 
 // Anime is a subcommand of Search
 func (s *Search) Anime(_ *gateway.MessageCreateEvent, name ...string) (string, error) {
-	if name == nil {
+	if len(name) < 1 {
 		return "", errors.New("missing anime name")
 	}
 
@@ -59,7 +63,7 @@ func (s *Search) Anime(_ *gateway.MessageCreateEvent, name ...string) (string, e
 
 // Character is a subcommand of Search
 func (s *Search) Character(_ *gateway.MessageCreateEvent, name ...string) (string, error) {
-	if name == nil {
+	if len(name) < 1 {
 		return "", errors.New("missing character name / ID")
 	}
 
@@ -83,7 +87,7 @@ func (s *Search) Character(_ *gateway.MessageCreateEvent, name ...string) (strin
 
 // User is a subcommand of Search
 func (s *Search) User(_ *gateway.MessageCreateEvent, name ...string) (string, error) {
-	if name == nil {
+	if len(name) < 1 {
 		return "", errors.New("missing user name")
 	}
 
