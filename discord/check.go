@@ -9,10 +9,10 @@ import (
 )
 
 func check(data *disgord.MessageCreate, args CmdArguments) {
-	// Verify if user possesses the Waifu he wants to give, also deletes the character from his database if valid
+	// Verify if user possesses the Waifu.
 	desc, valid := checkWaifuValid(data, args)
 
-	// Get the author of the database
+	// Get the avatar of the author
 	avatar := getUserAvatar(data.Message.Author)
 
 	if valid {
