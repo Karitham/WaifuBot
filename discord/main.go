@@ -94,16 +94,16 @@ func reply(s disgord.Session, data *disgord.MessageCreate) {
 	case "favourite", "favorite", "f":
 		favourite(data, args)
 		incDropper(data)
-	case "trendinganime", "animetrending", "ta":
+	case "trendinganime", "ta":
 		trendingMedia(data, "ANIME", args)
 		incDropper(data)
-	case "trendingmanga", "mangatrending", "tm":
+	case "trendingmanga", "tm":
 		trendingMedia(data, "MANGA", args)
 		incDropper(data)
-	case "searchanime", "animesearch", "sa":
+	case "searchanime", "sa":
 		searchMedia(data, "ANIME", args)
 		incDropper(data)
-	case "searchmanga", "mangasearch", "sm":
+	case "searchmanga", "sm":
 		searchMedia(data, "MANGA", args)
 		incDropper(data)
 	case "give", "g":
@@ -122,10 +122,12 @@ func reply(s disgord.Session, data *disgord.MessageCreate) {
 		list(data, args)
 	case "invite", "i":
 		invite(data)
-	case "claim", "c":
+	case "claim", "clm":
 		claim(data, args)
 	case "help", "h":
 		help(data, args)
+	case "check", "chk":
+		check(data, args)
 	default:
 		unknown(data)
 	}
