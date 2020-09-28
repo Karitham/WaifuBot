@@ -35,8 +35,10 @@ func help(data *disgord.MessageCreate, args []string) {
 			listHelp(data)
 		case "invite", "i":
 			inviteHelp(data)
-		case "claim", "c":
+		case "claim", "clm":
 			claimHelp(data)
+		case "check", "chk":
+			checkHelp(data)	
 		default:
 			defaultHelp(data)
 		}
