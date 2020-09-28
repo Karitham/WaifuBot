@@ -9,17 +9,18 @@ import (
 	"github.com/Karitham/WaifuBot/query"
 	"github.com/diamondburned/arikawa/discord"
 	"github.com/diamondburned/arikawa/gateway"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 // Roll drops a random character and adds it to the database
 func (b *Bot) Roll(m *gateway.MessageCreateEvent) (*discord.Embed, error) {
 	userData, err := database.ViewUserData(m.Author.ID)
-	if err != nil {
+	if err != nil && err != mongo.ErrNoDocuments {
 		return nil, err
 	}
 
 	if nextRollTime := time.Until(userData.Date.Add(c.TimeBetweenRolls.Duration)); nextRollTime > 0 {
-		return nil, fmt.Errorf("cannot roll now, roll in %s", nextRollTime.Truncate(time.Second))
+		return nil, fmt.Errorf("illegal roll, roll in %s", nextRollTime.Truncate(time.Second))
 	}
 
 	char, err := query.CharSearchByPopularity(

@@ -28,7 +28,7 @@ type CharLayout struct {
 }
 
 // ViewUserData returns a list of waifus the user has collected
-func ViewUserData(id discord.UserID) (userData *UserDataStruct, err error) {
+func ViewUserData(id discord.UserID) (userData UserDataStruct, err error) {
 	bytesWaifu, err := collection.FindOne(context.TODO(), bson.M{"_id": id}).DecodeBytes()
 	if err != mongo.ErrNoDocuments {
 		err := bson.Unmarshal(bytesWaifu, &userData)
@@ -36,7 +36,7 @@ func ViewUserData(id discord.UserID) (userData *UserDataStruct, err error) {
 			log.Println(err)
 		}
 	} else {
-		return nil, err
+		return UserDataStruct{}, err
 	}
 	return
 }
