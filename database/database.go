@@ -10,7 +10,6 @@ import (
 )
 
 var collection *mongo.Collection
-var client *mongo.Client
 
 // Init is used to start the database
 func Init(config config.ConfStruct) {
