@@ -9,10 +9,10 @@ import (
 )
 
 func verify(data *disgord.MessageCreate, args CmdArguments) {
-	// Verify if user possesses the Waifu he wants to give, also deletes the character from his database if valid
+	// Verify if user possesses the Waifu
 	desc, valid := verifyWaifuValid(data, args)
 
-	// Get the author of the database
+	// Get the avatar of the mentioned user.
 	avatar := getUserAvatar(data.Message.Author)
 
 	if valid {
@@ -60,7 +60,7 @@ func verify(data *disgord.MessageCreate, args CmdArguments) {
 	}
 }
 
-// Verify if user possesses the Waifu he wants to give, also deletes the character from his database if valid
+// Verify if user possesses the Waifu
 func verifyWaifuValid(data *disgord.MessageCreate, arg CmdArguments) (desc string, isValid bool) {
 	if len(arg) > 0 {
 		resp := arg.ParseArgToSearch()
@@ -78,19 +78,19 @@ func verifyWaifuValid(data *disgord.MessageCreate, arg CmdArguments) (desc strin
 	return "Please enter arguments,\nRefer to help to see how to use this command", false
 }
 
-// Help function for Give
+// Help function for Verify
 func verifyHelp(data *disgord.MessageCreate) {
 	_, err := client.CreateMessage(
 		ctx,
 		data.Message.ChannelID,
 		&disgord.CreateMessageParams{
 			Embed: &disgord.Embed{
-				Title: "Check Help || alias chk",
+				Title: "Verify Help || alias v",
 				Description: fmt.Sprintf(
-					"This is the help for the check functionality\n\n"+
+					"This is the help for the verify functionality\n\n"+
 						"This permits you to check if one of your friends has got the waifu you want.\n"+
 						"You can give a waifu to another user using the following syntax :\n"+
-						"`%scheck ID @User`",
+						"`%sverify ID @User`",
 					conf.Prefix,
 				),
 				Footer: &disgord.EmbedFooter{
@@ -102,6 +102,6 @@ func verifyHelp(data *disgord.MessageCreate) {
 		},
 	)
 	if err != nil {
-		fmt.Println("There was an error sending help for check waifu: ", err)
+		fmt.Println("There was an error sending help for verifying waifu: ", err)
 	}
 }
