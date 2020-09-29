@@ -8,11 +8,11 @@ import (
 	"github.com/andersfylling/disgord"
 )
 
-func check(data *disgord.MessageCreate, args CmdArguments) {
-	// Verify if user possesses the Waifu.
-	desc, valid := checkWaifuValid(data, args)
+func verify(data *disgord.MessageCreate, args CmdArguments) {
+	// Verify if user possesses the Waifu he wants to give, also deletes the character from his database if valid
+	desc, valid := verifyWaifuValid(data, args)
 
-	// Get the avatar of the author
+	// Get the author of the database
 	avatar := getUserAvatar(data.Message.Author)
 
 	if valid {
@@ -61,7 +61,7 @@ func check(data *disgord.MessageCreate, args CmdArguments) {
 }
 
 // Verify if user possesses the Waifu he wants to give, also deletes the character from his database if valid
-func checkWaifuValid(data *disgord.MessageCreate, arg CmdArguments) (desc string, isValid bool) {
+func verifyWaifuValid(data *disgord.MessageCreate, arg CmdArguments) (desc string, isValid bool) {
 	if len(arg) > 0 {
 		resp := arg.ParseArgToSearch()
 		switch {
@@ -69,7 +69,7 @@ func checkWaifuValid(data *disgord.MessageCreate, arg CmdArguments) (desc string
 			return fmt.Sprintf("Error, %d is not a valid WaifuID,\nRefer to %shelp to see this command's syntax", resp.ID, conf.Prefix), false
 		case data.Message.Mentions == nil:
 			return fmt.Sprintf("Error, please tag a discord user,\nRefer to %shelp to see this command's syntax", conf.Prefix), false
-		case !database.CheckWaifuStruct{UserID: data.Message.Mentions[0].ID, CharID: resp.ID}.CheckWaifu():
+		case !database.VerifyWaifuStruct{UserID: data.Message.Mentions[0].ID, CharID: resp.ID}.VerifyWaifu():
 			return fmt.Sprintf("%s does not possess this waifu.", data.Message.Mentions[0].Username), false
 		default:
 			return "", true
@@ -79,7 +79,7 @@ func checkWaifuValid(data *disgord.MessageCreate, arg CmdArguments) (desc string
 }
 
 // Help function for Give
-func checkHelp(data *disgord.MessageCreate) {
+func verifyHelp(data *disgord.MessageCreate) {
 	_, err := client.CreateMessage(
 		ctx,
 		data.Message.ChannelID,

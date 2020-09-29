@@ -2,11 +2,13 @@ package database
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"time"
 
 	"github.com/andersfylling/disgord"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -40,13 +42,13 @@ func ViewUserData(id disgord.Snowflake) (userData UserDataStruct) {
 }
 
 // CheckWaifuStruct is what data to send to check if a waifu is owned from another user in the database
-type CheckWaifuStruct struct {
+type VerifyWaifuStruct struct {
 	UserID disgord.Snowflake `bson:"_id"`
 	CharID int
 }
 
 // CheckWaifuData is what data to send to check if a waifu is owned from another user in the database
-func (input CheckWaifuStruct) CheckWaifu() (WaifuExists bool) {
+func (input VerifyWaifuStruct) VerifyWaifu() (WaifuExists bool) {
 	var decoded bson.M
 
 	// Find the character and delete it

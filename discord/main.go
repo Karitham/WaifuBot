@@ -122,12 +122,12 @@ func reply(s disgord.Session, data *disgord.MessageCreate) {
 		list(data, args)
 	case "invite", "i":
 		invite(data)
-	case "claim", "clm":
+	case "claim", "c":
 		claim(data, args)
 	case "help", "h":
 		help(data, args)
-	case "check", "chk":
-		check(data, args)
+	case "verify", "v":
+		verify(data, args)
 	default:
 		unknown(data)
 	}
