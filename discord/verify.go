@@ -2,6 +2,7 @@ package discord
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/Karitham/WaifuBot/database"
 	"github.com/Karitham/WaifuBot/query"
@@ -19,7 +20,7 @@ func verify(data *disgord.MessageCreate, args CmdArguments) {
 		// Get char
 		_, err := query.CharSearch(args.ParseArgToSearch())
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 		}
 
 		// Send confirmation Message
@@ -37,7 +38,7 @@ func verify(data *disgord.MessageCreate, args CmdArguments) {
 			},
 		)
 		if err != nil {
-			fmt.Println("There was an error verifying: ", err)
+			log.Println("There was an error verifying: ", err)
 		}
 	} else {
 		// Send message
@@ -55,7 +56,7 @@ func verify(data *disgord.MessageCreate, args CmdArguments) {
 			},
 		)
 		if err != nil {
-			fmt.Println("Create message returned error :", err)
+			log.Println("Create message returned error :", err)
 		}
 	}
 }
@@ -102,6 +103,6 @@ func verifyHelp(data *disgord.MessageCreate) {
 		},
 	)
 	if err != nil {
-		fmt.Println("There was an error sending help for verifying waifu: ", err)
+		log.Println("There was an error sending help for verifying waifu: ", err)
 	}
 }
