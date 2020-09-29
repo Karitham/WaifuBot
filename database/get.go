@@ -2,7 +2,6 @@ package database
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"time"
 
@@ -41,26 +40,25 @@ func ViewUserData(id disgord.Snowflake) (userData UserDataStruct) {
 	return
 }
 
-// CheckWaifuStruct is what data to send to check if a waifu is owned from another user in the database
+// CheckWaifuStruct is what data to send to check if a waifu is owned by another user in the database
 type VerifyWaifuStruct struct {
 	UserID disgord.Snowflake `bson:"_id"`
 	CharID int
 }
 
-// CheckWaifuData is what data to send to check if a waifu is owned from another user in the database
+// CheckWaifuData is what data to send to check if a waifu is owned by another user in the database
 func (input VerifyWaifuStruct) VerifyWaifu() (WaifuExists bool) {
-	var decoded bson.M
 
-	// Find the character and delete it
+	// Find the character
 	var err = collection.FindOne(
 		context.TODO(),
 		bson.D{
 			primitive.E{Key: "_id", Value: input.UserID},
 			primitive.E{Key: "Waifus.ID", Value: input.CharID},
 		},
-	).Decode(&decoded) // If the database found something, returns true
+	)
 	if err != nil {
-		fmt.Println("There was an error when checking for a waifu :", err)
+		log.Println("There was an error when checking for a waifu :", err)
 		return false
 	}
 	return true
