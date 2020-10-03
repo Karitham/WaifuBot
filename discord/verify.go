@@ -2,27 +2,24 @@ package discord
 
 import (
 	"fmt"
+	"github.com/Karitham/WaifuBot/database"
 	"log"
 
-	"github.com/Karitham/WaifuBot/database"
 	"github.com/Karitham/WaifuBot/query"
 	"github.com/andersfylling/disgord"
 )
 
 func verify(data *disgord.MessageCreate, args CmdArguments) {
 	// Verify if user possesses the Waifu
-	desc, valid := verifyWaifuValid(data, args)
+	desc, isValid := verifyWaifuValid(data, args)
 
-	// Get the avatar of the mentioned user.
-	avatar := getUserAvatar(data.Message.Author)
+	// Get char
+	resp, err := query.CharSearch(args.ParseArgToSearch())
+	if err != nil {
+		log.Println(err)
+	}
 
-	if valid {
-		// Get char
-		_, err := query.CharSearch(args.ParseArgToSearch())
-		if err != nil {
-			log.Println(err)
-		}
-
+	if isValid {
 		// Send confirmation Message
 		_, err = client.CreateMessage(
 			ctx,
@@ -30,15 +27,15 @@ func verify(data *disgord.MessageCreate, args CmdArguments) {
 			&disgord.CreateMessageParams{
 				Embed: &disgord.Embed{
 					Title:       "Waifu Verification",
-					Thumbnail:   &disgord.EmbedThumbnail{URL: avatar},
-					Description: fmt.Sprintf("%s possesses the Waifu you want.", data.Message.Mentions[0].Username),
+					Thumbnail:   &disgord.EmbedThumbnail{URL: resp.Character.Image.Large},
+					Description: desc,
 					Timestamp:   data.Message.Timestamp,
 					Color:       0x43e99a,
 				},
 			},
 		)
 		if err != nil {
-			log.Println("There was an error verifying: ", err)
+			log.Println("There was an error when sending the verification message: ", err)
 		}
 	} else {
 		// Send message
@@ -48,7 +45,7 @@ func verify(data *disgord.MessageCreate, args CmdArguments) {
 			&disgord.CreateMessageParams{
 				Embed: &disgord.Embed{
 					Title:       "Waifu Verification",
-					Thumbnail:   &disgord.EmbedThumbnail{URL: avatar},
+					Thumbnail:   &disgord.EmbedThumbnail{URL: resp.Character.Image.Large},
 					Description: desc,
 					Timestamp:   data.Message.Timestamp,
 					Color:       0xcc0000,
@@ -64,16 +61,16 @@ func verify(data *disgord.MessageCreate, args CmdArguments) {
 // Verify if user possesses the Waifu
 func verifyWaifuValid(data *disgord.MessageCreate, arg CmdArguments) (desc string, isValid bool) {
 	if len(arg) > 0 {
-		resp := arg.ParseArgToSearch()
+		resp, _ := query.CharSearch(arg.ParseArgToSearch())
 		switch {
-		case resp.ID == 0:
-			return fmt.Sprintf("Error, %d is not a valid WaifuID,\nRefer to %shelp to see this command's syntax", resp.ID, conf.Prefix), false
+		case resp.Character.ID == 0:
+			return fmt.Sprintf("Error, %d is not a valid WaifuID,\nRefer to %shelp to see this command's syntax", resp.Character.ID, conf.Prefix), false
 		case data.Message.Mentions == nil:
 			return fmt.Sprintf("Error, please tag a discord user,\nRefer to %shelp to see this command's syntax", conf.Prefix), false
-		case !database.VerifyWaifuStruct{UserID: data.Message.Mentions[0].ID, CharID: resp.ID}.VerifyWaifu():
-			return fmt.Sprintf("%s does not possess this waifu.", data.Message.Mentions[0].Username), false
+		case !database.VerifyWaifuStruct{UserID: data.Message.Mentions[0].ID, CharID: resp.Character.ID}.VerifyWaifu():
+			return fmt.Sprintf("%s does not possess %s.", data.Message.Mentions[0].Username, resp.Character.Name.Full), false
 		default:
-			return "", true
+			return fmt.Sprintf("%s possesses %s.", data.Message.Mentions[0].Username, resp.Character.Name.Full), true
 		}
 	}
 	return "Please enter arguments,\nRefer to help to see how to use this command", false

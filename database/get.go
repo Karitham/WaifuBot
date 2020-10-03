@@ -43,23 +43,28 @@ func ViewUserData(id disgord.Snowflake) (userData UserDataStruct) {
 // CheckWaifuStruct is what data to send to check if a waifu is owned by another user in the database
 type VerifyWaifuStruct struct {
 	UserID disgord.Snowflake `bson:"_id"`
-	CharID int
+	CharID int64
 }
 
-// CheckWaifuData is what data to send to check if a waifu is owned by another user in the database
+// VerifyWaifu verifies if the mentioned account has got the Waifu he asked for.
 func (input VerifyWaifuStruct) VerifyWaifu() (WaifuExists bool) {
 
-	// Find the character
-	var err = collection.FindOne(
+	var result bson.M
+	// Find the character in the mentioned user's DB
+	err := collection.FindOne(
 		context.TODO(),
 		bson.D{
 			primitive.E{Key: "_id", Value: input.UserID},
 			primitive.E{Key: "Waifus.ID", Value: input.CharID},
 		},
-	)
+	).Decode(&result)
 	if err != nil {
-		log.Println("There was an error when checking for a waifu :", err)
-		return false
+		// ErrNoDocuments means that the filter did not match any documents in the collection
+		if err == mongo.ErrNoDocuments {
+			log.Println("There was an error when checking for a waifu :", err)
+			return false
+		}
 	}
+	log.Printf("found waifu %v", &result)
 	return true
 }
