@@ -65,6 +65,5 @@ func (input VerifyWaifuStruct) VerifyWaifu() (WaifuExists bool) {
 			return false
 		}
 	}
-	log.Printf("found waifu %v", &result)
 	return true
 }
