@@ -30,7 +30,7 @@ func (s *Search) Setup(sub *bot.Subcommand) {
 }
 
 // Manga is a subcommand of Search
-func (s *Search) Manga(_ *gateway.MessageCreateEvent, name ...string) (string, error) {
+func (s *Search) Manga(_ *gateway.MessageCreateEvent, name ...Name) (string, error) {
 	if len(name) < 1 {
 		return "", errors.New("missing manga name")
 	}
@@ -46,7 +46,7 @@ func (s *Search) Manga(_ *gateway.MessageCreateEvent, name ...string) (string, e
 }
 
 // Anime is a subcommand of Search
-func (s *Search) Anime(_ *gateway.MessageCreateEvent, name ...string) (string, error) {
+func (s *Search) Anime(_ *gateway.MessageCreateEvent, name ...Name) (string, error) {
 	if len(name) < 1 {
 		return "", errors.New("missing anime name")
 	}
@@ -62,7 +62,7 @@ func (s *Search) Anime(_ *gateway.MessageCreateEvent, name ...string) (string, e
 }
 
 // Character is a subcommand of Search
-func (s *Search) Character(_ *gateway.MessageCreateEvent, name ...string) (string, error) {
+func (s *Search) Character(_ *gateway.MessageCreateEvent, name ...Name) (string, error) {
 	if len(name) < 1 {
 		return "", errors.New("missing character name / ID")
 	}
@@ -86,7 +86,7 @@ func (s *Search) Character(_ *gateway.MessageCreateEvent, name ...string) (strin
 }
 
 // User is a subcommand of Search
-func (s *Search) User(_ *gateway.MessageCreateEvent, name ...string) (string, error) {
+func (s *Search) User(_ *gateway.MessageCreateEvent, name ...Name) (string, error) {
 	if len(name) < 1 {
 		return "", errors.New("missing user name")
 	}

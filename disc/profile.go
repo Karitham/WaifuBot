@@ -8,16 +8,15 @@ import (
 
 	"github.com/Karitham/WaifuBot/database"
 	"github.com/Karitham/WaifuBot/query"
-	"github.com/diamondburned/arikawa/bot"
 	"github.com/diamondburned/arikawa/discord"
 	"github.com/diamondburned/arikawa/gateway"
 )
 
 // Name represent the name of a character
-type Name bot.RawArguments
+type Name = string
 
 // Quote represent a quote
-type Quote bot.RawArguments
+type Quote = string
 
 // Profile displays user profile
 func (b *Bot) Profile(m *gateway.MessageCreateEvent) (*discord.Embed, error) {
@@ -37,7 +36,7 @@ func (b *Bot) Profile(m *gateway.MessageCreateEvent) (*discord.Embed, error) {
 }
 
 // Favorite sets a waifu as favorite
-func (b *Bot) Favorite(m *gateway.MessageCreateEvent, name ...string) (string, error) {
+func (b *Bot) Favorite(m *gateway.MessageCreateEvent, name ...Name) (string, error) {
 	if name == nil {
 		return "", errors.New("no character name entered")
 	}

@@ -6,44 +6,51 @@ import (
 	"github.com/Karitham/WaifuBot/database"
 	"github.com/diamondburned/arikawa/discord"
 	"github.com/diamondburned/arikawa/gateway"
+	"github.com/diamondburned/dgwidgets"
 )
 
 // Page represent a page
-type Page int
+type Page = int
 
 // List shows the user's list
-func (b *Bot) List(m *gateway.MessageCreateEvent, page ...Page) (*discord.Embed, error) {
-	var p = 1
-	if len(page) > 0 {
-		p = int(page[0])
-	}
-
+func (b *Bot) List(m *gateway.MessageCreateEvent) error {
 	uData, err := database.ViewUserData(m.Author.ID)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	embed, err := createListEmbed(m.Author, p-1, uData.Waifus)
-	if err != nil {
-		return nil, err
-	}
+	// Create widget
+	p := dgwidgets.NewPaginator(b.Ctx.Session, m.ChannelID)
 
-	return embed, nil
-}
-
-func createListEmbed(user discord.User, page int, list []database.CharLayout) (embed *discord.Embed, err error) {
-	return &discord.Embed{
-		Title: fmt.Sprintf("%s's list", user.Username),
-		Description: func(l []database.CharLayout) (d string) {
-			if len(l) >= 0 {
-				for i := c.ListLen * page; i < c.ListLen+c.ListLen*page && i < len(l); i++ {
-					d += fmt.Sprintf("%d - %s\n", l[i].ID, l[i].Name)
-				}
-				return d
+	// Make pages
+	p.Add(
+		func(charlist []database.CharLayout) (embeds []discord.Embed) {
+			for j := 0; j <= len(charlist)/c.ListLen; j++ {
+				embeds = append(embeds, discord.Embed{
+					Title: fmt.Sprintf("%s's list", m.Author.Username),
+					Description: func(l []database.CharLayout) (d string) {
+						if len(l) >= 0 {
+							for i := c.ListLen * j; i < c.ListLen+c.ListLen*j && i < len(l); i++ {
+								d += fmt.Sprintf("`%d`\f - %s\n", l[i].ID, l[i].Name)
+							}
+							return d
+						}
+						return ""
+					}(charlist),
+					Footer: &discord.EmbedFooter{
+						Text: fmt.Sprintf("Page %d out of %d", j+1, len(charlist)/c.ListLen+1),
+					},
+					Color: 3447003,
+				})
 			}
-			return "This user's list is empty"
-		}(list),
-		Thumbnail: &discord.EmbedThumbnail{URL: user.AvatarURL()},
-		Footer:    &discord.EmbedFooter{Text: fmt.Sprintf("Page %02d/%02d", page+1, ((len(list)-1)/c.ListLen)+1)},
-	}, nil
+			return embeds
+		}(uData.Waifus)...,
+	)
+
+	// What to do when timeout
+	p.ColourWhenDone = 0xFFFF00
+	p.DeleteReactionsWhenDone = true
+	p.Widget.Timeout = c.ListMaxUpdateTime.Duration
+
+	return p.Spawn()
 }

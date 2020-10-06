@@ -3,7 +3,9 @@ package disc
 import (
 	"fmt"
 	"log"
+	"math/rand"
 	"strconv"
+	"time"
 
 	"github.com/Karitham/WaifuBot/config"
 	"github.com/diamondburned/arikawa/bot"
@@ -41,6 +43,7 @@ func Start(cf config.ConfStruct) {
 		ctx.ChangeCommandInfo("Help", "", "display general help")
 		ctx.ChangeCommandInfo("Give", "", "give a char to a user")
 		ctx.ChangeCommandInfo("Invite", "", "send invite link")
+		ctx.ChangeCommandInfo("Claim", "", "claim a dropped character")
 
 		ctx.AddAliases("List", "l", "L")
 		ctx.AddAliases("Invite", "i", "I")
@@ -50,6 +53,7 @@ func Start(cf config.ConfStruct) {
 		ctx.AddAliases("Favorite", "f", "F")
 		ctx.AddAliases("Quote", "q", "Q")
 		ctx.AddAliases("Give", "g", "G")
+		ctx.AddAliases("Claim", "c", "C")
 
 		ctx.Gateway.Identifier.IdentifyData = gateway.IdentifyData{
 			Token: c.BotToken,
@@ -62,6 +66,22 @@ func Start(cf config.ConfStruct) {
 				Status: discord.OnlineStatus,
 			},
 		}
+
+		ctx.AddHandler(func(m *gateway.MessageCreateEvent) {
+			// Filter bot message
+			if m.Author.ID == ctx.Ready.User.ID {
+				return
+			}
+			// Higher chances the more you interact with the bot
+			r := rand.New(
+				rand.NewSource(time.Now().UnixNano()),
+			).Intn(c.DropsOnInteract - d.ChanInc[m.ChannelID])
+
+			if r == 0 {
+				commands.drop(m)
+				d.ChanInc[m.ChannelID] = 0
+			}
+		})
 
 		return nil
 	})

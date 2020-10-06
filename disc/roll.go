@@ -2,6 +2,7 @@ package disc
 
 import (
 	"fmt"
+	"log"
 	"math/rand"
 	"time"
 
@@ -34,7 +35,7 @@ func (b *Bot) Roll(m *gateway.MessageCreateEvent) (*discord.Embed, error) {
 		return nil, err
 	}
 
-	database.InputChar{
+	err = database.InputChar{
 		UserID: m.Author.ID,
 		CharList: database.CharLayout{
 			ID:    char.Page.Characters[0].ID,
@@ -43,6 +44,7 @@ func (b *Bot) Roll(m *gateway.MessageCreateEvent) (*discord.Embed, error) {
 		},
 		Date: time.Now(),
 	}.AddChar()
+	log.Println(err)
 
 	return &discord.Embed{
 		Title: char.Page.Characters[0].Name.Full,
