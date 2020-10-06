@@ -9,9 +9,6 @@ import (
 	"github.com/diamondburned/dgwidgets"
 )
 
-// Page represent a page
-type Page = int
-
 // List shows the user's list
 func (b *Bot) List(m *gateway.MessageCreateEvent) error {
 	uData, err := database.ViewUserData(m.Author.ID)
