@@ -44,7 +44,10 @@ func (b *Bot) Roll(m *gateway.MessageCreateEvent) (*discord.Embed, error) {
 		},
 		Date: time.Now(),
 	}.AddChar()
-	log.Println(err)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
 
 	return &discord.Embed{
 		Title: char.Page.Characters[0].Name.Full,
