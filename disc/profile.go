@@ -16,7 +16,7 @@ import (
 type Name = string
 
 // Quote represent a quote
-type Quote = string
+type Quote string
 
 // Profile displays user profile
 func (b *Bot) Profile(m *gateway.MessageCreateEvent) (*discord.Embed, error) {

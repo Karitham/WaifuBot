@@ -16,13 +16,13 @@ import (
 
 // Dropper is used to handle the dropping mechanism
 type Dropper struct {
-	Waifu   map[discord.ChannelID]waifuDropped
+	Waifu   map[discord.ChannelID]query.CharStruct
 	ChanInc map[discord.ChannelID]int
 	Mux     sync.Mutex
 }
 
 var d = Dropper{
-	Waifu:   make(map[discord.ChannelID]waifuDropped),
+	Waifu:   make(map[discord.ChannelID]query.CharStruct),
 	ChanInc: make(map[discord.ChannelID]int),
 }
 
@@ -44,16 +44,8 @@ func (b *Bot) drop(m *gateway.MessageCreateEvent) {
 	}
 
 	d.Mux.Lock()
+	d.Waifu[m.ChannelID] = char
 	defer d.Mux.Unlock()
-
-	d.Waifu[m.ChannelID] = waifuDropped{
-		char: database.CharLayout{
-			ID:    char.Page.Characters[0].ID,
-			Image: char.Page.Characters[0].Image.Large,
-			Name:  strings.Join(strings.Fields(char.Page.Characters[0].Name.Full), " "),
-		},
-		charURL: char.Page.Characters[0].SiteURL,
-	}
 
 	_, err = b.Ctx.SendMessage(m.ChannelID, "", &discord.Embed{
 		Title:       "CHARACTER DROP !",
@@ -94,7 +86,7 @@ func (b *Bot) Claim(m *gateway.MessageCreateEvent, name ...Name) (*discord.Embed
 
 	if !strings.EqualFold(
 		strings.Join(name, " "),
-		d.Waifu[m.ChannelID].char.Name,
+		c.Page.Characters[0].Name.Full,
 	) {
 		return nil, fmt.Errorf("wrong name entered")
 	}
@@ -103,9 +95,9 @@ func (b *Bot) Claim(m *gateway.MessageCreateEvent, name ...Name) (*discord.Embed
 	err := database.InputClaimedChar{
 		UserID: m.Author.ID,
 		CharList: database.CharLayout{
-			ID:    c.char.ID,
-			Name:  c.char.Name,
-			Image: c.char.Image,
+			ID:    c.Page.Characters[0].ID,
+			Name:  strings.Join(strings.Fields(c.Page.Characters[0].Name.Full), " "),
+			Image: c.Page.Characters[0].Image.Large,
 		},
 	}.AddChar()
 	if err != nil {
@@ -116,14 +108,13 @@ func (b *Bot) Claim(m *gateway.MessageCreateEvent, name ...Name) (*discord.Embed
 
 	return &discord.Embed{
 		Title: "Claim successful",
-		URL:   c.charURL,
+		URL:   c.Page.Characters[0].SiteURL,
 		Description: fmt.Sprintf(
-			"Well done %s, you claimed %s\n",
-			m.Author.Username,
-			c.char.Name,
+			"Well done %s you claimed %d\nIt appears in :\n- %s",
+			m.Author.Username, c.Page.Characters[0].ID, c.Page.Characters[0].Media.Nodes[0].Title.Romaji,
 		),
 		Thumbnail: &discord.EmbedThumbnail{
-			URL: c.char.Image,
+			URL: c.Page.Characters[0].Name.Full,
 		},
 	}, nil
 }

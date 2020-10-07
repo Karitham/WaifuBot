@@ -9,18 +9,16 @@ import (
 
 // ConfStruct is used to unmarshal the config.toml
 type ConfStruct struct {
-	Prefix                 []string `toml:"Prefix"`
-	BotToken               string   `toml:"Bot_Token"`
-	MongoURL               string   `toml:"Mongo_URL"`
-	BotStatus              string   `toml:"Bot_Status"`
-	MaxCharacterRoll       int      `toml:"Max_Character_Roll"`
-	MaxCharacterDrop       int      `toml:"Max_Character_Drop"`
-	DropsOnInteract        int      `toml:"Drops_On_Interact"`
-	ListLen                int      `toml:"List_Len"`
-	DeleteIllegalRollAfter duration `toml:"Delete_Illegal_Roll_After"`
-	DeleteWrongClaimAfter  duration `toml:"Delete_Wrong_Claim_After"`
-	ListMaxUpdateTime      duration `toml:"List_Max_Update_Time"`
-	TimeBetweenRolls       duration `toml:"Time_Between_Rolls"`
+	Prefix            []string `toml:"Prefix"`
+	BotToken          string   `toml:"Bot_Token"`
+	MongoURL          string   `toml:"Mongo_URL"`
+	BotStatus         string   `toml:"Bot_Status"`
+	MaxCharacterRoll  int      `toml:"Max_Character_Roll"`
+	MaxCharacterDrop  int      `toml:"Max_Character_Drop"`
+	DropsOnInteract   int      `toml:"Drops_On_Interact"`
+	ListLen           int      `toml:"List_Len"`
+	ListMaxUpdateTime duration `toml:"List_Max_Update_Time"`
+	TimeBetweenRolls  duration `toml:"Time_Between_Rolls"`
 }
 type duration struct {
 	time.Duration

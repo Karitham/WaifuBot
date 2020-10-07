@@ -10,7 +10,7 @@ import (
 )
 
 // CharacterID represent a character CharacterID
-type CharacterID = int
+type CharacterID int
 
 // Give is used to give a character to a user
 func (b *Bot) Give(m *gateway.MessageCreateEvent, cID CharacterID, user *arguments.UserMention) (string, error) {

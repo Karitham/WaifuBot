@@ -58,8 +58,8 @@ func (b *Bot) Roll(m *gateway.MessageCreateEvent) (*discord.Embed, error) {
 		},
 		Footer: &discord.EmbedFooter{
 			Text: fmt.Sprintf(
-				"You can roll again at %s",
-				m.ID.Time().Add(c.TimeBetweenRolls.Duration).Format("15:04"),
+				"You can roll again in %s",
+				c.TimeBetweenRolls.Truncate(time.Second),
 			),
 		},
 	}, nil
