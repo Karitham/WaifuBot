@@ -26,13 +26,13 @@ var d = Dropper{
 	ChanInc: make(map[discord.ChannelID]int),
 }
 
-type waifuDropped struct {
-	char    database.CharLayout
-	charURL string
-}
-
 func (b *Bot) drop(m *gateway.MessageCreateEvent) {
-	char, err := query.CharSearchByPopularity(
+	var err error
+
+	d.Mux.Lock()
+	defer d.Mux.Unlock()
+
+	d.Waifu[m.ChannelID], err = query.CharSearchByPopularity(
 		rand.New(
 			rand.NewSource(
 				time.Now().UnixNano(),
@@ -41,17 +41,14 @@ func (b *Bot) drop(m *gateway.MessageCreateEvent) {
 	)
 	if err != nil {
 		log.Println(err)
+		return
 	}
-
-	d.Mux.Lock()
-	d.Waifu[m.ChannelID] = char
-	defer d.Mux.Unlock()
 
 	_, err = b.Ctx.SendMessage(m.ChannelID, "", &discord.Embed{
 		Title:       "CHARACTER DROP !",
 		Description: "Can you guess who it is ?\nUse w.claim to get this character for yourself",
 		Thumbnail: &discord.EmbedThumbnail{
-			URL: char.Page.Characters[0].Image.Large,
+			URL: d.Waifu[m.ChannelID].Page.Characters[0].Image.Large,
 		},
 		Footer: &discord.EmbedFooter{
 			Text: "This character's initials are " +
@@ -60,7 +57,7 @@ func (b *Bot) drop(m *gateway.MessageCreateEvent) {
 						initials = initials + strings.ToUpper(string(v[0])) + "."
 					}
 					return
-				}(char.Page.Characters[0].Name.Full),
+				}(d.Waifu[m.ChannelID].Page.Characters[0].Name.Full),
 		},
 	},
 	)
