@@ -10,22 +10,22 @@ import (
 )
 
 // CharacterID represent a character CharacterID
-type CharacterID int
+type CharacterID int64
 
 // Give is used to give a character to a user
 func (b *Bot) Give(m *gateway.MessageCreateEvent, cID CharacterID, user *arguments.UserMention) (string, error) {
 	changed, err := database.CharDelStruct{
-		UserID: user.ID(),
-		CharID: int(cID),
+		UserID: m.Author.ID,
+		CharID: int64(cID),
 	}.DelChar()
 	if err != nil {
 		return "", err
 	}
 
 	var char database.CharLayout
-	for _, v := range changed.Waifus {
-		if v.ID == int64(cID) {
-			char = v
+	for _, w := range changed.Waifus {
+		if w.ID == int64(cID) {
+			char = w
 		}
 	}
 

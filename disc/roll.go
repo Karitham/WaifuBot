@@ -21,7 +21,7 @@ func (b *Bot) Roll(m *gateway.MessageCreateEvent) (*discord.Embed, error) {
 	}
 
 	if nextRollTime := time.Until(userData.Date.Add(c.TimeBetweenRolls.Duration)); nextRollTime > 0 {
-		return nil, fmt.Errorf("illegal roll, roll in %s", nextRollTime.Truncate(time.Second))
+		return nil, fmt.Errorf("**illegal roll**,\nroll in %s", nextRollTime.Truncate(time.Second))
 	}
 
 	char, err := query.CharSearchByPopularity(
