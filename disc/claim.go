@@ -59,8 +59,7 @@ func (b *Bot) drop(m *gateway.MessageCreateEvent) {
 					return
 				}(d.Waifu[m.ChannelID].Page.Characters[0].Name.Full),
 		},
-	},
-	)
+	})
 	if err != nil {
 		log.Println(err)
 	}
@@ -111,7 +110,7 @@ func (b *Bot) Claim(m *gateway.MessageCreateEvent, name ...Name) (*discord.Embed
 			m.Author.Username, c.Page.Characters[0].ID, c.Page.Characters[0].Media.Nodes[0].Title.Romaji,
 		),
 		Thumbnail: &discord.EmbedThumbnail{
-			URL: c.Page.Characters[0].Name.Full,
+			URL: c.Page.Characters[0].Image.Large,
 		},
 	}, nil
 }
