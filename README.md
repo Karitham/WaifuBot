@@ -1,6 +1,8 @@
 # Waifu Bot
 
 <p align="center">
+  <img alt="Code Factor Badge" src="https://badges.genua.fr/codefactor/grade/github/Karitham/WaifuBot?style=for-the-badge">
+  
   <img alt="Travis (.com)" src="https://img.shields.io/travis/com/karitham/waifubot?style=for-the-badge">
   
   <img alt="Docker Pulls" src="https://img.shields.io/docker/pulls/karithamdocker/go-waifubot?style=for-the-badge">
