@@ -1,20 +1,21 @@
 version: "3.8"
 
 services:
-  bot:
-    image: karithamdocker/go-waifubot:latest
-    restart: always
-    container_name: WaifuBot
-    volumes:
-      - "./config.toml:/home/waifubot/config.toml"
-    depends_on:
-      - db
+    bot:
+        image: karithamdocker/go-waifubot:testing
+        restart: always
+        container_name: WaifuBot
+        volumes:
+            - "./config.toml:/home/waifubot/config.toml"
+            - "./logs:/home/waifubot/logs"
+        depends_on:
+            - db
 
-  db:
-    image: mongo:latest
-    restart: always
-    container_name: WaifuDB
-    volumes:
-      - "/data/db:/data/db"
-    ports:
-      - "27017:27017"
+    db:
+        image: mongo:latest
+        restart: always
+        container_name: WaifuDB
+        volumes:
+            - "/data/db:/data/db"
+        ports:
+            - "27017:27017"
