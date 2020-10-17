@@ -11,6 +11,7 @@ import (
 	"github.com/diamondburned/arikawa/bot"
 	"github.com/diamondburned/arikawa/discord"
 	"github.com/diamondburned/arikawa/gateway"
+	"github.com/diamondburned/arikawa/utils/wsutil"
 )
 
 // Bot represent the bot
@@ -82,6 +83,10 @@ func Start(cf config.ConfStruct) {
 				d.ChanInc[m.ChannelID] = 0
 			}
 		})
+
+		wsutil.WSDebug = func(v ...interface{}) {
+			log.Println("WaifuBot - Gateway Debug: ", v)
+		}
 
 		return nil
 	})
