@@ -13,7 +13,7 @@ import (
 // List shows the user's list
 func (b *Bot) List(m *gateway.MessageCreateEvent, _ ...*arguments.UserMention) error {
 	var user discord.User
-	if len(m.Mentions) > 0 && &m.Mentions[0].User != nil {
+	if len(m.Mentions) > 0 {
 		user = m.Mentions[0].User
 	} else {
 		user = m.Author
