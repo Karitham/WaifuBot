@@ -1,4 +1,4 @@
 config*.toml
 .vscode
-.devcontainer
+logs
 !config_exemple.toml

@@ -23,8 +23,8 @@ type MediaSearchStruct struct {
 	} `json:"Media"`
 }
 
-// SearchMedia makes a query to the Anilist API to look after the wanted anime/manga (ID or Name accepted)
-func SearchMedia(name string, format string) (response MediaSearchStruct, err error) {
+// MediaSearch makes a query to the Anilist API to look after the wanted anime/manga (ID or Name accepted)
+func MediaSearch(name string, format string) (response MediaSearchStruct, err error) {
 	// build request
 	req := graphql.NewRequest(`
 	query ($name: String, $type: MediaType) {

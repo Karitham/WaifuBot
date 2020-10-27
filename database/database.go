@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"fmt"
 	"log"
 
 	"github.com/Karitham/WaifuBot/config"
@@ -10,15 +11,12 @@ import (
 )
 
 var collection *mongo.Collection
-var client *mongo.Client
 
 // Init is used to start the database
 func Init(config config.ConfStruct) {
-	var err error
-
 	// Connect to MongoDB
 	clientOptions := options.Client().ApplyURI(config.MongoURL)
-	client, err = mongo.Connect(context.Background(), clientOptions)
+	client, err := mongo.Connect(context.Background(), clientOptions)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -30,5 +28,5 @@ func Init(config config.ConfStruct) {
 	}
 
 	collection = client.Database("waifubot").Collection("waifus")
-	log.Println("Connected to MongoDB!")
+	fmt.Println("Connected to WaifuDB!")
 }
