@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   bot:
-    image: karithamdocker/go-waifubot:latest
+    image: lanesh4d0w/waifubot-testing:latest
     restart: always
     container_name: WaifuBot
     volumes:
