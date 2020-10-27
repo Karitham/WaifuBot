@@ -1,12 +1,12 @@
-# Waifu Bot
+# WaifuBot (Test Version)
 
-<p align="center">
-  <img alt="Travis (.com)" src="https://img.shields.io/travis/com/karitham/waifubot?style=for-the-badge">
-  
-  <img alt="Docker Pulls" src="https://img.shields.io/docker/pulls/karithamdocker/go-waifubot?style=for-the-badge">
+## Warning
 
-  <img alt="Docker Image Size (latest by date)" src="https://img.shields.io/docker/image-size/karithamdocker/go-waifubot?style=for-the-badge">
-</p>
+This is a fork of the original WaifuBot made by @Karitham, available [here](https://github.com/Karitham/WaifuBot).
+
+This fork may contain some improvements made by myself, reviewed and corrected by the original creator.
+
+It is in a stable state, usable everywhere.
 
 ## About
 
@@ -14,25 +14,26 @@ This is a waifu/husbando discord bot, it is pretty stable but some commands migh
 
 It uses [Disgord go lib](github.com/andersfylling/disgord), [Anilist's GraphQL API](https://github.com/AniList/ApiV2-GraphQL-Docs) and [mongoDB](https://mongodb.com)
 
-You can add the bot to your server [using this link](https://discord.com/oauth2/authorize?scope=bot&client_id=712332547694264341&permissions=0)
+You can add the bot to your server [using this link](https://discord.com/api/oauth2/authorize?client_id=733399598126596128&permissions=1074097217&scope=bot)
 
 ## Commands
 
-| command         | alias | description                                       |
-| --------------- | ----- | ------------------------------------------------- |
-| `roll`          | `r`   | Rolls a random waifu                              |
-| `list`          | `l`   | Lists all waifu claimed / rolled                  |
-| `claim`         | `c`   | Claims a randomly dropped waifu                   |
-| `profile`       | `p`   | View your profile                                 |
-| `give`          | `g`   | Give a character to someone                       |
-| `search`        | `s`   | Searches for an anime character                   |
-| `favourite`     | `f`   | Adds a character as your favourite                |
-| `quote`         | `q`   | Adds a custom quote on your profile               |
-| `trendingAnime` | `ta`  | View currently trending anime                     |
-| `trendingManga` | `tm`  | View currently trending manga                     |
-| `searchAnime`   | `sa`  | Search for an anime                               |
-| `searchManga`   | `sm`  | Search for an manga                               |
-| `invite`        | `i`   | Send invite link to invite the bot to your server |
+| command         | alias | description                                              |
+| --------------- | ----- | -------------------------------------------------------- |
+| `roll`          | `r`   | Rolls a random waifu                                     |
+| `list`          | `l`   | Lists all waifus you claimed / rolled                    |
+| `claim`         | `c`   | Claims a randomly dropped waifu                          |
+| `profile`       | `p`   | View your profile                                        |
+| `give`          | `g`   | Give a character to someone                              |
+| `search`        | `s`   | Searches for an anime character                          |
+| `favourite`     | `f`   | Adds a character as your favourite                       |
+| `quote`         | `q`   | Adds a custom quote on your profile                      |
+| `trendingAnime` | `ta`  | View currently trending anime (on AniList)               |
+| `trendingManga` | `tm`  | View currently trending manga (on AniList)               |
+| `searchAnime`   | `sa`  | Search for an anime                                      |
+| `searchManga`   | `sm`  | Search for an manga                                      |
+| `invite`        | `i`   | Send an invite link to invite the bot to your server     |
+| `verify`        | `v`   | Verifies if mentioned user has got the waifu you want    |
 
 ## Feature Requests
 
