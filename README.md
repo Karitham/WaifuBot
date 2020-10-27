@@ -1,38 +1,37 @@
 # Waifu Bot
 
 <p align="center">
-  <img alt="Travis (.com)" src="https://img.shields.io/travis/com/karitham/waifubot?style=for-the-badge">
+  <a href="https://discord.com/oauth2/authorize?client_id=712332547694264341&permissions=1074097217&scope=bot"><img alt="Add it to your discord" src="https://img.shields.io/badge/WaifuBot-ADD%20IT-green?style=for-the-badge"></a>
   
-  <img alt="Docker Pulls" src="https://img.shields.io/docker/pulls/karithamdocker/go-waifubot?style=for-the-badge">
+  <img alt="Docker Pulls" src="https://img.shields.io/docker/pulls/karithamdocker/go-waifubot?color=green&style=for-the-badge">
 
-  <img alt="Docker Image Size (latest by date)" src="https://img.shields.io/docker/image-size/karithamdocker/go-waifubot?style=for-the-badge">
+  <img alt="Docker Image Size (latest by date)" src="https://img.shields.io/docker/image-size/karithamdocker/go-waifubot?color=green&style=for-the-badge">
 </p>
 
-## About
+This is a waifu/husbando discord bot
 
-This is a waifu/husbando discord bot, it is pretty stable but some commands might change.
+It uses [Arikawa](https://github.com/diamondburned/arikawa), [Anilist's GraphQL API](https://github.com/AniList/ApiV2-GraphQL-Docs) and [mongoDB](https://mongodb.com)
 
-It uses [Disgord go lib](github.com/andersfylling/disgord), [Anilist's GraphQL API](https://github.com/AniList/ApiV2-GraphQL-Docs) and [mongoDB](https://mongodb.com)
-
-You can add the bot to your server [using this link](https://discord.com/oauth2/authorize?scope=bot&client_id=712332547694264341&permissions=0)
+You can add the bot to your server [using this link](https://discord.com/api/oauth2/authorize?client_id=733399598126596128&permissions=1074097217&scope=bot)
 
 ## Commands
 
-| command         | alias | description                                       |
-| --------------- | ----- | ------------------------------------------------- |
-| `roll`          | `r`   | Rolls a random waifu                              |
-| `list`          | `l`   | Lists all waifu claimed / rolled                  |
-| `claim`         | `c`   | Claims a randomly dropped waifu                   |
-| `profile`       | `p`   | View your profile                                 |
-| `give`          | `g`   | Give a character to someone                       |
-| `search`        | `s`   | Searches for an anime character                   |
-| `favourite`     | `f`   | Adds a character as your favourite                |
-| `quote`         | `q`   | Adds a custom quote on your profile               |
-| `trendingAnime` | `ta`  | View currently trending anime                     |
-| `trendingManga` | `tm`  | View currently trending manga                     |
-| `searchAnime`   | `sa`  | Search for an anime                               |
-| `searchManga`   | `sm`  | Search for an manga                               |
-| `invite`        | `i`   | Send invite link to invite the bot to your server |
+| command         | alias | description                                           |
+| --------------- | ----- | ----------------------------------------------------- |
+| `roll`          | `r`   | Rolls a random waifu                                  |
+| `list`          | `l`   | Lists all waifus you claimed / rolled                 |
+| `claim`         | `c`   | Claims a randomly dropped waifu                       |
+| `profile`       | `p`   | View your profile                                     |
+| `give`          | `g`   | Give a character to someone                           |
+| `search`        | `s`   | Searches for an anime character                       |
+| `favourite`     | `f`   | Adds a character as your favourite                    |
+| `quote`         | `q`   | Adds a custom quote on your profile                   |
+| `trendingAnime` | `ta`  | View currently trending anime (on AniList)            |
+| `trendingManga` | `tm`  | View currently trending manga (on AniList)            |
+| `searchAnime`   | `sa`  | Search for an anime                                   |
+| `searchManga`   | `sm`  | Search for an manga                                   |
+| `invite`        | `i`   | Send an invite link to invite the bot to your server  |
+| `verify`        | `v`   | Verifies if mentioned user has got the waifu you want |
 
 ## Feature Requests
 
@@ -66,4 +65,4 @@ Rename `configExample.toml` to `config.toml` and change the values according to 
 
 # Thanks
 
-Much thanks to people from the gopher discord for all the help with go and Anders for its library.
+Much thanks to people from the gopher discord for all the help with go
