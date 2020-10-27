@@ -25,10 +25,7 @@ func main() {
 	c := config.Retrieve(configFile)
 
 	// Set up logging
-	err := os.Mkdir(logDir, 0666)
-	if err != nil {
-		log.Println(err)
-	}
+	errMkdir := os.Mkdir(logDir, 0666)
 
 	logFile := path.Join(logDir, fmt.Sprintf("%s.txt", time.Now().Format("2006-01-02 15h04m")))
 
@@ -39,6 +36,10 @@ func main() {
 	defer lf.Close()
 
 	log.SetOutput(lf)
+
+	if errMkdir != nil {
+		log.Println(err)
+	}
 
 	database.Init(c)
 	disc.Start(c)

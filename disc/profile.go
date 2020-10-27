@@ -8,8 +8,10 @@ import (
 
 	"github.com/Karitham/WaifuBot/database"
 	"github.com/Karitham/WaifuBot/query"
+	"github.com/diamondburned/arikawa/bot/extras/arguments"
 	"github.com/diamondburned/arikawa/discord"
 	"github.com/diamondburned/arikawa/gateway"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 // Name represent the name of a character
@@ -19,17 +21,24 @@ type Name = string
 type Quote string
 
 // Profile displays user profile
-func (b *Bot) Profile(m *gateway.MessageCreateEvent) (*discord.Embed, error) {
-	uData, err := database.ViewUserData(m.Author.ID)
-	if err != nil {
+func (b *Bot) Profile(m *gateway.MessageCreateEvent, _ ...*arguments.UserMention) (*discord.Embed, error) {
+	var user discord.User
+	if len(m.Mentions) > 0 {
+		user = m.Mentions[0].User
+	} else {
+		user = m.Author
+	}
+
+	uData, err := database.ViewUserData(user.ID)
+	if err != nil && err != mongo.ErrNoDocuments {
 		return nil, err
 	}
 
 	return &discord.Embed{
-		Title: fmt.Sprintf("%s's profile", m.Author.Username),
+		Title: fmt.Sprintf("%s's profile", user.Username),
 		Description: fmt.Sprintf(
 			"%s\n%s last rolled %s ago.\nThey have rolled %d waifus and claimed %d.\nFavorite waifu is %s",
-			uData.Quote, m.Author.Username, time.Since(uData.Date).Truncate(time.Minute), len(uData.Waifus), uData.ClaimedWaifus, uData.Favorite.Name,
+			uData.Quote, user.Username, time.Since(uData.Date).Truncate(time.Minute), len(uData.Waifus), uData.ClaimedWaifus, uData.Favorite.Name,
 		),
 		Thumbnail: &discord.EmbedThumbnail{URL: uData.Favorite.Image},
 	}, nil

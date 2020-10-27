@@ -8,6 +8,7 @@ import (
 	"github.com/diamondburned/arikawa/discord"
 	"github.com/diamondburned/arikawa/gateway"
 	"github.com/diamondburned/dgwidgets"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 // List shows the user's list
@@ -20,7 +21,9 @@ func (b *Bot) List(m *gateway.MessageCreateEvent, _ ...*arguments.UserMention) e
 	}
 
 	uData, err := database.ViewUserData(user.ID)
-	if err != nil {
+	if err == mongo.ErrNoDocuments {
+		return fmt.Errorf("%s has no waifu", user.Username)
+	} else if err != nil {
 		return err
 	}
 
@@ -58,4 +61,20 @@ func (b *Bot) List(m *gateway.MessageCreateEvent, _ ...*arguments.UserMention) e
 	p.Widget.Timeout = c.ListMaxUpdateTime.Duration
 
 	return p.Spawn()
+}
+
+// Verify verify if someone has a waifu
+func (b *Bot) Verify(m *gateway.MessageCreateEvent, id CharacterID, _ ...*arguments.UserMention) (string, error) {
+	var user discord.User
+	if len(m.Mentions) > 0 {
+		user = m.Mentions[0].User
+	} else {
+		user = m.Author
+	}
+
+	ok, _ := database.VerifyWaifu(uint(id), uint(user.ID))
+	if ok {
+		return fmt.Sprintf("%s owns the character", user.Username), nil
+	}
+	return fmt.Sprintf("%s doesn't own the character", user.Username), nil
 }

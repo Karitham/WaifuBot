@@ -13,7 +13,7 @@ import (
 // CharDelStruct is what data to send to remove a waifu from the database
 type CharDelStruct struct {
 	UserID discord.UserID `bson:"_id"`
-	CharID int64
+	CharID uint
 }
 
 // DelChar removes a waifu from the database

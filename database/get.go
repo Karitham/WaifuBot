@@ -7,12 +7,13 @@ import (
 
 	"github.com/diamondburned/arikawa/discord"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 // UserDataStruct is a representation of the data inside the database, it's used to retrieve data
 type UserDataStruct struct {
-	ID            int          `bson:"_id"`
+	ID            uint         `bson:"_id"`
 	Quote         string       `bson:"Quote,omitempty"`
 	Favorite      CharLayout   `bson:"Favourite,omitempty"`
 	ClaimedWaifus int          `bson:"ClaimedWaifus,omitempty"`
@@ -22,7 +23,7 @@ type UserDataStruct struct {
 
 // CharLayout is how each character is stored
 type CharLayout struct {
-	ID    int64  `bson:"ID"`
+	ID    uint   `bson:"ID"`
 	Name  string `bson:"Name"`
 	Image string `bson:"Image"`
 }
@@ -39,4 +40,15 @@ func ViewUserData(id discord.UserID) (userData UserDataStruct, err error) {
 		return UserDataStruct{}, err
 	}
 	return
+}
+
+// VerifyWaifu verifies if the mentioned account has got the Waifu he asked for.
+func VerifyWaifu(wID uint, uID uint) (WaifuExists bool, userData UserDataStruct) {
+	return !(collection.FindOne(
+		context.TODO(),
+		bson.D{
+			primitive.E{Key: "_id", Value: uID},
+			primitive.E{Key: "Waifus.ID", Value: wID},
+		},
+	).Decode(&userData) == mongo.ErrNoDocuments), userData
 }

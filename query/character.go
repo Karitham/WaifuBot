@@ -22,7 +22,7 @@ type CharStruct struct {
 
 // CharacterStruct represent character object
 type CharacterStruct struct {
-	ID      int64  `json:"id"`
+	ID      uint   `json:"id"`
 	SiteURL string `json:"siteUrl"`
 	Image   struct {
 		Large string `json:"large"`
