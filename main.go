@@ -35,6 +35,7 @@ func main() {
 	}
 	defer lf.Close()
 
+	log.SetPrefix("[WaifuBot] ")
 	log.SetOutput(lf)
 
 	if errMkdir != nil {
