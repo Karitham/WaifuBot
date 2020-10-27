@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"flag"
 	"fmt"
 	"log"
@@ -27,8 +26,8 @@ func main() {
 
 	// Set up logging
 	err := os.Mkdir(logDir, 0666)
-	if errors.Is(err, os.PathError{Op: "mkdir", Path: "logs", Err: &os.PathError{}}.Err) {
-		fmt.Println(err)
+	if err != nil {
+		log.Println(err)
 	}
 
 	logFile := path.Join(logDir, fmt.Sprintf("%s.txt", time.Now().Format("2006-01-02 15h04m")))

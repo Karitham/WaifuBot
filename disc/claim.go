@@ -67,8 +67,8 @@ func (b *Bot) drop(m *gateway.MessageCreateEvent) {
 
 // Claim a waifu and adds it to the user's database
 func (b *Bot) Claim(m *gateway.MessageCreateEvent, name ...Name) (*discord.Embed, error) {
-	if name[0] == "" {
-		return nil, fmt.Errorf("if you want to claim a character, use claim `name of the character`")
+	if len(name) == 0 {
+		return nil, fmt.Errorf("if you want to claim a character, use `claim <name>`")
 	}
 
 	// Lock because we are reading from the map

@@ -4,14 +4,22 @@ import (
 	"fmt"
 
 	"github.com/Karitham/WaifuBot/database"
+	"github.com/diamondburned/arikawa/bot/extras/arguments"
 	"github.com/diamondburned/arikawa/discord"
 	"github.com/diamondburned/arikawa/gateway"
 	"github.com/diamondburned/dgwidgets"
 )
 
 // List shows the user's list
-func (b *Bot) List(m *gateway.MessageCreateEvent) error {
-	uData, err := database.ViewUserData(m.Author.ID)
+func (b *Bot) List(m *gateway.MessageCreateEvent, _ ...*arguments.UserMention) error {
+	var user discord.User
+	if len(m.Mentions) > 0 && &m.Mentions[0].User != nil {
+		user = m.Mentions[0].User
+	} else {
+		user = m.Author
+	}
+
+	uData, err := database.ViewUserData(user.ID)
 	if err != nil {
 		return err
 	}
@@ -24,7 +32,7 @@ func (b *Bot) List(m *gateway.MessageCreateEvent) error {
 		func(charlist []database.CharLayout) (embeds []discord.Embed) {
 			for j := 0; j <= len(charlist)/c.ListLen; j++ {
 				embeds = append(embeds, discord.Embed{
-					Title: fmt.Sprintf("%s's list", m.Author.Username),
+					Title: fmt.Sprintf("%s's list", user.Username),
 					Description: func(l []database.CharLayout) (d string) {
 						if len(l) >= 0 {
 							for i := c.ListLen * j; i < c.ListLen+c.ListLen*j && i < len(l); i++ {
