@@ -1,7 +1,5 @@
 # Waifu Bot
 
-<br>
-
 <p align="center">
   <a target="_blank" href="https://discord.com/oauth2/authorize?client_id=712332547694264341&permissions=1074097217&scope=bot" ><img alt="Add it to your discord" src="https://img.shields.io/badge/WaifuBot-ADD%20IT-brightgreen?style=for-the-badge"></a>
   <a target="_blank" href="https://www.codefactor.io/repository/github/karitham/waifubot"><img alt="code factor grade" src="https://img.shields.io/codefactor/grade/github/karitham/waifubot?color=brightgreen&style=for-the-badge"></a>
@@ -9,30 +7,33 @@
   <a target="_blank" href="https://hub.docker.com/repository/docker/karithamdocker/go-waifubot"><img alt="Docker Image Size (latest by date)" src="https://img.shields.io/docker/image-size/karithamdocker/go-waifubot?color=brightgreen&style=for-the-badge"></a>
 </p>
 
-<br>
-
-This is a waifu/husbando discord bot
-
-It uses [Arikawa](https://github.com/diamondburned/arikawa), [Anilist's GraphQL API](https://github.com/AniList/ApiV2-GraphQL-Docs) and [mongoDB](https://mongodb.com)
-
 ## Commands
 
-| command         | alias | description                                           |
-| --------------- | ----- | ----------------------------------------------------- |
-| `roll`          | `r`   | Rolls a random waifu                                  |
-| `list`          | `l`   | Lists all waifus you claimed / rolled                 |
-| `claim`         | `c`   | Claims a randomly dropped waifu                       |
-| `profile`       | `p`   | View your profile                                     |
-| `give`          | `g`   | Give a character to someone                           |
-| `search`        | `s`   | Searches for an anime character                       |
-| `favourite`     | `f`   | Adds a character as your favourite                    |
-| `quote`         | `q`   | Adds a custom quote on your profile                   |
-| `trendingAnime` | `ta`  | View currently trending anime (on AniList)            |
-| `trendingManga` | `tm`  | View currently trending manga (on AniList)            |
-| `searchAnime`   | `sa`  | Search for an anime                                   |
-| `searchManga`   | `sm`  | Search for an manga                                   |
-| `invite`        | `i`   | Send an invite link to invite the bot to your server  |
-| `verify`        | `v`   | Verifies if mentioned user has got the waifu you want |
+```help
+Help
+---
+Commands
+claim string...: claim a dropped character
+favorite string...: set a char as favorite
+give CharacterID @user: give a char to a user
+help: display general help
+invite: send invite link
+list @user...: display user characters
+profile @user...: display user profile
+quote string...: set profile quote
+roll: roll a random character
+verify CharacterID... @user...: check if a user owns the waifu
+---
+Subcommands
+search: Search for characters, anime, manga and users
+search anime string...: search for an anime
+search character string...: search for a character
+search manga string...: search for a manga
+search user string...: search for an anilist user
+trending: View trending manga and anime
+trending anime: search for an anime
+trending manga: search for a manga
+```
 
 ## Feature Requests
 
@@ -66,6 +67,28 @@ Rename `configExample.toml` to `config.toml` and change the values according to 
 ## Run
 
 `docker-compose up -d`
+
+# Dependencies
+
+- [Arikawa](https://github.com/diamondburned/arikawa)
+- [Arikawa](https://github.com/diamondburned/dgwidgets)
+- [Machinebox/graphql](https://github.com/machinebox/graphql)
+- [BurntSushi/toml](github.com/BurntSushi/toml)
+- [Anilist API](https://github.com/AniList/ApiV2-GraphQL-Docs)
+- [MongoDB](https://mongodb.com)
+- and their following deps
+
+# LICENSE
+
+```license
+Copyright 2020 PERY "Karitham" Pierre-Louis
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+```
 
 # Thanks
 

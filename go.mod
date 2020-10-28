@@ -7,7 +7,7 @@ require (
 	github.com/diamondburned/arikawa v1.3.7
 	github.com/diamondburned/dgwidgets v0.0.0-20200731234347-9c2c07fe2e11
 	github.com/gorilla/schema v1.2.0 // indirect
-	github.com/klauspost/compress v1.11.1 // indirect
+	github.com/klauspost/compress v1.11.2 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/machinebox/graphql v0.2.2
 	github.com/matryer/is v1.4.0 // indirect
