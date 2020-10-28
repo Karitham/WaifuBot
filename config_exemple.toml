@@ -43,3 +43,6 @@ List_Max_Update_Time = "5m"
 
 # How much time between each user roll
 Time_Between_Rolls = "4h"
+
+# Use true to make the logs go to a file horodated
+Log_To_File = false

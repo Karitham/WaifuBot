@@ -21,10 +21,10 @@ type Bot struct {
 	dropper *Dropper
 }
 
-var c config.ConfStruct
+var c *config.ConfStruct
 
 // Start starts the bot, registers the command and updates its status
-func Start(cf config.ConfStruct) {
+func Start(cf *config.ConfStruct) {
 	c = cf
 	var b = &Bot{
 		Ctx: &bot.Context{},
