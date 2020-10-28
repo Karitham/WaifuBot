@@ -18,21 +18,16 @@ import (
 type Dropper struct {
 	Waifu   map[discord.ChannelID]query.CharStruct
 	ChanInc map[discord.ChannelID]int
-	Mux     sync.Mutex
+	Mux     *sync.Mutex
 }
 
-var d = Dropper{
-	Waifu:   make(map[discord.ChannelID]query.CharStruct),
-	ChanInc: make(map[discord.ChannelID]int),
-}
-
-func (b *Bot) drop(m *gateway.MessageCreateEvent) {
+func (bot *Bot) drop(m *gateway.MessageCreateEvent) {
 	var err error
 
-	d.Mux.Lock()
-	defer d.Mux.Unlock()
+	bot.dropper.Mux.Lock()
+	defer bot.dropper.Mux.Unlock()
 
-	d.Waifu[m.ChannelID], err = query.CharSearchByPopularity(
+	bot.dropper.Waifu[m.ChannelID], err = query.CharSearchByPopularity(
 		rand.New(
 			rand.NewSource(
 				time.Now().UnixNano(),
@@ -44,11 +39,11 @@ func (b *Bot) drop(m *gateway.MessageCreateEvent) {
 		return
 	}
 
-	_, err = b.Ctx.SendMessage(m.ChannelID, "", &discord.Embed{
+	_, err = bot.Ctx.SendMessage(m.ChannelID, "", &discord.Embed{
 		Title:       "CHARACTER DROP !",
 		Description: "Can you guess who it is ?\nUse w.claim to get this character for yourself",
 		Thumbnail: &discord.EmbedThumbnail{
-			URL: d.Waifu[m.ChannelID].Page.Characters[0].Image.Large,
+			URL: bot.dropper.Waifu[m.ChannelID].Page.Characters[0].Image.Large,
 		},
 		Footer: &discord.EmbedFooter{
 			Text: "This character's initials are " +
@@ -57,7 +52,7 @@ func (b *Bot) drop(m *gateway.MessageCreateEvent) {
 						initials = initials + strings.ToUpper(string(v[0])) + "."
 					}
 					return
-				}(d.Waifu[m.ChannelID].Page.Characters[0].Name.Full),
+				}(bot.dropper.Waifu[m.ChannelID].Page.Characters[0].Name.Full),
 		},
 	})
 	if err != nil {
@@ -66,15 +61,15 @@ func (b *Bot) drop(m *gateway.MessageCreateEvent) {
 }
 
 // Claim a waifu and adds it to the user's database
-func (b *Bot) Claim(m *gateway.MessageCreateEvent, name ...Name) (*discord.Embed, error) {
+func (bot *Bot) Claim(m *gateway.MessageCreateEvent, name ...Name) (*discord.Embed, error) {
 	if len(name) == 0 {
 		return nil, fmt.Errorf("if you want to claim a character, use `claim <name>`")
 	}
 
 	// Lock because we are reading from the map
-	d.Mux.Lock()
-	defer d.Mux.Unlock()
-	c, ok := d.Waifu[m.ChannelID]
+	bot.dropper.Mux.Lock()
+	defer bot.dropper.Mux.Unlock()
+	c, ok := bot.dropper.Waifu[m.ChannelID]
 
 	if !ok {
 		return nil, fmt.Errorf("there is no character to claim")
@@ -100,7 +95,7 @@ func (b *Bot) Claim(m *gateway.MessageCreateEvent, name ...Name) (*discord.Embed
 		return nil, err
 	}
 
-	delete(d.Waifu, m.ChannelID)
+	delete(bot.dropper.Waifu, m.ChannelID)
 
 	return &discord.Embed{
 		Title: "Claim successful",

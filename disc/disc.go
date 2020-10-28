@@ -5,9 +5,11 @@ import (
 	"log"
 	"math/rand"
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/Karitham/WaifuBot/config"
+	"github.com/Karitham/WaifuBot/query"
 	"github.com/diamondburned/arikawa/bot"
 	"github.com/diamondburned/arikawa/discord"
 	"github.com/diamondburned/arikawa/gateway"
@@ -15,7 +17,8 @@ import (
 
 // Bot represent the bot
 type Bot struct {
-	Ctx *bot.Context
+	Ctx     *bot.Context
+	dropper *Dropper
 }
 
 var c config.ConfStruct
@@ -23,10 +26,17 @@ var c config.ConfStruct
 // Start starts the bot, registers the command and updates its status
 func Start(cf config.ConfStruct) {
 	c = cf
-	var commands = &Bot{}
+	var b = &Bot{
+		Ctx: &bot.Context{},
+		dropper: &Dropper{
+			Waifu:   make(map[discord.ChannelID]query.CharStruct),
+			ChanInc: make(map[discord.ChannelID]int),
+			Mux:     new(sync.Mutex),
+		},
+	}
 
 	// Start the bot
-	wait, err := bot.Start(c.BotToken, commands, func(ctx *bot.Context) error {
+	wait, err := bot.Start(c.BotToken, b, func(ctx *bot.Context) error {
 		ctx.HasPrefix = bot.NewPrefix(c.Prefix...)
 
 		ctx.SilentUnknown.Command = true
@@ -77,11 +87,11 @@ func Start(cf config.ConfStruct) {
 			// Higher chances the more you interact with the bot
 			r := rand.New(
 				rand.NewSource(time.Now().UnixNano()),
-			).Intn(c.DropsOnInteract - d.ChanInc[m.ChannelID])
+			).Intn(c.DropsOnInteract - b.dropper.ChanInc[m.ChannelID])
 
 			if r == 0 {
-				commands.drop(m)
-				d.ChanInc[m.ChannelID] = 0
+				b.drop(m)
+				b.dropper.ChanInc[m.ChannelID] = 0
 			}
 		})
 		return nil

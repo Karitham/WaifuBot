@@ -17,9 +17,6 @@ import (
 // Name represent the name of a character
 type Name = string
 
-// Quote represent a quote
-type Quote string
-
 // Profile displays user profile
 func (b *Bot) Profile(m *gateway.MessageCreateEvent, _ ...*arguments.UserMention) (*discord.Embed, error) {
 	var user discord.User
