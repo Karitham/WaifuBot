@@ -71,7 +71,7 @@ Rename `configExample.toml` to `config.toml` and change the values according to 
 # Dependencies
 
 - [Arikawa](https://github.com/diamondburned/arikawa)
-- [Arikawa](https://github.com/diamondburned/dgwidgets)
+- [DGWidgets](https://github.com/diamondburned/dgwidgets)
 - [Machinebox/graphql](https://github.com/machinebox/graphql)
 - [BurntSushi/toml](github.com/BurntSushi/toml)
 - [Anilist API](https://github.com/AniList/ApiV2-GraphQL-Docs)

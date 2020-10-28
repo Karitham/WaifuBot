@@ -2,7 +2,6 @@ package database
 
 import (
 	"context"
-	"fmt"
 	"log"
 
 	"github.com/Karitham/WaifuBot/config"
@@ -28,5 +27,5 @@ func Init(config *config.ConfStruct) {
 	}
 
 	collection = client.Database("waifubot").Collection("waifus")
-	fmt.Println("Connected to WaifuDB!")
+	log.Println("Connected to WaifuDB!")
 }

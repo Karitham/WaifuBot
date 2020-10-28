@@ -100,7 +100,7 @@ func Start(cf *config.ConfStruct) {
 		log.Fatalln(err)
 	}
 
-	fmt.Println("Bot started")
+	log.Println("Bot started")
 
 	// Wait for closing
 	if err := wait(); err != nil {
