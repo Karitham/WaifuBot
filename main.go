@@ -30,7 +30,7 @@ func main() {
 
 	log.SetPrefix("[WaifuBot] ")
 
-	database.Init(&c)
+	database.Initialise(&c)
 	disc.Start(&c)
 }
 

@@ -13,12 +13,7 @@ import (
 
 // List shows the user's list
 func (b *Bot) List(m *gateway.MessageCreateEvent, _ ...*arguments.UserMention) error {
-	var user discord.User
-	if len(m.Mentions) > 0 {
-		user = m.Mentions[0].User
-	} else {
-		user = m.Author
-	}
+	user := parseUser(m)
 
 	uData, err := database.ViewUserData(user.ID)
 	if err == mongo.ErrNoDocuments {
@@ -64,7 +59,7 @@ func (b *Bot) List(m *gateway.MessageCreateEvent, _ ...*arguments.UserMention) e
 }
 
 // Verify verify if someone has a waifu
-func (b *Bot) Verify(m *gateway.MessageCreateEvent, id CharacterID, _ ...*arguments.UserMention) (string, error) {
+func (b *Bot) Verify(m *gateway.MessageCreateEvent, id database.CharID, _ ...*arguments.UserMention) (string, error) {
 	var user discord.User
 	if len(m.Mentions) > 0 {
 		user = m.Mentions[0].User
@@ -72,7 +67,7 @@ func (b *Bot) Verify(m *gateway.MessageCreateEvent, id CharacterID, _ ...*argume
 		user = m.Author
 	}
 
-	ok, _ := database.VerifyWaifu(uint(id), uint(user.ID))
+	ok, _ := id.VerifyWaifu(m.Author.ID)
 	if ok {
 		return fmt.Sprintf("%s owns the character", user.Username), nil
 	}

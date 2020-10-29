@@ -131,3 +131,10 @@ func (b *Bot) Invite(_ *gateway.MessageCreateEvent) (*discord.Embed, error) {
 		),
 	}, nil
 }
+
+func parseUser(m *gateway.MessageCreateEvent) (user discord.User) {
+	if len(m.Mentions) > 0 {
+		return m.Mentions[0].User
+	}
+	return m.Author
+}

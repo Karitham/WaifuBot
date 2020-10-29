@@ -5,18 +5,14 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Karitham/WaifuBot/query"
 	"github.com/diamondburned/arikawa/discord"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// CharStruct alias query.CharStruct
-type CharStruct query.CharStruct
-
 // AddRolled adds a waifu to the user each time he has a new one
-func (c CharStruct) AddRolled(uID discord.UserID, date time.Time) error {
+func (c CharStruct) AddRolled(uID discord.UserID) error {
 	opts := options.FindOneAndUpdate().SetUpsert(true)
 	err := collection.FindOneAndUpdate(
 		context.TODO(),

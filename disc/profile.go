@@ -19,12 +19,7 @@ type Name = string
 
 // Profile displays user profile
 func (b *Bot) Profile(m *gateway.MessageCreateEvent, _ ...*arguments.UserMention) (*discord.Embed, error) {
-	var user discord.User
-	if len(m.Mentions) > 0 {
-		user = m.Mentions[0].User
-	} else {
-		user = m.Author
-	}
+	user := parseUser(m)
 
 	uData, err := database.ViewUserData(user.ID)
 	if err != nil && err != mongo.ErrNoDocuments {
