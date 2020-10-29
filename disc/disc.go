@@ -19,6 +19,7 @@ import (
 type Bot struct {
 	Ctx     *bot.Context
 	dropper *Dropper
+	seed    rand.Source64
 }
 
 var c *config.ConfStruct
@@ -30,9 +31,10 @@ func Start(cf *config.ConfStruct) {
 		Ctx: &bot.Context{},
 		dropper: &Dropper{
 			Waifu:   make(map[discord.ChannelID]query.CharStruct),
-			ChanInc: make(map[discord.ChannelID]int),
+			ChanInc: make(map[discord.ChannelID]uint64),
 			Mux:     new(sync.Mutex),
 		},
+		seed: rand.New(rand.NewSource(time.Now().UnixNano())),
 	}
 
 	// Start the bot
@@ -86,9 +88,7 @@ func Start(cf *config.ConfStruct) {
 			}
 			// Higher chances the more you interact with the bot
 			b.dropper.ChanInc[m.ChannelID]++
-			r := rand.New(
-				rand.NewSource(time.Now().UnixNano()),
-			).Intn(c.DropsOnInteract - b.dropper.ChanInc[m.ChannelID])
+			r := b.seed.Uint64() % (c.DropsOnInteract - b.dropper.ChanInc[m.ChannelID])
 
 			if r == 0 {
 				b.drop(m)

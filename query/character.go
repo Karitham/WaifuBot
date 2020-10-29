@@ -80,7 +80,7 @@ func CharSearch(input CharSearchInput) (response CharSearchStruct, err error) {
 }
 
 // CharSearchByPopularity outputs the character you want based on their number on the page list
-func CharSearchByPopularity(id int) (response CharStruct, err error) {
+func CharSearchByPopularity(id uint64) (response CharStruct, err error) {
 	// Create request
 	req := graphql.NewRequest(`
 	query ($pageNumber: Int) {

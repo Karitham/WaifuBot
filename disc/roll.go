@@ -3,7 +3,6 @@ package disc
 import (
 	"fmt"
 	"log"
-	"math/rand"
 	"time"
 
 	"github.com/Karitham/WaifuBot/database"
@@ -24,13 +23,8 @@ func (b *Bot) Roll(m *gateway.MessageCreateEvent) (*discord.Embed, error) {
 		return nil, fmt.Errorf("**illegal roll**,\nroll in %s", nextRollTime.Truncate(time.Second))
 	}
 
-	char, err := query.CharSearchByPopularity(
-		rand.New(
-			rand.NewSource(
-				time.Now().UnixNano(),
-			),
-		).Intn(c.MaxCharacterRoll),
-	)
+	char, err := query.CharSearchByPopularity(b.seed.Uint64() % c.MaxCharacterRoll)
+
 	if err != nil {
 		return nil, err
 	}

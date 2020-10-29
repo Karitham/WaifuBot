@@ -10,6 +10,8 @@ github.com/diamondburned/arikawa v1.1.1/go.mod h1:nIhVIatzTQhPUa7NB8w4koG1RF9gYb
 github.com/diamondburned/arikawa v1.3.8 h1:Gmqj3gJ8r931SIdiNeJ7xQDEOoUJkRE05cp/nKphpEU=
 github.com/diamondburned/arikawa v1.3.8/go.mod h1:nIhVIatzTQhPUa7NB8w4koG1RF9gYbpAr8Fj8sKq660=
 github.com/diamondburned/arikawa v1.3.9/go.mod h1:nIhVIatzTQhPUa7NB8w4koG1RF9gYbpAr8Fj8sKq660=
+github.com/diamondburned/arikawa v1.3.10 h1:EecXF0t05FhkmmFlg+w4pS9YjfVwTWGTQnBaEQy42zw=
+github.com/diamondburned/arikawa v1.3.10/go.mod h1:nIhVIatzTQhPUa7NB8w4koG1RF9gYbpAr8Fj8sKq660=
 github.com/diamondburned/dgwidgets v0.0.0-20200731234347-9c2c07fe2e11 h1:q5Ts37p5IxUblFcVbk2b9qnuAbbibl/2p/GMW3OM7NQ=
 github.com/diamondburned/dgwidgets v0.0.0-20200731234347-9c2c07fe2e11/go.mod h1:dQFjtnMTrptGpnV07GAQmCXuO7v9H8gq0y2JfIq3tmE=
 github.com/go-sql-driver/mysql v1.5.0/go.mod h1:DCzpHaOWr8IXmIStZouvnhqoel9Qv2LBy8hT2VhHyBg=
@@ -124,6 +126,8 @@ golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3/go.mod h1:t9HGtf8HONx5eT2rtn
 golang.org/x/net v0.0.0-20200202094626-16171245cfb2/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
 golang.org/x/net v0.0.0-20201027133719-8eef5233e2a1 h1:IEhJ99VWSYpHIxjlbu3DQyHegGPnQYAv0IaCX9KHyG0=
 golang.org/x/net v0.0.0-20201027133719-8eef5233e2a1/go.mod h1:sp8m0HH+o8qH0wwXwYZr8TS3Oi6o0r6Gce1SSxlDquU=
+golang.org/x/net v0.0.0-20201029055024-942e2f445f3c h1:rpcgRPA7OvNEOdprt2Wx8/Re2cBTd8NPo/lvo3AyMqk=
+golang.org/x/net v0.0.0-20201029055024-942e2f445f3c/go.mod h1:sp8m0HH+o8qH0wwXwYZr8TS3Oi6o0r6Gce1SSxlDquU=
 golang.org/x/sync v0.0.0-20190227155943-e225da77a7e6/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
 golang.org/x/sync v0.0.0-20190412183630-56d357773e84/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
 golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=

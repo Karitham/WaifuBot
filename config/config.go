@@ -13,9 +13,9 @@ type ConfStruct struct {
 	BotToken          string   `toml:"Bot_Token"`
 	MongoURL          string   `toml:"Mongo_URL"`
 	BotStatus         string   `toml:"Bot_Status"`
-	MaxCharacterRoll  int      `toml:"Max_Character_Roll"`
-	MaxCharacterDrop  int      `toml:"Max_Character_Drop"`
-	DropsOnInteract   int      `toml:"Drops_On_Interact"`
+	MaxCharacterRoll  uint64   `toml:"Max_Character_Roll"`
+	MaxCharacterDrop  uint     `toml:"Max_Character_Drop"`
+	DropsOnInteract   uint64   `toml:"Drops_On_Interact"`
 	ListLen           int      `toml:"List_Len"`
 	ListMaxUpdateTime duration `toml:"List_Max_Update_Time"`
 	TimeBetweenRolls  duration `toml:"Time_Between_Rolls"`

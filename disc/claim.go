@@ -3,10 +3,8 @@ package disc
 import (
 	"fmt"
 	"log"
-	"math/rand"
 	"strings"
 	"sync"
-	"time"
 
 	"github.com/Karitham/WaifuBot/database"
 	"github.com/Karitham/WaifuBot/query"
@@ -17,7 +15,7 @@ import (
 // Dropper is used to handle the dropping mechanism
 type Dropper struct {
 	Waifu   map[discord.ChannelID]query.CharStruct
-	ChanInc map[discord.ChannelID]int
+	ChanInc map[discord.ChannelID]uint64
 	Mux     *sync.Mutex
 }
 
@@ -27,13 +25,7 @@ func (bot *Bot) drop(m *gateway.MessageCreateEvent) {
 	bot.dropper.Mux.Lock()
 	defer bot.dropper.Mux.Unlock()
 
-	bot.dropper.Waifu[m.ChannelID], err = query.CharSearchByPopularity(
-		rand.New(
-			rand.NewSource(
-				time.Now().UnixNano(),
-			),
-		).Intn(c.MaxCharacterRoll),
-	)
+	bot.dropper.Waifu[m.ChannelID], err = query.CharSearchByPopularity(bot.seed.Uint64() % c.MaxCharacterRoll)
 	if err != nil {
 		log.Println(err)
 		return
