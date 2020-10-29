@@ -29,11 +29,7 @@ func (b *Bot) Give(m *gateway.MessageCreateEvent, cID CharacterID, user *argumen
 		}
 	}
 
-	err = database.InputChar{
-		UserID:   user.ID(),
-		CharList: char,
-		Date:     changed.Date,
-	}.AddChar()
+	err = database.CharLayout(char).Add(user.ID())
 	if err != nil {
 		log.Println(err)
 	}

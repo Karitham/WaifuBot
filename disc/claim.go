@@ -39,6 +39,10 @@ func (bot *Bot) drop(m *gateway.MessageCreateEvent) {
 		return
 	}
 
+	// Sanitize the name so it's claimable through discord (some characters have double spaces in their name)
+	bot.dropper.Waifu[m.ChannelID].Page.Characters[0].Name.Full =
+		strings.Join(strings.Fields(bot.dropper.Waifu[m.ChannelID].Page.Characters[0].Name.Full), " ")
+
 	_, err = bot.Ctx.SendMessage(m.ChannelID, "", &discord.Embed{
 		Title:       "CHARACTER DROP !",
 		Description: "Can you guess who it is ?\nUse w.claim to get this character for yourself",
@@ -83,14 +87,7 @@ func (bot *Bot) Claim(m *gateway.MessageCreateEvent, name ...Name) (*discord.Emb
 	}
 
 	// Add to db
-	err := database.InputClaimedChar{
-		UserID: m.Author.ID,
-		CharList: database.CharLayout{
-			ID:    c.Page.Characters[0].ID,
-			Name:  strings.Join(strings.Fields(c.Page.Characters[0].Name.Full), " "),
-			Image: c.Page.Characters[0].Image.Large,
-		},
-	}.AddChar()
+	err := database.CharStruct(bot.dropper.Waifu[m.ChannelID]).AddClaimed(m.Author.ID)
 	if err != nil {
 		return nil, err
 	}

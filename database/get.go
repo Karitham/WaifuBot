@@ -21,13 +21,6 @@ type UserDataStruct struct {
 	Waifus        []CharLayout `bson:"Waifus,omitempty"`
 }
 
-// CharLayout is how each character is stored
-type CharLayout struct {
-	ID    uint   `bson:"ID"`
-	Name  string `bson:"Name"`
-	Image string `bson:"Image"`
-}
-
 // ViewUserData returns a list of waifus the user has collected
 func ViewUserData(id discord.UserID) (userData UserDataStruct, err error) {
 	bytesWaifu, err := collection.FindOne(context.TODO(), bson.M{"_id": id}).DecodeBytes()

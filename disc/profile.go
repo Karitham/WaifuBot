@@ -59,12 +59,10 @@ func (b *Bot) Favorite(m *gateway.MessageCreateEvent, name ...Name) (string, err
 		return "", err
 	}
 
-	database.FavoriteStruct{UserID: m.Author.ID, Favorite: database.CharLayout{
-		ID:    char.Character.ID,
-		Image: char.Character.Image.Large,
-		Name:  char.Character.Name.Full,
-	}}.SetFavorite()
-
+	err = database.Favorite(char).Set(m.Author.ID)
+	if err != nil {
+		return "", err
+	}
 	return fmt.Sprintf("New waifu set, check your profile\n<%s>", char.Character.SiteURL), nil
 }
 
@@ -75,11 +73,5 @@ func (b *Bot) Quote(m *gateway.MessageCreateEvent, quote ...string) (string, err
 	}
 
 	q := strings.Join(quote, " ")
-
-	database.NewQuote{
-		UserID: m.Author.ID,
-		Quote:  q,
-	}.SetQuote()
-
-	return fmt.Sprintf("New quote set :\n%s", q), nil
+	return fmt.Sprintf("New quote set :\n%s", q), database.Quote(q).Set(m.Author.ID)
 }

@@ -85,6 +85,7 @@ func Start(cf *config.ConfStruct) {
 				return
 			}
 			// Higher chances the more you interact with the bot
+			b.dropper.ChanInc[m.ChannelID]++
 			r := rand.New(
 				rand.NewSource(time.Now().UnixNano()),
 			).Intn(c.DropsOnInteract - b.dropper.ChanInc[m.ChannelID])
@@ -100,7 +101,11 @@ func Start(cf *config.ConfStruct) {
 		log.Fatalln(err)
 	}
 
-	log.Println("Bot started")
+	guilds, err := b.Ctx.Guilds()
+	if err != nil {
+		log.Println(err)
+	}
+	log.Printf("Bot started in %d servers", len(guilds))
 
 	// Wait for closing
 	if err := wait(); err != nil {

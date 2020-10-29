@@ -35,15 +35,7 @@ func (b *Bot) Roll(m *gateway.MessageCreateEvent) (*discord.Embed, error) {
 		return nil, err
 	}
 
-	err = database.InputChar{
-		UserID: m.Author.ID,
-		CharList: database.CharLayout{
-			ID:    char.Page.Characters[0].ID,
-			Image: char.Page.Characters[0].Image.Large,
-			Name:  char.Page.Characters[0].Name.Full,
-		},
-		Date: time.Now(),
-	}.AddChar()
+	err = database.CharStruct(char).AddRolled(m.Author.ID, time.Now())
 	if err != nil {
 		log.Println(err)
 		return nil, err

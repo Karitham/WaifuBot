@@ -2,58 +2,66 @@ package database
 
 import (
 	"context"
-	"log"
+	"strings"
 
+	"github.com/Karitham/WaifuBot/query"
 	"github.com/diamondburned/arikawa/discord"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// FavoriteStruct represents how to send data to the database
-type FavoriteStruct struct {
-	UserID   discord.UserID `bson:"_id"`
-	Favorite CharLayout
+// CharLayout is how each character is stored
+type CharLayout struct {
+	ID    uint   `bson:"ID"`
+	Name  string `bson:"Name"`
+	Image string `bson:"Image"`
 }
 
-// NewQuote represent the data needed to change user quote
-type NewQuote struct {
-	UserID discord.UserID
-	Quote  string
-}
+// Favorite represent the favorite char
+type Favorite query.CharSearchStruct
 
-// SetFavorite adds a waifu to the user each time he has a new one
-func (input FavoriteStruct) SetFavorite() {
+// Quote represent the data needed to change user quote
+type Quote string
+
+// Set adds a waifu to the user each time he has a new one
+func (fav Favorite) Set(uID discord.UserID) error {
 	opts := options.FindOneAndUpdate().SetUpsert(true)
 	_, err := collection.FindOneAndUpdate(
 		context.TODO(),
 		bson.M{
-			"_id": input.UserID,
+			"_id": uID,
 		},
 		bson.M{
-			"$set": bson.M{"Favourite": input.Favorite},
+			"$set": bson.M{"Favourite": CharLayout{
+				ID:    fav.Character.ID,
+				Image: fav.Character.Image.Large,
+				Name:  strings.Join(strings.Fields(fav.Character.Name.Full), " "),
+			}},
 		},
 		opts,
 	).DecodeBytes()
 	if err != mongo.ErrNoDocuments && err != nil {
-		log.Println(err)
+		return err
 	}
+	return nil
 }
 
-// SetQuote set the user quote on his profile
-func (input NewQuote) SetQuote() {
+// Set set the user quote on his profile
+func (quote Quote) Set(uID discord.UserID) error {
 	opts := options.FindOneAndUpdate().SetUpsert(true)
 	_, err := collection.FindOneAndUpdate(
 		context.TODO(),
 		bson.M{
-			"_id": input.UserID,
+			"_id": uID,
 		},
 		bson.M{
-			"$set": bson.M{"Quote": input.Quote},
+			"$set": bson.M{"Quote": quote},
 		},
 		opts,
 	).DecodeBytes()
 	if err != mongo.ErrNoDocuments && err != nil {
-		log.Println(err)
+		return err
 	}
+	return nil
 }

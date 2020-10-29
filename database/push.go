@@ -2,65 +2,85 @@ package database
 
 import (
 	"context"
+	"strings"
 	"time"
 
+	"github.com/Karitham/WaifuBot/query"
 	"github.com/diamondburned/arikawa/discord"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// InputClaimedChar represents how to send data to the database
-type InputClaimedChar struct {
-	UserID   discord.UserID `bson:"_id"`
-	CharList CharLayout
-}
+// CharStruct alias query.CharStruct
+type CharStruct query.CharStruct
 
-// InputChar represents how to send data to the database
-type InputChar struct {
-	UserID   discord.UserID `bson:"_id"`
-	Date     time.Time      `bson:"Date"`
-	CharList CharLayout
-}
-
-// AddChar adds a waifu to the user each time he has a new one
-func (input InputClaimedChar) AddChar() error {
-	var decoded bson.M
-
+// AddRolled adds a waifu to the user each time he has a new one
+func (c CharStruct) AddRolled(uID discord.UserID, date time.Time) error {
 	opts := options.FindOneAndUpdate().SetUpsert(true)
-
 	err := collection.FindOneAndUpdate(
 		context.TODO(),
 		bson.M{
-			"_id": input.UserID,
+			"_id": uID,
 		},
 		bson.M{
-			"$inc":  bson.M{"ClaimedWaifus": 1},
-			"$push": bson.M{"Waifus": input.CharList},
+			"$set": bson.M{"Date": time.Now()},
+			"$push": bson.M{"Waifus": CharLayout{
+				ID:    c.Page.Characters[0].ID,
+				Image: c.Page.Characters[0].Image.Large,
+				Name:  strings.Join(strings.Fields(c.Page.Characters[0].Name.Full), " "),
+			}},
 		},
 		opts,
-	).Decode(&decoded)
+	).Decode(&bson.M{})
 	if err != mongo.ErrNoDocuments && err != nil {
 		return err
 	}
 	return nil
 }
 
-// AddChar adds a waifu to the user each time he has a new one
-func (input InputChar) AddChar() error {
-	var decoded bson.M
+// AddClaimed adds a waifu to the user each time he has a new one
+func (c CharStruct) AddClaimed(uID discord.UserID) error {
 	opts := options.FindOneAndUpdate().SetUpsert(true)
 	err := collection.FindOneAndUpdate(
 		context.TODO(),
 		bson.M{
-			"_id": input.UserID,
+			"_id": uID,
 		},
 		bson.M{
-			"$set":  bson.M{"Date": input.Date},
-			"$push": bson.M{"Waifus": input.CharList},
+			"$inc": bson.M{"ClaimedWaifus": 1},
+			"$push": bson.M{"Waifus": CharLayout{
+				ID:    c.Page.Characters[0].ID,
+				Image: c.Page.Characters[0].Image.Large,
+				Name:  strings.Join(strings.Fields(c.Page.Characters[0].Name.Full), " "),
+			}},
 		},
 		opts,
-	).Decode(&decoded)
+	).Decode(&bson.M{})
+	if err != mongo.ErrNoDocuments && err != nil {
+		return err
+	}
+	return nil
+}
+
+// Add adds a waifu to the user each time he has a new one
+func (c CharLayout) Add(uID discord.UserID) error {
+	opts := options.FindOneAndUpdate().SetUpsert(true)
+	err := collection.FindOneAndUpdate(
+		context.TODO(),
+		bson.M{
+			"_id": uID,
+		},
+		bson.M{
+			"$inc": bson.M{"ClaimedWaifus": 1},
+			"$push": bson.M{"Waifus": CharLayout{
+				ID:    c.ID,
+				Image: c.Image,
+				Name:  strings.Join(strings.Fields(c.Name), " "),
+			}},
+		},
+		opts,
+	).Decode(&bson.M{})
 	if err != mongo.ErrNoDocuments && err != nil {
 		return err
 	}

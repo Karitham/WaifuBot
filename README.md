@@ -3,7 +3,6 @@
 <p align="center">
   <a target="_blank" href="https://discord.com/oauth2/authorize?client_id=712332547694264341&permissions=1074097217&scope=bot" ><img alt="Add it to your discord" src="https://img.shields.io/badge/WaifuBot-ADD%20IT-brightgreen?style=for-the-badge"></a>
   <a target="_blank" href="https://www.codefactor.io/repository/github/karitham/waifubot"><img alt="code factor grade" src="https://img.shields.io/codefactor/grade/github/karitham/waifubot?color=brightgreen&style=for-the-badge"></a>
-  <a target="_blank" href="https://hub.docker.com/repository/docker/karithamdocker/go-waifubot"><img alt="Docker Pulls" src="https://img.shields.io/docker/pulls/karithamdocker/go-waifubot?color=brightgreen&style=for-the-badge"></a>
   <a target="_blank" href="https://hub.docker.com/repository/docker/karithamdocker/go-waifubot"><img alt="Docker Image Size (latest by date)" src="https://img.shields.io/docker/image-size/karithamdocker/go-waifubot?color=brightgreen&style=for-the-badge"></a>
 </p>
 
