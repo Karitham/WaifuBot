@@ -9,6 +9,7 @@ github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSs
 github.com/diamondburned/arikawa v1.1.1/go.mod h1:nIhVIatzTQhPUa7NB8w4koG1RF9gYbpAr8Fj8sKq660=
 github.com/diamondburned/arikawa v1.3.8 h1:Gmqj3gJ8r931SIdiNeJ7xQDEOoUJkRE05cp/nKphpEU=
 github.com/diamondburned/arikawa v1.3.8/go.mod h1:nIhVIatzTQhPUa7NB8w4koG1RF9gYbpAr8Fj8sKq660=
+github.com/diamondburned/arikawa v1.3.9/go.mod h1:nIhVIatzTQhPUa7NB8w4koG1RF9gYbpAr8Fj8sKq660=
 github.com/diamondburned/dgwidgets v0.0.0-20200731234347-9c2c07fe2e11 h1:q5Ts37p5IxUblFcVbk2b9qnuAbbibl/2p/GMW3OM7NQ=
 github.com/diamondburned/dgwidgets v0.0.0-20200731234347-9c2c07fe2e11/go.mod h1:dQFjtnMTrptGpnV07GAQmCXuO7v9H8gq0y2JfIq3tmE=
 github.com/go-sql-driver/mysql v1.5.0/go.mod h1:DCzpHaOWr8IXmIStZouvnhqoel9Qv2LBy8hT2VhHyBg=
