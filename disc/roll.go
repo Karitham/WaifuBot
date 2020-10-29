@@ -34,6 +34,10 @@ func (b *Bot) Roll(m *gateway.MessageCreateEvent) (*discord.Embed, error) {
 	if err != nil {
 		return nil, err
 	}
+	if ok, _ := database.CharID(char.Page.Characters[0].ID).VerifyWaifu(m.Author.ID); ok {
+		b.Roll(m)
+		return nil, nil
+	}
 
 	err = database.CharStruct(char).AddRolled(m.Author.ID)
 	if err != nil {

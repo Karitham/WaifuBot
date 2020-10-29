@@ -86,6 +86,10 @@ func (bot *Bot) Claim(m *gateway.MessageCreateEvent, name ...Name) (*discord.Emb
 		return nil, fmt.Errorf("wrong name entered")
 	}
 
+	if ok, _ := database.CharID(bot.dropper.Waifu[m.ChannelID].Page.Characters[0].ID).VerifyWaifu(m.Author.ID); ok {
+		return nil, fmt.Errorf("%s, you already own %s", m.Author.Username, bot.dropper.Waifu[m.ChannelID].Page.Characters[0].Name.Full)
+	}
+
 	// Add to db
 	err := database.CharStruct(bot.dropper.Waifu[m.ChannelID]).AddClaimed(m.Author.ID)
 	if err != nil {
