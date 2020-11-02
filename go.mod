@@ -4,7 +4,7 @@ go 1.14
 
 require (
 	github.com/BurntSushi/toml v0.3.1
-	github.com/diamondburned/arikawa v1.3.10
+	github.com/diamondburned/arikawa v1.3.14
 	github.com/diamondburned/dgwidgets v0.0.0-20200731234347-9c2c07fe2e11
 	github.com/gorilla/schema v1.2.0 // indirect
 	github.com/klauspost/compress v1.11.2 // indirect
