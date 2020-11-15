@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/Karitham/WaifuBot/database"
-	"github.com/diamondburned/arikawa/bot/extras/arguments"
-	"github.com/diamondburned/arikawa/gateway"
+	"github.com/diamondburned/arikawa/v2/bot/extras/arguments"
+	"github.com/diamondburned/arikawa/v2/gateway"
 )
 
 // Give is used to give a character to a user

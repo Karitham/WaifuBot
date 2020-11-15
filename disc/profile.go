@@ -8,9 +8,9 @@ import (
 
 	"github.com/Karitham/WaifuBot/database"
 	"github.com/Karitham/WaifuBot/query"
-	"github.com/diamondburned/arikawa/bot/extras/arguments"
-	"github.com/diamondburned/arikawa/discord"
-	"github.com/diamondburned/arikawa/gateway"
+	"github.com/diamondburned/arikawa/v2/bot/extras/arguments"
+	"github.com/diamondburned/arikawa/v2/discord"
+	"github.com/diamondburned/arikawa/v2/gateway"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 

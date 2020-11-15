@@ -10,9 +10,9 @@ import (
 
 	"github.com/Karitham/WaifuBot/config"
 	"github.com/Karitham/WaifuBot/query"
-	"github.com/diamondburned/arikawa/bot"
-	"github.com/diamondburned/arikawa/discord"
-	"github.com/diamondburned/arikawa/gateway"
+	"github.com/diamondburned/arikawa/v2/bot"
+	"github.com/diamondburned/arikawa/v2/discord"
+	"github.com/diamondburned/arikawa/v2/gateway"
 )
 
 // Bot represent the bot
@@ -20,6 +20,7 @@ type Bot struct {
 	Ctx     *bot.Context
 	dropper *Dropper
 	seed    rand.Source64
+	Me      *discord.User
 }
 
 var c *config.ConfStruct
@@ -44,8 +45,8 @@ func Start(cf *config.ConfStruct) {
 		ctx.SilentUnknown.Command = true
 		ctx.SilentUnknown.Subcommand = true
 
-		ctx.MustRegisterSubcommandCustom(&Search{}, "search")
-		ctx.MustRegisterSubcommandCustom(&Trending{}, "trending")
+		ctx.MustRegisterSubcommand(&Search{}, "search", "s")
+		ctx.MustRegisterSubcommand(&Trending{}, "trending", "t")
 
 		ctx.ChangeCommandInfo("Roll", "", "roll a random character")
 		ctx.ChangeCommandInfo("Profile", "", "display user profile")
@@ -73,19 +74,23 @@ func Start(cf *config.ConfStruct) {
 			Token: c.BotToken,
 
 			Presence: &gateway.UpdateStatusData{
-				Game: &discord.Activity{
-					Name: c.BotStatus,
-					Type: discord.GameActivity,
+				Activities: &[]discord.Activity{
+					{
+						Name: c.BotStatus,
+						Type: discord.GameActivity,
+					},
 				},
+
 				Status: discord.OnlineStatus,
 			},
 		}
 
 		ctx.AddHandler(func(m *gateway.MessageCreateEvent) {
 			// Filter bot message
-			if m.Author.ID == ctx.Ready.User.ID {
+			if m.Author.Bot {
 				return
 			}
+
 			// Higher chances the more you interact with the bot
 			b.dropper.ChanInc[m.ChannelID]++
 			r := b.seed.Uint64() % (c.DropsOnInteract - b.dropper.ChanInc[m.ChannelID])
@@ -95,10 +100,16 @@ func Start(cf *config.ConfStruct) {
 				b.dropper.ChanInc[m.ChannelID] = 0
 			}
 		})
+
 		return nil
 	})
 	if err != nil {
 		log.Fatalln(err)
+	}
+
+	b.Me, err = b.Ctx.Me()
+	if err != nil {
+		log.Println(err)
 	}
 
 	guilds, err := b.Ctx.Guilds()
@@ -124,9 +135,10 @@ func parseArgs(b string) (ID int) {
 func (b *Bot) Invite(_ *gateway.MessageCreateEvent) (*discord.Embed, error) {
 	return &discord.Embed{
 		Title: "Invite",
+
 		URL: fmt.Sprintf(
 			"https://discord.com/oauth2/authorize?scope=bot&client_id=%d&permissions=%d",
-			b.Ctx.Ready.User.ID,
+			b.Me.ID,
 			1073801280,
 		),
 	}, nil

@@ -1,8 +1,8 @@
 package disc
 
 import (
-	"github.com/diamondburned/arikawa/discord"
-	"github.com/diamondburned/arikawa/gateway"
+	"github.com/diamondburned/arikawa/v2/discord"
+	"github.com/diamondburned/arikawa/v2/gateway"
 )
 
 // Help prints the default help message.

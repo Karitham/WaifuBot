@@ -8,8 +8,8 @@ import (
 
 	"github.com/Karitham/WaifuBot/database"
 	"github.com/Karitham/WaifuBot/query"
-	"github.com/diamondburned/arikawa/discord"
-	"github.com/diamondburned/arikawa/gateway"
+	"github.com/diamondburned/arikawa/v2/discord"
+	"github.com/diamondburned/arikawa/v2/gateway"
 )
 
 // Dropper is used to handle the dropping mechanism
