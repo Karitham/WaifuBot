@@ -2,6 +2,7 @@ package disc
 
 import (
 	"errors"
+	"strings"
 
 	"github.com/Karitham/WaifuBot/query"
 	"github.com/diamondburned/arikawa/v2/bot"
@@ -49,9 +50,13 @@ func (s *Trending) Anime(_ *gateway.MessageCreateEvent) (*discord.Embed, error) 
 	}, nil
 }
 
-func formatTrending(list query.TrendingMediaStruct) (formattedList string) {
+func formatTrending(list query.TrendingMediaStruct) string {
+	sb := strings.Builder{}
+
 	for _, v := range list.Page.Media {
-		formattedList += v.Title.Romaji + "\n"
+		sb.WriteString(v.Title.Romaji)
+		sb.WriteString("\n")
 	}
-	return
+
+	return sb.String()
 }

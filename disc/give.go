@@ -14,8 +14,8 @@ func (b *Bot) Give(m *gateway.MessageCreateEvent, cID database.CharID, _ *argume
 
 	if ok, _ := cID.VerifyWaifu(m.Author.ID); !ok {
 		return "", fmt.Errorf("%s does not own character %d", m.Author.Username, cID)
-	} else if ok, _ = cID.VerifyWaifu(m.Author.ID); ok {
-		return "", fmt.Errorf("%s, you already own this waifu", m.Author.Username)
+	} else if ok, _ = cID.VerifyWaifu(user.ID); ok {
+		return "", fmt.Errorf("%s, already owns this waifu", m.Author.Username)
 	}
 
 	changed, err := cID.DelChar(m.Author.ID)
