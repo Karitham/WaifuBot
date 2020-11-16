@@ -8,8 +8,8 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/diamondburned/arikawa/v2 v2.0.0-20201115003216-4992f4ab200a h1:+/+bqDl95yuIoO/shShLGR2SuPvCIzmqz1u23U6RlAo=
 github.com/diamondburned/arikawa/v2 v2.0.0-20201115003216-4992f4ab200a/go.mod h1:33ra6kX2wK4dSeTD/3hjg1ZSOVQ3GJy4e9GJ7hPMJsk=
-github.com/diamondburned/dgwidgets v0.0.0-20201115010416-0bd030f60967 h1:+qwUJom/c1rMv2gzOjUaGe0oaDiG7AD5Q0ZX6YZbtk8=
-github.com/diamondburned/dgwidgets v0.0.0-20201115010416-0bd030f60967/go.mod h1:v3HzgAq61FqJa+65xU2f8pUt8ENtbCSNyaNCSt98f80=
+github.com/diamondburned/dgwidgets v0.0.0-20201116072431-32e20a553512 h1:ATa7YoBDH5qBXGJCisiFDV0y2vWTUc2ruJn0dc1BGgo=
+github.com/diamondburned/dgwidgets v0.0.0-20201116072431-32e20a553512/go.mod h1:v3HzgAq61FqJa+65xU2f8pUt8ENtbCSNyaNCSt98f80=
 github.com/go-sql-driver/mysql v1.5.0/go.mod h1:DCzpHaOWr8IXmIStZouvnhqoel9Qv2LBy8hT2VhHyBg=
 github.com/go-stack/stack v1.8.0 h1:5SgMzNM5HxrEjV0ww2lTmX6E2Izsfxas4+YHWRs3Lsk=
 github.com/go-stack/stack v1.8.0/go.mod h1:v0f6uXyyMGvRgIKkXu+yp6POWl0qKG85gN/melR3HDY=
@@ -58,8 +58,8 @@ github.com/karrick/godirwalk v1.8.0/go.mod h1:H5KPZjojv4lE+QYImBI8xVtrBRgYrIVsaR
 github.com/karrick/godirwalk v1.10.3/go.mod h1:RoGL9dQei4vP9ilrpETWE8CLOZ1kiN0LhBygSwrAsHA=
 github.com/klauspost/compress v1.9.5 h1:U+CaK85mrNNb4k8BNOfgJtJ/gr6kswUCFj6miSzVC6M=
 github.com/klauspost/compress v1.9.5/go.mod h1:RyIbtBH6LamlWaDj8nUwkbUhJ87Yi3uG0guNDohfE1A=
-github.com/klauspost/compress v1.11.2 h1:MiK62aErc3gIiVEtyzKfeOHgW7atJb5g/KNX5m3c2nQ=
-github.com/klauspost/compress v1.11.2/go.mod h1:aoV0uJVorq1K+umq18yTdKaF57EivdYsUV+/s2qKfXs=
+github.com/klauspost/compress v1.11.3 h1:dB4Bn0tN3wdCzQxnS8r06kV74qN/TAfaIS0bVE8h3jc=
+github.com/klauspost/compress v1.11.3/go.mod h1:aoV0uJVorq1K+umq18yTdKaF57EivdYsUV+/s2qKfXs=
 github.com/konsorten/go-windows-terminal-sequences v1.0.1/go.mod h1:T0+1ngSBFLxvqU3pZ+m/2kptfBszLMUkC4ZK/EgS/cQ=
 github.com/konsorten/go-windows-terminal-sequences v1.0.2/go.mod h1:T0+1ngSBFLxvqU3pZ+m/2kptfBszLMUkC4ZK/EgS/cQ=
 github.com/kr/pretty v0.1.0 h1:L/CwN0zerZDmRFUapSPitk6f+Q3+0za1rQkzVuMiMFI=

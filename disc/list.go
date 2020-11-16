@@ -31,36 +31,33 @@ func (b *Bot) List(m *gateway.MessageCreateEvent, _ ...*arguments.UserMention) e
 	p.ColourWhenDone = 0xFFFF00
 
 	// Make pages
-	p.Add(
-		func(charlist []database.CharLayout) (embeds []discord.Embed) {
-			for j := 0; j <= len(charlist)/c.ListLen; j++ {
-				embeds = append(embeds, discord.Embed{
+	for j := 0; j <= len(uData.Waifus)/c.ListLen; j++ {
+		p.Add(discord.Embed{
+			Title: fmt.Sprintf("%s's list", user.Username),
 
-					Title: fmt.Sprintf("%s's list", user.Username),
+			Description: func(l []database.CharLayout) string {
+				var s strings.Builder
 
-					Description: func(l []database.CharLayout) string {
-						var s strings.Builder
+				if len(l) >= 0 {
+					for i := c.ListLen * j; i < c.ListLen+c.ListLen*j && i < len(l); i++ {
+						s.WriteString(fmt.Sprintf("`%d`\f - %s\n", l[i].ID, l[i].Name))
+					}
+					return s.String()
+				}
 
-						if len(l) >= 0 {
-							for i := c.ListLen * j; i < c.ListLen+c.ListLen*j && i < len(l); i++ {
-								s.WriteString(fmt.Sprintf("`%d`\f - %s\n", l[i].ID, l[i].Name))
-							}
-							return s.String()
-						}
+				return ""
+			}(uData.Waifus),
 
-						return ""
-					}(charlist),
+			Color: 3447003,
+		})
+	}
 
-					Footer: &discord.EmbedFooter{
-						Text: fmt.Sprintf("Page %d out of %d", j+1, len(charlist)/c.ListLen+1),
-					},
-
-					Color: 3447003,
-				})
-			}
-			return embeds
-		}(uData.Waifus)...,
-	)
+	// TODO wait for `https://github.com/diamondburned/dgwidgets/pull/2` merge to remove
+	for i := range p.Pages {
+		p.Pages[i].Footer = &discord.EmbedFooter{
+			Text: fmt.Sprintf("#[%d / %d]", i+1, len(p.Pages)),
+		}
+	}
 
 	return p.Spawn()
 }
