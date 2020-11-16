@@ -140,7 +140,7 @@ func (b *Bot) Invite(_ *gateway.MessageCreateEvent) (*discord.Embed, error) {
 		URL: fmt.Sprintf(
 			"https://discord.com/oauth2/authorize?scope=bot&client_id=%d&permissions=%d",
 			b.Me.ID,
-			1073801280,
+			92224,
 		),
 	}, nil
 }
