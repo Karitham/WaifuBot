@@ -52,13 +52,6 @@ func (b *Bot) List(m *gateway.MessageCreateEvent, _ ...*arguments.UserMention) e
 		})
 	}
 
-	// TODO wait for `https://github.com/diamondburned/dgwidgets/pull/2` merge to remove
-	for i := range p.Pages {
-		p.Pages[i].Footer = &discord.EmbedFooter{
-			Text: fmt.Sprintf("#[%d / %d]", i+1, len(p.Pages)),
-		}
-	}
-
 	return p.Spawn()
 }
 

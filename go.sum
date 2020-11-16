@@ -8,8 +8,8 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/diamondburned/arikawa/v2 v2.0.0-20201115003216-4992f4ab200a h1:+/+bqDl95yuIoO/shShLGR2SuPvCIzmqz1u23U6RlAo=
 github.com/diamondburned/arikawa/v2 v2.0.0-20201115003216-4992f4ab200a/go.mod h1:33ra6kX2wK4dSeTD/3hjg1ZSOVQ3GJy4e9GJ7hPMJsk=
-github.com/diamondburned/dgwidgets v0.0.0-20201116072431-32e20a553512 h1:ATa7YoBDH5qBXGJCisiFDV0y2vWTUc2ruJn0dc1BGgo=
-github.com/diamondburned/dgwidgets v0.0.0-20201116072431-32e20a553512/go.mod h1:v3HzgAq61FqJa+65xU2f8pUt8ENtbCSNyaNCSt98f80=
+github.com/diamondburned/dgwidgets v0.0.0-20201116085548-422db73776fa h1:3BnjjifZzVLrcC+C1T/jkDeO3DoNWKWSK4C7RFU6XO4=
+github.com/diamondburned/dgwidgets v0.0.0-20201116085548-422db73776fa/go.mod h1:v3HzgAq61FqJa+65xU2f8pUt8ENtbCSNyaNCSt98f80=
 github.com/go-sql-driver/mysql v1.5.0/go.mod h1:DCzpHaOWr8IXmIStZouvnhqoel9Qv2LBy8hT2VhHyBg=
 github.com/go-stack/stack v1.8.0 h1:5SgMzNM5HxrEjV0ww2lTmX6E2Izsfxas4+YHWRs3Lsk=
 github.com/go-stack/stack v1.8.0/go.mod h1:v0f6uXyyMGvRgIKkXu+yp6POWl0qKG85gN/melR3HDY=
