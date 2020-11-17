@@ -57,15 +57,9 @@ func (b *Bot) List(m *gateway.MessageCreateEvent, _ ...*arguments.UserMention) e
 
 // Verify verify if someone has a waifu
 func (b *Bot) Verify(m *gateway.MessageCreateEvent, id database.CharID, _ ...*arguments.UserMention) (string, error) {
-	var user discord.User
+	user := parseUser(m)
 
-	if len(m.Mentions) > 0 {
-		user = m.Mentions[0].User
-	} else {
-		user = m.Author
-	}
-
-	if ok, _ := id.VerifyWaifu(m.Author.ID); ok {
+	if ok, _ := id.VerifyWaifu(user.ID); ok {
 		return fmt.Sprintf("%s owns the character %d", user.Username, id), nil
 	}
 	return fmt.Sprintf("%s doesn't own the character %d", user.Username, id), nil
