@@ -96,7 +96,7 @@ func Start(cf *config.ConfStruct) {
 			b.dropper.ChanInc[m.ChannelID]++
 			r := b.seed.Uint64() % (c.DropsOnInteract - b.dropper.ChanInc[m.ChannelID])
 
-			if r == 0 {
+			if r == 0 || b.dropper.ChanInc[m.ChannelID]+1 == c.DropsOnInteract {
 				b.drop(m)
 				b.dropper.ChanInc[m.ChannelID] = 0
 			}
