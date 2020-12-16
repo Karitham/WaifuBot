@@ -19,7 +19,6 @@ type ConfStruct struct {
 	ListLen           int      `toml:"List_Len"`
 	ListMaxUpdateTime duration `toml:"List_Max_Update_Time"`
 	TimeBetweenRolls  duration `toml:"Time_Between_Rolls"`
-	LogToFile         bool     `toml:"Log_To_File"`
 }
 type duration struct {
 	time.Duration

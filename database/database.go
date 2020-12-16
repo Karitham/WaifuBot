@@ -11,8 +11,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// Initialise is used to start the database
-func Initialise(config *config.ConfStruct) {
+// Init is used to start the database
+func Init(config *config.ConfStruct) {
 	// Connect to MongoDB
 	clientOptions := options.Client().ApplyURI(config.MongoURL)
 	client, err := mongo.Connect(context.Background(), clientOptions)
