@@ -2,11 +2,14 @@ package main
 
 import (
 	"flag"
-	"log"
+	"os"
 
-	"github.com/Karitham/WaifuBot/config"
-	"github.com/Karitham/WaifuBot/database"
-	"github.com/Karitham/WaifuBot/disc"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
+
+	"github.com/Karitham/WaifuBot/internal/config"
+	"github.com/Karitham/WaifuBot/internal/db"
+	"github.com/Karitham/WaifuBot/internal/disc"
 )
 
 var configFile string
@@ -17,11 +20,19 @@ func init() {
 }
 
 func main() {
+	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+	log.Logger = log.Level(zerolog.TraceLevel)
+
 	// Retrieve config and start the bot
-	conf := config.Retrieve(configFile)
+	conf, err := config.Retrieve(configFile)
+	if err != nil {
+		log.Fatal().Err(err).Msg("Error getting config")
+	}
 
-	log.SetPrefix("[WaifuBot] ")
+	conn, err := db.Init(conf.Database)
+	if err != nil {
+		log.Fatal().Err(err).Msg("couldn't connect to db")
+	}
 
-	database.Init(&conf)
-	disc.Start(&conf)
+	disc.Start(conf, conn)
 }

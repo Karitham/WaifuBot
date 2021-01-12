@@ -1,7 +1,6 @@
 package config
 
 import (
-	"log"
 	"time"
 
 	"github.com/BurntSushi/toml"
@@ -11,7 +10,6 @@ import (
 type ConfStruct struct {
 	Prefix            []string `toml:"Prefix"`
 	BotToken          string   `toml:"Bot_Token"`
-	MongoURL          string   `toml:"Mongo_URL"`
 	BotStatus         string   `toml:"Bot_Status"`
 	MaxCharacterRoll  uint64   `toml:"Max_Character_Roll"`
 	MaxCharacterDrop  uint     `toml:"Max_Character_Drop"`
@@ -19,7 +17,17 @@ type ConfStruct struct {
 	ListLen           int      `toml:"List_Len"`
 	ListMaxUpdateTime duration `toml:"List_Max_Update_Time"`
 	TimeBetweenRolls  duration `toml:"Time_Between_Rolls"`
+	Database          Database `toml:"Database"`
 }
+
+// Database represent the needed things for the database
+type Database struct {
+	Dbname   string `toml:"dbname"`
+	Host     string `toml:"host"`
+	Password string `toml:"password"`
+	User     string `toml:"user"`
+}
+
 type duration struct {
 	time.Duration
 }
@@ -30,9 +38,9 @@ func (d *duration) UnmarshalText(text []byte) (err error) {
 }
 
 // Retrieve retrieves the config from the file
-func Retrieve(filename string) (config ConfStruct) {
-	if _, err := toml.DecodeFile(filename, &config); err != nil {
-		log.Fatalln("Couldn't read configuration : ", err)
+func Retrieve(filename string) (config *ConfStruct, err error) {
+	if _, err = toml.DecodeFile(filename, &config); err != nil {
+		return nil, err
 	}
-	return
+	return config, nil
 }

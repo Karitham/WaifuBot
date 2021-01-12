@@ -1,4 +1,4 @@
 config*.toml
 .vscode
-logs
-!config_exemple.toml
+!config_example.toml
+database.vuerd.json

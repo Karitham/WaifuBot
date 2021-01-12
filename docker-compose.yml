@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   bot:
-    image: karithamdocker/go-waifubot
+    image: karithamdocker/go-waifubot:postgres
     restart: always
     container_name: WaifuBot
     volumes:
@@ -11,10 +11,20 @@ services:
       - db
 
   db:
-    image: mongo:latest
+    image: postgres:9.6-alpine
     restart: always
     container_name: WaifuDB
     volumes:
       - "/data/db:/data/db"
+    environment:
+      POSTGRES_PASSWORD: waifudb
+      POSTGRES_DB: waifudb
     ports:
-      - "27017:27017"
+      - 5432:5432
+
+  adminer:
+    image: adminer
+    restart: always
+    container_name: adminer
+    ports:
+      - 8080:8080

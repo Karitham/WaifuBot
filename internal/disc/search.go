@@ -4,10 +4,14 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/Karitham/WaifuBot/query"
+	"github.com/Karitham/WaifuBot/internal/anilist"
 	"github.com/diamondburned/arikawa/v2/bot"
 	"github.com/diamondburned/arikawa/v2/gateway"
+	"github.com/rs/zerolog/log"
 )
+
+// Name represent the name of a character
+type Name = string
 
 // Search Initializes a subcommand
 type Search struct {
@@ -37,8 +41,14 @@ func (s *Search) Manga(_ *gateway.MessageCreateEvent, name ...Name) (string, err
 
 	n := strings.Join(name, " ")
 
-	r, err := query.MediaSearch(n, "MANGA")
+	r, err := anilist.MediaSearch(n, "MANGA")
 	if err != nil {
+		log.Debug().
+			Err(err).
+			Str("Title", n).
+			Str("Type", "MANGA SEARCH").
+			Msg("Could not get manga")
+
 		return "", err
 	}
 
@@ -53,8 +63,14 @@ func (s *Search) Anime(_ *gateway.MessageCreateEvent, name ...Name) (string, err
 
 	n := strings.Join(name, " ")
 
-	r, err := query.MediaSearch(n, "ANIME")
+	r, err := anilist.MediaSearch(n, "ANIME")
 	if err != nil {
+		log.Debug().
+			Err(err).
+			Str("Title", n).
+			Str("Type", "ANIME SEARCH").
+			Msg("Could not get anime")
+
 		return "", err
 	}
 
@@ -71,14 +87,20 @@ func (s *Search) Character(_ *gateway.MessageCreateEvent, name ...Name) (string,
 
 	// Parse args
 	id := parseArgs(n)
-	searchArgs := query.CharSearchInput{
+	searchArgs := anilist.CharSearchInput{
 		ID:   id,
 		Name: n,
 	}
 
 	// Search for character
-	r, err := query.CharSearch(searchArgs)
+	r, err := anilist.CharSearch(searchArgs)
 	if err != nil {
+		log.Debug().
+			Err(err).
+			Str("Name/ID", n).
+			Str("Type", "CHAR SEARCH").
+			Msg("Could not get character")
+
 		return "", err
 	}
 
@@ -93,8 +115,14 @@ func (s *Search) User(_ *gateway.MessageCreateEvent, name ...Name) (string, erro
 
 	n := strings.Join(name, " ")
 
-	r, err := query.User(n)
+	r, err := anilist.User(n)
 	if err != nil {
+		log.Debug().
+			Err(err).
+			Str("Name", n).
+			Str("Type", "USER SEARCH").
+			Msg("Could not get user")
+
 		return "", err
 	}
 

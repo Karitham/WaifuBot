@@ -2,14 +2,16 @@ package disc
 
 import (
 	"fmt"
-	"log"
 	"math/rand"
 	"strconv"
 	"sync"
 	"time"
 
-	"github.com/Karitham/WaifuBot/config"
-	"github.com/Karitham/WaifuBot/query"
+	"github.com/rs/zerolog/log"
+
+	"github.com/Karitham/WaifuBot/internal/anilist"
+	"github.com/Karitham/WaifuBot/internal/config"
+	"github.com/Karitham/WaifuBot/internal/db"
 	"github.com/diamondburned/arikawa/v2/bot"
 	"github.com/diamondburned/arikawa/v2/discord"
 	"github.com/diamondburned/arikawa/v2/gateway"
@@ -21,26 +23,27 @@ type Bot struct {
 	dropper *Dropper
 	seed    rand.Source64
 	Me      *discord.User
+	conf    *config.ConfStruct
+	conn    *db.Queries
 }
 
-var c *config.ConfStruct
-
 // Start starts the bot, registers the command and updates its status
-func Start(cf *config.ConfStruct) {
-	c = cf
+func Start(configuration *config.ConfStruct, connection *db.Queries) {
 	var b = &Bot{
 		Ctx: &bot.Context{},
 		dropper: &Dropper{
-			Waifu:   make(map[discord.ChannelID]query.CharStruct),
+			Waifu:   make(map[discord.ChannelID]anilist.CharStruct),
 			ChanInc: make(map[discord.ChannelID]uint64),
-			Mux:     new(sync.Mutex),
+			Mutex:   new(sync.Mutex),
 		},
 		seed: rand.New(rand.NewSource(time.Now().UnixNano())),
+		conf: configuration,
+		conn: connection,
 	}
 
 	// Start the bot
-	wait, err := bot.Start(c.BotToken, b, func(ctx *bot.Context) error {
-		ctx.HasPrefix = bot.NewPrefix(c.Prefix...)
+	wait, err := bot.Start(b.conf.BotToken, b, func(ctx *bot.Context) error {
+		ctx.HasPrefix = bot.NewPrefix(b.conf.Prefix...)
 
 		ctx.SilentUnknown.Command = true
 		ctx.SilentUnknown.Subcommand = true
@@ -71,12 +74,12 @@ func Start(cf *config.ConfStruct) {
 		ctx.AddAliases("Claim", "c", "C")
 
 		ctx.Gateway.Identifier.IdentifyData = gateway.IdentifyData{
-			Token: c.BotToken,
+			Token: b.conf.BotToken,
 
 			Presence: &gateway.UpdateStatusData{
 				Activities: &[]discord.Activity{
 					{
-						Name: c.BotStatus,
+						Name: b.conf.BotStatus,
 						Type: discord.GameActivity,
 					},
 				},
@@ -94,9 +97,9 @@ func Start(cf *config.ConfStruct) {
 
 			// Higher chances the more you interact with the bot
 			b.dropper.ChanInc[m.ChannelID]++
-			r := b.seed.Uint64() % (c.DropsOnInteract - b.dropper.ChanInc[m.ChannelID])
+			r := b.seed.Uint64() % (b.conf.DropsOnInteract - b.dropper.ChanInc[m.ChannelID])
 
-			if r == 0 || b.dropper.ChanInc[m.ChannelID]+1 == c.DropsOnInteract {
+			if r == 0 || b.dropper.ChanInc[m.ChannelID]+1 == b.conf.DropsOnInteract {
 				b.drop(m)
 				b.dropper.ChanInc[m.ChannelID] = 0
 			}
@@ -105,23 +108,29 @@ func Start(cf *config.ConfStruct) {
 		return nil
 	})
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatal().
+			Err(err).
+			Msg("Error on starting the bot")
 	}
 
 	b.Me, err = b.Ctx.Me()
 	if err != nil {
-		log.Println(err)
+		log.Err(err).
+			Msg("Error getting the current user")
 	}
 
 	guilds, err := b.Ctx.Guilds()
 	if err != nil {
-		log.Println(err)
+		log.Err(err).
+			Msg("Error getting the guilds")
 	}
-	log.Printf("Bot started in %d servers", len(guilds))
+	fmt.Printf("Bot started in %d guild(s)\n", len(guilds))
 
 	// Wait for closing
 	if err := wait(); err != nil {
-		log.Fatalln("Gateway fatal error:", err)
+		log.Fatal().
+			Err(err).
+			Msg("Error on keeping the bot alive")
 	}
 }
 
@@ -136,7 +145,6 @@ func parseArgs(b string) (ID int) {
 func (b *Bot) Invite(_ *gateway.MessageCreateEvent) (*discord.Embed, error) {
 	return &discord.Embed{
 		Title: "Invite",
-
 		URL: fmt.Sprintf(
 			"https://discord.com/oauth2/authorize?scope=bot&client_id=%d&permissions=%d",
 			b.Me.ID,

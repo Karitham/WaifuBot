@@ -4,10 +4,11 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/Karitham/WaifuBot/query"
+	"github.com/Karitham/WaifuBot/internal/anilist"
 	"github.com/diamondburned/arikawa/v2/bot"
 	"github.com/diamondburned/arikawa/v2/discord"
 	"github.com/diamondburned/arikawa/v2/gateway"
+	"github.com/rs/zerolog/log"
 )
 
 // Trending Initializes a subcommand
@@ -26,8 +27,12 @@ func (s *Trending) Setup(sub *bot.Subcommand) {
 
 // Manga is a subcommand of Search
 func (s *Trending) Manga(_ *gateway.MessageCreateEvent) (*discord.Embed, error) {
-	r, err := query.TrendingMediaQuery("MANGA")
+	r, err := anilist.TrendingMediaQuery("MANGA")
 	if err != nil {
+		log.Err(err).
+			Str("Type", "TRENDING MANGA").
+			Msg("Could not query trending manga")
+
 		return nil, errors.New("couldn't query trending manga")
 	}
 
@@ -39,8 +44,12 @@ func (s *Trending) Manga(_ *gateway.MessageCreateEvent) (*discord.Embed, error) 
 
 // Anime is a subcommand of Search
 func (s *Trending) Anime(_ *gateway.MessageCreateEvent) (*discord.Embed, error) {
-	r, err := query.TrendingMediaQuery("ANIME")
+	r, err := anilist.TrendingMediaQuery("ANIME")
 	if err != nil {
+		log.Err(err).
+			Str("Type", "TRENDING ANIME").
+			Msg("Could not query trending anime")
+
 		return nil, errors.New("couldn't query trending anime")
 	}
 
@@ -50,8 +59,8 @@ func (s *Trending) Anime(_ *gateway.MessageCreateEvent) (*discord.Embed, error) 
 	}, nil
 }
 
-func formatTrending(list query.TrendingMediaStruct) string {
-	sb := strings.Builder{}
+func formatTrending(list anilist.TrendingMediaStruct) string {
+	sb := new(strings.Builder)
 
 	for _, v := range list.Page.Media {
 		sb.WriteString(v.Title.Romaji)
