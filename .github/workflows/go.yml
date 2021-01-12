@@ -16,7 +16,7 @@ jobs:
               uses: actions/checkout@v2
 
             - name: Build
-              run: cd cmd && go build -v
+              run: go build -v
 
     golangci:
         name: lint
