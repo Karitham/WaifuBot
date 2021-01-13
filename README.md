@@ -63,21 +63,11 @@ See [Project](https://github.com/Karitham/WaifuBot/projects/1) to view the curre
 
 ## Setup
 
-Rename `configExample.toml` to `config.toml` and change the values according to your needs
+Rename `config_example.toml` to `config.toml` and change the values according to your needs
 
 ## Run
 
 `docker-compose up -d`
-
-# Dependencies
-
-- [Arikawa](https://github.com/diamondburned/arikawa)
-- [DGWidgets](https://github.com/diamondburned/dgwidgets)
-- [Machinebox/graphql](https://github.com/machinebox/graphql)
-- [BurntSushi/toml](github.com/BurntSushi/toml)
-- [Anilist API](https://github.com/AniList/ApiV2-GraphQL-Docs)
-- [MongoDB](https://mongodb.com)
-- and their following deps
 
 # LICENSE
 

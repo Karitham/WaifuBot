@@ -47,6 +47,9 @@ func (b *Bot) Profile(m *gateway.MessageCreateEvent, _ ...*arguments.UserMention
 	log.Trace().
 		Str("Type", "PROFILE").
 		Int("User", int(user.ID)).
+		Str("Quote", data[0].Quote).
+		Str("Name", fav.Name.String).
+		Int("CharID", int(fav.ID)).
 		Msg("sent profile embed")
 
 	return &discord.Embed{
@@ -59,7 +62,7 @@ func (b *Bot) Profile(m *gateway.MessageCreateEvent, _ ...*arguments.UserMention
 			time.Since(data[0].Date).Truncate(time.Minute),
 			len(data)-int(data[0].ClaimCount),
 			data[0].ClaimCount,
-			data[0].Name.String,
+			fav.Name.String,
 		),
 
 		Thumbnail: &discord.EmbedThumbnail{URL: fav.Image.String},
