@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/lib/pq"
 	"github.com/rs/zerolog/log"
 
 	"github.com/Karitham/WaifuBot/internal/anilist"
@@ -46,6 +47,7 @@ func (b *Bot) Roll(m *gateway.MessageCreateEvent) (*discord.Embed, error) {
 		return nil, err
 	}
 
+label:
 	err = b.conn.InsertChar(context.Background(), db.InsertCharParams{
 		ID:     int64(char.Page.Characters[0].ID),
 		UserID: int64(m.Author.ID),
@@ -58,7 +60,16 @@ func (b *Bot) Roll(m *gateway.MessageCreateEvent) (*discord.Embed, error) {
 			Valid:  true,
 		},
 	})
-	if err != nil {
+	if err, ok := err.(*pq.Error); ok && err.Code == "23503" {
+		log.Err(err).
+			Str("Type", "ROLL").
+			Str("Name", char.Page.Characters[0].Name.Full).
+			Int("ID", int(char.Page.Characters[0].ID)).
+			Int("User", int(m.Author.ID)).
+			Msg("Duplicate char")
+
+		goto label
+	} else if err != nil {
 		log.Err(err).
 			Str("Type", "ROLL").
 			Msg("Could not insert char")
