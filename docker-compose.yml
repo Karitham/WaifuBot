@@ -15,16 +15,17 @@ services:
     restart: always
     container_name: WaifuDB
     volumes:
-      - "/data/db:/data/db"
+      - "/data/postgres:/data/postgres"
     environment:
       POSTGRES_PASSWORD: waifudb
       POSTGRES_DB: waifudb
+      PGDATA: "/data/postgres"
     ports:
       - 5432:5432
 
-  adminer:
-    image: adminer
-    restart: always
-    container_name: adminer
-    ports:
-      - 8080:8080
+  # adminer:
+  #   image: adminer
+  #   restart: always
+  #   container_name: adminer
+  #   ports:
+  #     - 8080:8080
