@@ -39,7 +39,7 @@ func (b *Bot) Profile(m *gateway.MessageCreateEvent, _ ...*arguments.UserMention
 
 	fav := db.Character{}
 	for _, char := range data {
-		if char.ID == data[0].Favorite.Int64 {
+		if char.ID == char.Favorite.Int64 {
 			fav = db.Character{ID: char.ID, Image: char.Image, Name: char.Name}
 		}
 	}
