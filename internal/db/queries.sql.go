@@ -11,9 +11,10 @@ import (
 
 const addOneToClaimCount = `-- name: AddOneToClaimCount :exec
 INSERT INTO "users" ("id", "claim_count")
-VALUES ($1, 1)
-ON CONFLICT ("id") DO
-UPDATE SET "claim_count" = users.claim_count + 1 WHERE users.id = $1
+VALUES ($1, 1) ON CONFLICT ("id") DO
+UPDATE
+SET "claim_count" = users.claim_count + 1
+WHERE users.id = $1
 `
 
 func (q *Queries) AddOneToClaimCount(ctx context.Context, id int64) error {
@@ -33,7 +34,8 @@ func (q *Queries) CreateUser(ctx context.Context, id int64) error {
 
 const deleteChar = `-- name: DeleteChar :exec
 DELETE FROM characters
-WHERE "id" = $1 AND "user_id" = $2
+WHERE "id" = $1
+    AND "user_id" = $2
 `
 
 type DeleteCharParams struct {
@@ -47,8 +49,10 @@ func (q *Queries) DeleteChar(ctx context.Context, arg DeleteCharParams) error {
 }
 
 const getChar = `-- name: GetChar :one
-SELECT id, user_id, image, name FROM characters
-WHERE "id" = $1 AND "user_id" = $2
+SELECT id, user_id, image, name
+FROM characters
+WHERE "id" = $1
+    AND "user_id" = $2
 LIMIT 1
 `
 
@@ -84,7 +88,8 @@ func (q *Queries) GetDate(ctx context.Context, id int64) (time.Time, error) {
 }
 
 const getUser = `-- name: GetUser :one
-SELECT id, quote, date, favorite, claim_count FROM users
+SELECT id, quote, date, favorite, claim_count
+FROM users
 WHERE "id" = $1
 LIMIT 1
 `
@@ -103,7 +108,9 @@ func (q *Queries) GetUser(ctx context.Context, id int64) (User, error) {
 }
 
 const getUserList = `-- name: GetUserList :many
-SELECT id, user_id, image, name FROM Characters WHERE "user_id" = $1
+SELECT id, user_id, image, name
+FROM Characters
+WHERE "user_id" = $1
 `
 
 func (q *Queries) GetUserList(ctx context.Context, userID int64) ([]Character, error) {
@@ -135,10 +142,23 @@ func (q *Queries) GetUserList(ctx context.Context, userID int64) ([]Character, e
 }
 
 const getUserProfile = `-- name: GetUserProfile :many
-SELECT a.id, a.user_id, a.image, a.name, users.quote, users.date, users.favorite, users.claim_count FROM
-(SELECT id, user_id, image, name FROM characters WHERE "user_id" = $1) AS a
-INNER JOIN
-users ON users.id = a.user_id
+SELECT a.id,
+    a.user_id,
+    a.image,
+    a.name,
+    users.quote,
+    users.date,
+    users.favorite,
+    users.claim_count
+FROM (
+        SELECT id,
+            user_id,
+            image,
+            name
+        FROM characters
+        WHERE "user_id" = $1
+    ) AS a
+    INNER JOIN users ON users.id = a.user_id
 `
 
 type GetUserProfileRow struct {
@@ -188,7 +208,7 @@ const giveChar = `-- name: GiveChar :exec
 UPDATE characters
 SET "user_id" = $3
 WHERE "id" = $1
-AND "user_id" = $2
+    AND "user_id" = $2
 `
 
 type GiveCharParams struct {
@@ -226,9 +246,10 @@ func (q *Queries) InsertChar(ctx context.Context, arg InsertCharParams) error {
 
 const setFavorite = `-- name: SetFavorite :exec
 INSERT INTO "users" ("id", "favorite")
-VALUES ($1, $2)
-ON CONFLICT ("id") DO
-UPDATE SET "favorite" = $2 WHERE users.id = $1
+VALUES ($1, $2) ON CONFLICT ("id") DO
+UPDATE
+SET "favorite" = $2
+WHERE users.id = $1
 `
 
 type SetFavoriteParams struct {
@@ -243,9 +264,10 @@ func (q *Queries) SetFavorite(ctx context.Context, arg SetFavoriteParams) error 
 
 const setQuote = `-- name: SetQuote :exec
 INSERT INTO users ("id", "quote")
-VALUES ($1, $2)
-ON CONFLICT ("id") DO
-UPDATE SET "quote" = $2 WHERE users.id = $1
+VALUES ($1, $2) ON CONFLICT ("id") DO
+UPDATE
+SET "quote" = $2
+WHERE users.id = $1
 `
 
 type SetQuoteParams struct {
@@ -260,9 +282,10 @@ func (q *Queries) SetQuote(ctx context.Context, arg SetQuoteParams) error {
 
 const updateUserDate = `-- name: UpdateUserDate :exec
 INSERT INTO "users" ("id", "date")
-VALUES ($1, $2)
-ON CONFLICT ("id") DO
-UPDATE SET "date" = $2 WHERE users.id = $1
+VALUES ($1, $2) ON CONFLICT ("id") DO
+UPDATE
+SET "date" = $2
+WHERE users.id = $1
 `
 
 type UpdateUserDateParams struct {

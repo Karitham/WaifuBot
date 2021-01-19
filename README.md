@@ -69,6 +69,16 @@ Rename `config_example.toml` to `config.toml` and change the values according to
 
 `docker-compose up -d`
 
+## Development
+
+The database part is generated using `sqlc`
+
+If you make any modifications to the files in `/sql` you can re-generate the code using
+
+```sh
+docker run --rm -v $(pwd):/src -w /src kjconroy/sqlc generate
+```
+
 # LICENSE
 
 ```license
