@@ -5,9 +5,6 @@ import (
 	"fmt"
 
 	"github.com/Karitham/WaifuBot/internal/config"
-
-	// need it for db
-	_ "github.com/lib/pq"
 )
 
 const dbTables = `
