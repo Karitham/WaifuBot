@@ -59,7 +59,7 @@ func (b *Bot) Profile(m *gateway.MessageCreateEvent, _ ...*arguments.UserMention
 			"%s\n%s last rolled %s ago.\nThey have rolled %d waifus and claimed %d.\nTheir Favorite waifu is %s",
 			data[0].Quote,
 			user.Username,
-			time.Since(data[0].Date).Truncate(time.Minute),
+			time.Since(data[0].Date).Truncate(time.Second),
 			len(data)-int(data[0].ClaimCount),
 			data[0].ClaimCount,
 			fav.Name.String,

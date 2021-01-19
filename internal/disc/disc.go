@@ -84,7 +84,7 @@ func Start(configuration *config.ConfStruct, connection *db.Queries) {
 					},
 				},
 
-				Status: discord.OnlineStatus,
+				Status: gateway.OnlineStatus,
 			},
 		}
 
