@@ -94,9 +94,8 @@ func Start(cf *config.ConfStruct) {
 
 			// Higher chances the more you interact with the bot
 			b.dropper.ChanInc[m.ChannelID]++
-			r := b.seed.Uint64() % (c.DropsOnInteract - b.dropper.ChanInc[m.ChannelID])
 
-			if r == 0 || b.dropper.ChanInc[m.ChannelID]+1 == c.DropsOnInteract {
+			if b.seed.Uint64() == (c.DropsOnInteract - b.dropper.ChanInc[m.ChannelID]) || b.dropper.ChanInc[m.ChannelID]+1 == c.DropsOnInteract {
 				b.drop(m)
 				b.dropper.ChanInc[m.ChannelID] = 0
 			}
