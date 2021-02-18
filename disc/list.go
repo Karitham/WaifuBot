@@ -47,8 +47,7 @@ func (b *Bot) List(m *gateway.MessageCreateEvent, _ ...*arguments.UserMention) e
 
 				return ""
 			}(uData.Waifus),
-
-			Color: 3447003,
+			Color: 0x5DADE2,
 		})
 	}
 

@@ -22,9 +22,6 @@ type Dropper struct {
 func (bot *Bot) drop(m *gateway.MessageCreateEvent) {
 	var err error
 
-	bot.dropper.Mux.Lock()
-	defer bot.dropper.Mux.Unlock()
-
 	bot.dropper.Waifu[m.ChannelID], err = query.CharSearchByPopularity(bot.seed.Uint64() % c.MaxCharacterRoll)
 	if err != nil {
 		log.Println(err)

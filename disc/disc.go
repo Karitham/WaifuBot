@@ -74,14 +74,14 @@ func Start(cf *config.ConfStruct) {
 			Token: c.BotToken,
 
 			Presence: &gateway.UpdateStatusData{
-				Activities: &[]discord.Activity{
+				Activities: []discord.Activity{
 					{
 						Name: c.BotStatus,
 						Type: discord.GameActivity,
 					},
 				},
 
-				Status: discord.OnlineStatus,
+				Status: gateway.OnlineStatus,
 			},
 		}
 
@@ -91,6 +91,9 @@ func Start(cf *config.ConfStruct) {
 			if m.Author.Bot {
 				return
 			}
+
+			b.dropper.Mux.Lock()
+			defer b.dropper.Mux.Unlock()
 
 			// Higher chances the more you interact with the bot
 			b.dropper.ChanInc[m.ChannelID]++
