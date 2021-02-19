@@ -29,8 +29,8 @@ func (b *Bot) Profile(m *gateway.MessageCreateEvent, _ ...*arguments.UserMention
 	return &discord.Embed{
 		Title: fmt.Sprintf("%s's profile", user.Username),
 		Description: fmt.Sprintf(
-			"%s\n%s last rolled %s ago.\nThey have rolled %d waifus and claimed %d.\nFavorite waifu is %s",
-			uData.Quote, user.Username, time.Since(uData.Date).Truncate(time.Minute), len(uData.Waifus), uData.ClaimedWaifus, uData.Favorite.Name,
+			"%s\n%s last rolled %s ago.\nThey have %d waifus.\nTheir favorite waifu is %s",
+			uData.Quote, user.Username, time.Since(uData.Date).Truncate(time.Minute), len(uData.Waifus), uData.Favorite.Name,
 		),
 		Thumbnail: &discord.EmbedThumbnail{URL: uData.Favorite.Image},
 	}, nil
@@ -63,7 +63,7 @@ func (b *Bot) Favorite(m *gateway.MessageCreateEvent, name ...Name) (string, err
 
 // Quote sets a quote on the user profile
 func (b *Bot) Quote(m *gateway.MessageCreateEvent, quote ...string) (string, error) {
-	if quote == nil {
+	if len(quote) < 1 || quote[0] == "" {
 		return "", errors.New("no quote entered")
 	}
 

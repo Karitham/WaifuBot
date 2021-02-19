@@ -4,9 +4,9 @@ go 1.15
 
 require (
 	github.com/BurntSushi/toml v0.3.1
-	github.com/aws/aws-sdk-go v1.37.13 // indirect
-	github.com/diamondburned/arikawa/v2 v2.0.4
-	github.com/diamondburned/dgwidgets v0.0.0-20201218230508-35fde96ee9b0
+	github.com/aws/aws-sdk-go v1.37.14 // indirect
+	github.com/diamondburned/arikawa/v2 v2.0.5-0.20210218190821-a939a26cab0f
+	github.com/diamondburned/dgwidgets v0.0.0-20210218231808-17b4e9dccf07
 	github.com/golang/snappy v0.0.2 // indirect
 	github.com/google/go-cmp v0.5.4 // indirect
 	github.com/klauspost/compress v1.11.7 // indirect

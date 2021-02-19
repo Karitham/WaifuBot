@@ -20,7 +20,6 @@ type Bot struct {
 	Ctx     *bot.Context
 	dropper *Dropper
 	seed    rand.Source64
-	Me      *discord.User
 }
 
 var c *config.ConfStruct
@@ -111,11 +110,6 @@ func Start(cf *config.ConfStruct) {
 		log.Fatalln(err)
 	}
 
-	b.Me, err = b.Ctx.Me()
-	if err != nil {
-		log.Println(err)
-	}
-
 	guilds, err := b.Ctx.Guilds()
 	if err != nil {
 		log.Println(err)
@@ -142,7 +136,7 @@ func (b *Bot) Invite(_ *gateway.MessageCreateEvent) (*discord.Embed, error) {
 
 		URL: fmt.Sprintf(
 			"https://discord.com/oauth2/authorize?scope=bot&client_id=%d&permissions=%d",
-			b.Me.ID,
+			b.Ctx.State.Ready().User.ID,
 			92224,
 		),
 	}, nil

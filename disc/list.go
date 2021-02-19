@@ -30,6 +30,9 @@ func (b *Bot) List(m *gateway.MessageCreateEvent, _ ...*arguments.UserMention) e
 	p.SetTimeout(c.ListMaxUpdateTime.Duration)
 	p.ColourWhenDone = 0xFFFF00
 
+	// Use discord reply feature
+	p.Widget.ReplyTo = m.ID
+
 	// Make pages
 	for j := 0; j <= len(uData.Waifus)/c.ListLen; j++ {
 		p.Add(discord.Embed{

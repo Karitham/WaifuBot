@@ -68,7 +68,6 @@ func (c CharLayout) Add(uID discord.UserID) error {
 			"_id": uID,
 		},
 		bson.M{
-			"$inc": bson.M{"ClaimedWaifus": 1},
 			"$push": bson.M{"Waifus": CharLayout{
 				ID:    c.ID,
 				Image: c.Image,
