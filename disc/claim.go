@@ -3,13 +3,16 @@ package disc
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"strings"
 	"sync"
 
 	"github.com/Karitham/WaifuBot/database"
 	"github.com/Karitham/WaifuBot/query"
+	"github.com/diamondburned/arikawa/v2/api"
 	"github.com/diamondburned/arikawa/v2/discord"
 	"github.com/diamondburned/arikawa/v2/gateway"
+	"github.com/diamondburned/arikawa/v2/utils/sendpart"
 )
 
 // Dropper is used to handle the dropping mechanism
@@ -32,21 +35,31 @@ func (bot *Bot) drop(m *gateway.MessageCreateEvent) {
 	bot.dropper.Waifu[m.ChannelID].Page.Characters[0].Name.Full =
 		strings.Join(strings.Fields(bot.dropper.Waifu[m.ChannelID].Page.Characters[0].Name.Full), " ")
 
-	_, err = bot.Ctx.SendMessage(m.ChannelID, "", &discord.Embed{
-		Title:       "CHARACTER DROP !",
-		Description: "Can you guess who it is ?\nUse w.claim to get this character for yourself",
-		Thumbnail: &discord.EmbedThumbnail{
-			URL: bot.dropper.Waifu[m.ChannelID].Page.Characters[0].Image.Large,
+	// get Image
+	f, err := http.Get(bot.dropper.Waifu[m.ChannelID].Page.Characters[0].Image.Large)
+	if err != nil {
+		log.Println(err)
+	}
+	defer f.Body.Close()
+
+	embedFile := sendpart.File{Name: "stop_reading_that_nerd.png", Reader: f.Body}
+
+	_, err = bot.Ctx.SendMessageComplex(m.ChannelID, api.SendMessageData{
+		Embed: &discord.Embed{
+			Title:       "CHARACTER DROP !",
+			Description: "Can you guess who it is ?\nUse w.claim to get this character for yourself",
+			Image:       &discord.EmbedImage{URL: embedFile.AttachmentURI()},
+			Footer: &discord.EmbedFooter{
+				Text: "This character's initials are " +
+					func(name string) (initials string) {
+						for _, v := range strings.Fields(name) {
+							initials = initials + strings.ToUpper(string(v[0])) + "."
+						}
+						return
+					}(bot.dropper.Waifu[m.ChannelID].Page.Characters[0].Name.Full),
+			},
 		},
-		Footer: &discord.EmbedFooter{
-			Text: "This character's initials are " +
-				func(name string) (initials string) {
-					for _, v := range strings.Fields(name) {
-						initials = initials + strings.ToUpper(string(v[0])) + "."
-					}
-					return
-				}(bot.dropper.Waifu[m.ChannelID].Page.Characters[0].Name.Full),
-		},
+		Files: []sendpart.File{embedFile},
 	})
 	if err != nil {
 		log.Println(err)
