@@ -84,7 +84,7 @@ func Start(cf *config.ConfStruct) {
 			},
 		}
 		
-		b.Subcommand.AddMiddleware("*", NotLelouch(b.Ctx)
+		b.Subcommand.AddMiddleware("*", NotLelouch(b.Ctx))
 
 		ctx.Session.Gateway.AddIntents(gateway.IntentGuildMessageReactions)
 		ctx.AddHandler(func(m *gateway.MessageCreateEvent) {
