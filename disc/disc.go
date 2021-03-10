@@ -11,6 +11,7 @@ import (
 	"github.com/Karitham/WaifuBot/config"
 	"github.com/Karitham/WaifuBot/query"
 	"github.com/diamondburned/arikawa/v2/bot"
+	"github.com/diamondburned/arikawa/v2/bot/extras/infer"
 	"github.com/diamondburned/arikawa/v2/discord"
 	"github.com/diamondburned/arikawa/v2/gateway"
 )
