@@ -83,6 +83,8 @@ func Start(cf *config.ConfStruct) {
 				Status: gateway.OnlineStatus,
 			},
 		}
+		
+		b.Subcommand.AddMiddleware("*", NotLelouch(b.Ctx)
 
 		ctx.Session.Gateway.AddIntents(gateway.IntentGuildMessageReactions)
 		ctx.AddHandler(func(m *gateway.MessageCreateEvent) {
@@ -119,6 +121,21 @@ func Start(cf *config.ConfStruct) {
 	// Wait for closing
 	if err := wait(); err != nil {
 		log.Fatalln("Gateway fatal error:", err)
+	}
+}
+
+func NotLelouch(ctx *bot.Context) func(interface{}) error {
+	return func(ev interface{}) error {
+		var userID = infer.UserID(ev)
+		if !userID.IsValid() {
+			return bot.Break
+		}
+		
+		if userID == 182503482803093513 {
+			return bot.Break;
+		}
+
+		return nil
 	}
 }
 
