@@ -87,7 +87,7 @@ func Start(cf *config.ConfStruct) {
 		ctx.Session.Gateway.AddIntents(gateway.IntentGuildMessageReactions)
 		ctx.AddHandler(func(m *gateway.MessageCreateEvent) {
 			// Filter bot message
-			if m.Author.Bot {
+			if m.Author.Bot || m.Author.ID == discord.ParseSnowflake("182503482803093513"){
 				return
 			}
 
