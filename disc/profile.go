@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Karitham/WaifuBot/internal/anilist"
-	"github.com/Karitham/WaifuBot/internal/db"
+	"github.com/Karitham/WaifuBot/anilist"
+	"github.com/Karitham/WaifuBot/db"
 	"github.com/diamondburned/arikawa/v2/bot/extras/arguments"
 	"github.com/diamondburned/arikawa/v2/discord"
 	"github.com/diamondburned/arikawa/v2/gateway"
@@ -37,35 +37,26 @@ func (b *Bot) Profile(m *gateway.MessageCreateEvent, _ ...*arguments.UserMention
 		return nil, err
 	}
 
-	fav := db.Character{}
-	for _, char := range data {
-		if char.ID == char.Favorite.Int64 {
-			fav = db.Character{ID: char.ID, Image: char.Image, Name: char.Name}
-		}
-	}
-
 	log.Trace().
 		Str("Type", "PROFILE").
 		Int("User", int(user.ID)).
-		Str("Quote", data[0].Quote).
-		Str("Name", fav.Name.String).
-		Int("CharID", int(fav.ID)).
+		Str("Quote", data.Quote).
+		Str("Name", data.Name.String).
 		Msg("sent profile embed")
 
 	return &discord.Embed{
 		Title: fmt.Sprintf("%s's profile", user.Username),
 
 		Description: fmt.Sprintf(
-			"%s\n%s last rolled %s ago.\nThey have rolled %d waifus and claimed %d.\nTheir Favorite waifu is %s",
-			data[0].Quote,
+			"%s\n%s last rolled %s ago.\nThey own %d waifus.\nTheir Favorite waifu is %s",
+			data.Quote,
 			user.Username,
-			time.Since(data[0].Date).Truncate(time.Second),
-			len(data)-int(data[0].ClaimCount),
-			data[0].ClaimCount,
-			fav.Name.String,
+			time.Since(data.Date.UTC()).Truncate(time.Second),
+			data.Count,
+			data.Name.String,
 		),
 
-		Thumbnail: &discord.EmbedThumbnail{URL: fav.Image.String},
+		Thumbnail: &discord.EmbedThumbnail{URL: data.Image.String},
 	}, nil
 }
 

@@ -9,8 +9,8 @@ import (
 
 	"github.com/rs/zerolog/log"
 
-	"github.com/Karitham/WaifuBot/internal/anilist"
-	"github.com/Karitham/WaifuBot/internal/db"
+	"github.com/Karitham/WaifuBot/anilist"
+	"github.com/Karitham/WaifuBot/db"
 	"github.com/diamondburned/arikawa/v2/discord"
 	"github.com/diamondburned/arikawa/v2/gateway"
 )
@@ -27,7 +27,7 @@ func (bot *Bot) drop(m *gateway.MessageCreateEvent) {
 	defer bot.dropper.Mutex.Unlock()
 
 	var err error
-	bot.dropper.Waifu[m.ChannelID], err = anilist.CharSearchByPopularity(bot.seed.Uint64() % bot.conf.MaxCharacterRoll)
+	bot.dropper.Waifu[m.ChannelID], err = anilist.CharSearchByPopularity(bot.seed.Uint64()%bot.conf.MaxCharacterRoll, []int64{})
 	if err != nil {
 		log.Err(err).
 			Str("Type", "DROP").
@@ -64,7 +64,7 @@ func (bot *Bot) drop(m *gateway.MessageCreateEvent) {
 		Str("Type", "DROP").
 		Uint("ID", bot.dropper.Waifu[m.ChannelID].Page.Characters[0].ID).
 		Str("Name", bot.dropper.Waifu[m.ChannelID].Page.Characters[0].Name.Full).
-		Msg("Dropped char")
+		Msg("dropped char")
 }
 
 // Claim a waifu and adds it to the user's database
@@ -93,14 +93,8 @@ func (bot *Bot) Claim(m *gateway.MessageCreateEvent, name ...Name) (*discord.Emb
 	err := bot.conn.InsertChar(context.Background(), db.InsertCharParams{
 		ID:     int64(char.Page.Characters[0].ID),
 		UserID: int64(m.Author.ID),
-		Image: sql.NullString{
-			String: char.Page.Characters[0].Image.Large,
-			Valid:  true,
-		},
-		Name: sql.NullString{
-			String: char.Page.Characters[0].Name.Full,
-			Valid:  true,
-		},
+		Image:  sql.NullString{String: char.Page.Characters[0].Image.Large, Valid: true},
+		Name:   sql.NullString{String: char.Page.Characters[0].Name.Full, Valid: true},
 	})
 	if err != nil {
 		log.Err(err).
@@ -111,24 +105,13 @@ func (bot *Bot) Claim(m *gateway.MessageCreateEvent, name ...Name) (*discord.Emb
 		return nil, err
 	}
 
-	err = bot.conn.AddOneToClaimCount(context.Background(), int64(m.Author.ID))
-	if err != nil {
-		log.Err(err).
-			Str("Type", "CLAIM").
-			Uint("ID", char.Page.Characters[0].ID).
-			Int("UserID", int(m.Author.ID)).
-			Msg("Error adding one to claim count")
-
-		return nil, err
-	}
-
 	delete(bot.dropper.Waifu, m.ChannelID)
 
 	log.Trace().
 		Str("Type", "CLAIM").
 		Uint("ID", char.Page.Characters[0].ID).
 		Int("UserID", int(m.Author.ID)).
-		Msg("User claimed char")
+		Msg("user claimed char")
 
 	return &discord.Embed{
 		Title: "Claim successful",

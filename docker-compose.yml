@@ -1,21 +1,21 @@
 version: "3.8"
 
 services:
-  bot:
-    image: karithamdocker/go-waifubot:postgres
-    restart: always
-    container_name: WaifuBot
-    volumes:
-      - "./config.toml:/home/waifubot/config.toml"
-    depends_on:
-      - db
+  # bot:
+  #   image: karithamdocker/go-waifubot:postgres
+  #   restart: always
+  #   container_name: WaifuBot
+  #  volumes:
+  #    - "./config.toml:/home/waifubot/config.toml"
+  #  depends_on:
+  #    - db
 
   db:
     image: postgres:9.6-alpine
     restart: always
     container_name: WaifuDB
     volumes:
-      - "/data/postgres:/data/postgres"
+      - "/data/postgres/WaifuBot:/data/postgres"*
     environment:
       POSTGRES_PASSWORD: waifudb
       POSTGRES_DB: waifudb
@@ -23,10 +23,9 @@ services:
     ports:
       - 5432:5432
 
-  # adminer:
-  #   image: adminer
-  #   restart: always
-  #   container_name: adminer
-  #   ports:
-  #     - 8080:8080
-  
+  adminer:
+    image: adminer
+    restart: always
+    container_name: adminer
+    ports:
+      - 8080:8080

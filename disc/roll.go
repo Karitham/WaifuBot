@@ -1,16 +1,13 @@
 package disc
 
 import (
-	"context"
-	"database/sql"
 	"fmt"
+	"strings"
 	"time"
 
-	"github.com/lib/pq"
+	"github.com/Karitham/WaifuBot/anilist"
 	"github.com/rs/zerolog/log"
 
-	"github.com/Karitham/WaifuBot/internal/anilist"
-	"github.com/Karitham/WaifuBot/internal/db"
 	"github.com/diamondburned/arikawa/v2/discord"
 	"github.com/diamondburned/arikawa/v2/gateway"
 )
@@ -18,7 +15,7 @@ import (
 // Roll drops a random character and adds it to the database
 func (b *Bot) Roll(m *gateway.MessageCreateEvent) (*discord.Embed, error) {
 	t, err := b.conn.GetDate(b.Ctx.Context(), int64(m.Author.ID))
-	if err == sql.ErrNoRows {
+	if err != nil {
 		err := b.conn.CreateUser(b.Ctx.Context(), int64(m.Author.ID))
 		if err != nil {
 			log.Err(err).
@@ -27,64 +24,27 @@ func (b *Bot) Roll(m *gateway.MessageCreateEvent) (*discord.Embed, error) {
 				Msg("Could not create user")
 
 		}
-	} else if err != nil {
-		log.Err(err).
-			Msg("Could not get date")
-
-		return nil, err
 	}
 
-	if nextRollTime := time.Until(t.Add(b.conf.TimeBetweenRolls.Duration)); nextRollTime > 0 {
+	if nextRollTime := time.Until(t.UTC().Add(b.conf.TimeBetweenRolls.Duration)); nextRollTime > 0 {
 		return nil, fmt.Errorf("**illegal roll**,\nroll in %s", nextRollTime.Truncate(time.Second))
 	}
 
-	char, err := anilist.CharSearchByPopularity(b.seed.Uint64() % b.conf.MaxCharacterRoll)
+	list, err := b.conn.GetUserCharsIDs(b.Ctx.Context(), int64(m.Author.ID))
 	if err != nil {
 		log.Err(err).
 			Str("Type", "ROLL").
+			Msg("Could not get chars from DB")
+
+		return nil, err
+	}
+
+	char, err := anilist.CharSearchByPopularity(b.seed.Uint64()%b.conf.MaxCharacterRoll, list)
+	if err != nil {
+		log.Err(err).
+			Str("Type", "ROLL").
+			Ints64("List", list).
 			Msg("Could not search char")
-
-		return nil, err
-	}
-
-label:
-	err = b.conn.InsertChar(context.Background(), db.InsertCharParams{
-		ID:     int64(char.Page.Characters[0].ID),
-		UserID: int64(m.Author.ID),
-		Image: sql.NullString{
-			String: char.Page.Characters[0].Image.Large,
-			Valid:  true,
-		},
-		Name: sql.NullString{
-			String: char.Page.Characters[0].Name.Full,
-			Valid:  true,
-		},
-	})
-	if err, ok := err.(*pq.Error); ok && err.Code == "23503" {
-		log.Err(err).
-			Str("Type", "ROLL").
-			Str("Name", char.Page.Characters[0].Name.Full).
-			Int("ID", int(char.Page.Characters[0].ID)).
-			Int("User", int(m.Author.ID)).
-			Msg("Duplicate char")
-
-		goto label
-	} else if err != nil {
-		log.Err(err).
-			Str("Type", "ROLL").
-			Msg("Could not insert char")
-
-		return nil, err
-	}
-
-	err = b.conn.UpdateUserDate(context.Background(), db.UpdateUserDateParams{
-		ID:   int64(m.Author.ID),
-		Date: time.Now().UTC(),
-	})
-	if err != nil {
-		log.Err(err).
-			Str("Type", "ROLL").
-			Msg("Could not update date")
 
 		return nil, err
 	}
@@ -95,6 +55,24 @@ label:
 		Uint("ID", char.Page.Characters[0].ID).
 		Str("Name", char.Page.Characters[0].Name.Full).
 		Msg("user rolled a waifu")
+
+	err = b.conn.RollChar(
+		b.Ctx.Context(),
+		int64(m.Author.ID),
+		int64(char.Page.Characters[0].ID),
+		char.Page.Characters[0].Image.Large,
+		strings.Join(
+			strings.Fields(char.Page.Characters[0].Name.Full),
+			" ",
+		),
+	)
+	if err != nil {
+		log.Err(err).
+			Str("Type", "ROLL").
+			Msg("Could not add char to the database")
+
+		return nil, err
+	}
 
 	return &discord.Embed{
 		Title: char.Page.Characters[0].Name.Full,

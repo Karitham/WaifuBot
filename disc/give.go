@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/Karitham/WaifuBot/internal/db"
+	"github.com/Karitham/WaifuBot/db"
 	"github.com/diamondburned/arikawa/v2/bot/extras/arguments"
 	"github.com/diamondburned/arikawa/v2/gateway"
 	"github.com/lib/pq"

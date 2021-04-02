@@ -80,12 +80,12 @@ func CharSearch(input CharSearchInput) (response CharSearchStruct, err error) {
 }
 
 // CharSearchByPopularity outputs the character you want based on their number on the page list
-func CharSearchByPopularity(id uint64) (response CharStruct, err error) {
+func CharSearchByPopularity(id uint64, notIn []int64) (response CharStruct, err error) {
 	// Create request
 	req := graphql.NewRequest(`
-	query ($pageNumber: Int) {
+	query ($pageNumber: Int, $not_in: [Int]) {
 		Page(perPage: 1, page: $pageNumber) {
-		  characters(sort: FAVOURITES_DESC) {
+		  characters(sort: FAVOURITES_DESC, id_not_in: $not_in) {
 			id
 			siteUrl
 			image {
@@ -103,10 +103,13 @@ func CharSearchByPopularity(id uint64) (response CharStruct, err error) {
 			}
 		  }
 		}
-	  }
+	  }	  
 	`)
 
 	req.Var("pageNumber", id)
+	if len(notIn) > 0 {
+		req.Var("not_in", notIn)
+	}
 
 	// Make request
 	err = graphql.NewClient(graphURL).Run(context.Background(), req, &response)

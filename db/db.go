@@ -22,14 +22,8 @@ func New(db DBTX) *Queries {
 func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	q := Queries{db: db}
 	var err error
-	if q.addOneToClaimCountStmt, err = db.PrepareContext(ctx, addOneToClaimCount); err != nil {
-		return nil, fmt.Errorf("error preparing query AddOneToClaimCount: %w", err)
-	}
 	if q.createUserStmt, err = db.PrepareContext(ctx, createUser); err != nil {
 		return nil, fmt.Errorf("error preparing query CreateUser: %w", err)
-	}
-	if q.deleteCharStmt, err = db.PrepareContext(ctx, deleteChar); err != nil {
-		return nil, fmt.Errorf("error preparing query DeleteChar: %w", err)
 	}
 	if q.getCharStmt, err = db.PrepareContext(ctx, getChar); err != nil {
 		return nil, fmt.Errorf("error preparing query GetChar: %w", err)
@@ -39,6 +33,9 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	}
 	if q.getUserStmt, err = db.PrepareContext(ctx, getUser); err != nil {
 		return nil, fmt.Errorf("error preparing query GetUser: %w", err)
+	}
+	if q.getUserCharsIDsStmt, err = db.PrepareContext(ctx, getUserCharsIDs); err != nil {
+		return nil, fmt.Errorf("error preparing query GetUserCharsIDs: %w", err)
 	}
 	if q.getUserListStmt, err = db.PrepareContext(ctx, getUserList); err != nil {
 		return nil, fmt.Errorf("error preparing query GetUserList: %w", err)
@@ -52,33 +49,23 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.insertCharStmt, err = db.PrepareContext(ctx, insertChar); err != nil {
 		return nil, fmt.Errorf("error preparing query InsertChar: %w", err)
 	}
+	if q.setDateStmt, err = db.PrepareContext(ctx, setDate); err != nil {
+		return nil, fmt.Errorf("error preparing query SetDate: %w", err)
+	}
 	if q.setFavoriteStmt, err = db.PrepareContext(ctx, setFavorite); err != nil {
 		return nil, fmt.Errorf("error preparing query SetFavorite: %w", err)
 	}
 	if q.setQuoteStmt, err = db.PrepareContext(ctx, setQuote); err != nil {
 		return nil, fmt.Errorf("error preparing query SetQuote: %w", err)
 	}
-	if q.updateUserDateStmt, err = db.PrepareContext(ctx, updateUserDate); err != nil {
-		return nil, fmt.Errorf("error preparing query UpdateUserDate: %w", err)
-	}
 	return &q, nil
 }
 
 func (q *Queries) Close() error {
 	var err error
-	if q.addOneToClaimCountStmt != nil {
-		if cerr := q.addOneToClaimCountStmt.Close(); cerr != nil {
-			err = fmt.Errorf("error closing addOneToClaimCountStmt: %w", cerr)
-		}
-	}
 	if q.createUserStmt != nil {
 		if cerr := q.createUserStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing createUserStmt: %w", cerr)
-		}
-	}
-	if q.deleteCharStmt != nil {
-		if cerr := q.deleteCharStmt.Close(); cerr != nil {
-			err = fmt.Errorf("error closing deleteCharStmt: %w", cerr)
 		}
 	}
 	if q.getCharStmt != nil {
@@ -94,6 +81,11 @@ func (q *Queries) Close() error {
 	if q.getUserStmt != nil {
 		if cerr := q.getUserStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing getUserStmt: %w", cerr)
+		}
+	}
+	if q.getUserCharsIDsStmt != nil {
+		if cerr := q.getUserCharsIDsStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getUserCharsIDsStmt: %w", cerr)
 		}
 	}
 	if q.getUserListStmt != nil {
@@ -116,6 +108,11 @@ func (q *Queries) Close() error {
 			err = fmt.Errorf("error closing insertCharStmt: %w", cerr)
 		}
 	}
+	if q.setDateStmt != nil {
+		if cerr := q.setDateStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing setDateStmt: %w", cerr)
+		}
+	}
 	if q.setFavoriteStmt != nil {
 		if cerr := q.setFavoriteStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing setFavoriteStmt: %w", cerr)
@@ -124,11 +121,6 @@ func (q *Queries) Close() error {
 	if q.setQuoteStmt != nil {
 		if cerr := q.setQuoteStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing setQuoteStmt: %w", cerr)
-		}
-	}
-	if q.updateUserDateStmt != nil {
-		if cerr := q.updateUserDateStmt.Close(); cerr != nil {
-			err = fmt.Errorf("error closing updateUserDateStmt: %w", cerr)
 		}
 	}
 	return err
@@ -168,39 +160,37 @@ func (q *Queries) queryRow(ctx context.Context, stmt *sql.Stmt, query string, ar
 }
 
 type Queries struct {
-	db                     DBTX
-	tx                     *sql.Tx
-	addOneToClaimCountStmt *sql.Stmt
-	createUserStmt         *sql.Stmt
-	deleteCharStmt         *sql.Stmt
-	getCharStmt            *sql.Stmt
-	getDateStmt            *sql.Stmt
-	getUserStmt            *sql.Stmt
-	getUserListStmt        *sql.Stmt
-	getUserProfileStmt     *sql.Stmt
-	giveCharStmt           *sql.Stmt
-	insertCharStmt         *sql.Stmt
-	setFavoriteStmt        *sql.Stmt
-	setQuoteStmt           *sql.Stmt
-	updateUserDateStmt     *sql.Stmt
+	db                  DBTX
+	tx                  *sql.Tx
+	createUserStmt      *sql.Stmt
+	getCharStmt         *sql.Stmt
+	getDateStmt         *sql.Stmt
+	getUserStmt         *sql.Stmt
+	getUserCharsIDsStmt *sql.Stmt
+	getUserListStmt     *sql.Stmt
+	getUserProfileStmt  *sql.Stmt
+	giveCharStmt        *sql.Stmt
+	insertCharStmt      *sql.Stmt
+	setDateStmt         *sql.Stmt
+	setFavoriteStmt     *sql.Stmt
+	setQuoteStmt        *sql.Stmt
 }
 
 func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 	return &Queries{
-		db:                     tx,
-		tx:                     tx,
-		addOneToClaimCountStmt: q.addOneToClaimCountStmt,
-		createUserStmt:         q.createUserStmt,
-		deleteCharStmt:         q.deleteCharStmt,
-		getCharStmt:            q.getCharStmt,
-		getDateStmt:            q.getDateStmt,
-		getUserStmt:            q.getUserStmt,
-		getUserListStmt:        q.getUserListStmt,
-		getUserProfileStmt:     q.getUserProfileStmt,
-		giveCharStmt:           q.giveCharStmt,
-		insertCharStmt:         q.insertCharStmt,
-		setFavoriteStmt:        q.setFavoriteStmt,
-		setQuoteStmt:           q.setQuoteStmt,
-		updateUserDateStmt:     q.updateUserDateStmt,
+		db:                  tx,
+		tx:                  tx,
+		createUserStmt:      q.createUserStmt,
+		getCharStmt:         q.getCharStmt,
+		getDateStmt:         q.getDateStmt,
+		getUserStmt:         q.getUserStmt,
+		getUserCharsIDsStmt: q.getUserCharsIDsStmt,
+		getUserListStmt:     q.getUserListStmt,
+		getUserProfileStmt:  q.getUserProfileStmt,
+		giveCharStmt:        q.giveCharStmt,
+		insertCharStmt:      q.insertCharStmt,
+		setDateStmt:         q.setDateStmt,
+		setFavoriteStmt:     q.setFavoriteStmt,
+		setQuoteStmt:        q.setQuoteStmt,
 	}
 }

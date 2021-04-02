@@ -4,7 +4,7 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/Karitham/WaifuBot/internal/anilist"
+	"github.com/Karitham/WaifuBot/anilist"
 	"github.com/diamondburned/arikawa/v2/bot"
 	"github.com/diamondburned/arikawa/v2/gateway"
 	"github.com/rs/zerolog/log"

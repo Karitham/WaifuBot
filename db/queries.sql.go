@@ -9,21 +9,8 @@ import (
 	"time"
 )
 
-const addOneToClaimCount = `-- name: AddOneToClaimCount :exec
-INSERT INTO "users" ("id", "claim_count")
-VALUES ($1, 1) ON CONFLICT ("id") DO
-UPDATE
-SET "claim_count" = users.claim_count + 1
-WHERE users.id = $1
-`
-
-func (q *Queries) AddOneToClaimCount(ctx context.Context, id int64) error {
-	_, err := q.exec(ctx, q.addOneToClaimCountStmt, addOneToClaimCount, id)
-	return err
-}
-
 const createUser = `-- name: CreateUser :exec
-INSERT INTO users ("id")
+INSERT INTO users (id)
 VALUES ($1)
 `
 
@@ -32,27 +19,11 @@ func (q *Queries) CreateUser(ctx context.Context, id int64) error {
 	return err
 }
 
-const deleteChar = `-- name: DeleteChar :exec
-DELETE FROM characters
-WHERE "id" = $1
-    AND "user_id" = $2
-`
-
-type DeleteCharParams struct {
-	ID     int64 `json:"id"`
-	UserID int64 `json:"user_id"`
-}
-
-func (q *Queries) DeleteChar(ctx context.Context, arg DeleteCharParams) error {
-	_, err := q.exec(ctx, q.deleteCharStmt, deleteChar, arg.ID, arg.UserID)
-	return err
-}
-
 const getChar = `-- name: GetChar :one
 SELECT id, user_id, image, name
 FROM characters
-WHERE "id" = $1
-    AND "user_id" = $2
+WHERE id = $1
+    AND characters.user_id = $2
 LIMIT 1
 `
 
@@ -74,10 +45,9 @@ func (q *Queries) GetChar(ctx context.Context, arg GetCharParams) (Character, er
 }
 
 const getDate = `-- name: GetDate :one
-SELECT "date"
+SELECT users.date
 FROM users
-WHERE "id" = $1
-LIMIT 1
+WHERE users.id = $1
 `
 
 func (q *Queries) GetDate(ctx context.Context, id int64) (time.Time, error) {
@@ -88,9 +58,9 @@ func (q *Queries) GetDate(ctx context.Context, id int64) (time.Time, error) {
 }
 
 const getUser = `-- name: GetUser :one
-SELECT id, quote, date, favorite, claim_count
+SELECT id, quote, date, favorite
 FROM users
-WHERE "id" = $1
+WHERE id = $1
 LIMIT 1
 `
 
@@ -102,15 +72,43 @@ func (q *Queries) GetUser(ctx context.Context, id int64) (User, error) {
 		&i.Quote,
 		&i.Date,
 		&i.Favorite,
-		&i.ClaimCount,
 	)
 	return i, err
 }
 
+const getUserCharsIDs = `-- name: GetUserCharsIDs :many
+SELECT id
+FROM characters
+WHERE characters.user_id = $1
+`
+
+func (q *Queries) GetUserCharsIDs(ctx context.Context, userID int64) ([]int64, error) {
+	rows, err := q.query(ctx, q.getUserCharsIDsStmt, getUserCharsIDs, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []int64
+	for rows.Next() {
+		var id int64
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		items = append(items, id)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getUserList = `-- name: GetUserList :many
 SELECT id, user_id, image, name
-FROM Characters
-WHERE "user_id" = $1
+FROM characters
+WHERE characters.user_id = $1
 `
 
 func (q *Queries) GetUserList(ctx context.Context, userID int64) ([]Character, error) {
@@ -141,74 +139,47 @@ func (q *Queries) GetUserList(ctx context.Context, userID int64) ([]Character, e
 	return items, nil
 }
 
-const getUserProfile = `-- name: GetUserProfile :many
-SELECT a.id,
-    a.user_id,
-    a.image,
-    a.name,
-    users.quote,
+const getUserProfile = `-- name: GetUserProfile :one
+SELECT characters.image,
+    characters.name,
     users.date,
-    users.favorite,
-    users.claim_count
-FROM (
-        SELECT id,
-            user_id,
-            image,
-            name
+    users.quote,
+    (
+        SELECT count(id)
         FROM characters
-        WHERE "user_id" = $1
-    ) AS a
-    INNER JOIN users ON users.id = a.user_id
+        WHERE characters.user_id = $1
+    ) as count
+FROM users
+    LEFT JOIN characters ON characters.id = users.favorite
+WHERE users.id = $1
 `
 
 type GetUserProfileRow struct {
-	ID         int64          `json:"id"`
-	UserID     int64          `json:"user_id"`
-	Image      sql.NullString `json:"image"`
-	Name       sql.NullString `json:"name"`
-	Quote      string         `json:"quote"`
-	Date       time.Time      `json:"date"`
-	Favorite   sql.NullInt64  `json:"favorite"`
-	ClaimCount int32          `json:"claim_count"`
+	Image sql.NullString `json:"image"`
+	Name  sql.NullString `json:"name"`
+	Date  time.Time      `json:"date"`
+	Quote string         `json:"quote"`
+	Count interface{}    `json:"count"`
 }
 
-func (q *Queries) GetUserProfile(ctx context.Context, userID int64) ([]GetUserProfileRow, error) {
-	rows, err := q.query(ctx, q.getUserProfileStmt, getUserProfile, userID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []GetUserProfileRow
-	for rows.Next() {
-		var i GetUserProfileRow
-		if err := rows.Scan(
-			&i.ID,
-			&i.UserID,
-			&i.Image,
-			&i.Name,
-			&i.Quote,
-			&i.Date,
-			&i.Favorite,
-			&i.ClaimCount,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
+func (q *Queries) GetUserProfile(ctx context.Context, userID int64) (GetUserProfileRow, error) {
+	row := q.queryRow(ctx, q.getUserProfileStmt, getUserProfile, userID)
+	var i GetUserProfileRow
+	err := row.Scan(
+		&i.Image,
+		&i.Name,
+		&i.Date,
+		&i.Quote,
+		&i.Count,
+	)
+	return i, err
 }
 
 const giveChar = `-- name: GiveChar :exec
 UPDATE characters
-SET "user_id" = $3
-WHERE "id" = $1
-    AND "user_id" = $2
+SET user_id = $3
+WHERE characters.id = $1
+    AND characters.user_id = $2
 `
 
 type GiveCharParams struct {
@@ -244,11 +215,25 @@ func (q *Queries) InsertChar(ctx context.Context, arg InsertCharParams) error {
 	return err
 }
 
+const setDate = `-- name: SetDate :exec
+UPDATE users
+SET date = $2
+WHERE users.id = $1
+`
+
+type SetDateParams struct {
+	ID   int64     `json:"id"`
+	Date time.Time `json:"date"`
+}
+
+func (q *Queries) SetDate(ctx context.Context, arg SetDateParams) error {
+	_, err := q.exec(ctx, q.setDateStmt, setDate, arg.ID, arg.Date)
+	return err
+}
+
 const setFavorite = `-- name: SetFavorite :exec
-INSERT INTO "users" ("id", "favorite")
-VALUES ($1, $2) ON CONFLICT ("id") DO
-UPDATE
-SET "favorite" = $2
+UPDATE users
+SET favorite = $2
 WHERE users.id = $1
 `
 
@@ -263,10 +248,8 @@ func (q *Queries) SetFavorite(ctx context.Context, arg SetFavoriteParams) error 
 }
 
 const setQuote = `-- name: SetQuote :exec
-INSERT INTO users ("id", "quote")
-VALUES ($1, $2) ON CONFLICT ("id") DO
-UPDATE
-SET "quote" = $2
+UPDATE users
+SET quote = $2
 WHERE users.id = $1
 `
 
@@ -277,23 +260,5 @@ type SetQuoteParams struct {
 
 func (q *Queries) SetQuote(ctx context.Context, arg SetQuoteParams) error {
 	_, err := q.exec(ctx, q.setQuoteStmt, setQuote, arg.ID, arg.Quote)
-	return err
-}
-
-const updateUserDate = `-- name: UpdateUserDate :exec
-INSERT INTO "users" ("id", "date")
-VALUES ($1, $2) ON CONFLICT ("id") DO
-UPDATE
-SET "date" = $2
-WHERE users.id = $1
-`
-
-type UpdateUserDateParams struct {
-	ID   int64     `json:"id"`
-	Date time.Time `json:"date"`
-}
-
-func (q *Queries) UpdateUserDate(ctx context.Context, arg UpdateUserDateParams) error {
-	_, err := q.exec(ctx, q.updateUserDateStmt, updateUserDate, arg.ID, arg.Date)
 	return err
 }

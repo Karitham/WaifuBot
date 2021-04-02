@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/Karitham/WaifuBot/internal/db"
+	"github.com/Karitham/WaifuBot/db"
 	"github.com/diamondburned/arikawa/v2/bot/extras/arguments"
 	"github.com/diamondburned/arikawa/v2/discord"
 	"github.com/diamondburned/arikawa/v2/gateway"
@@ -18,13 +18,13 @@ import (
 func (b *Bot) List(m *gateway.MessageCreateEvent, _ ...*arguments.UserMention) error {
 	user := parseUser(m)
 
-	uData, err := b.conn.GetUserList(context.Background(), int64(m.Author.ID))
+	uData, err := b.conn.GetUserList(context.Background(), int64(user.ID))
 	if err == sql.ErrNoRows {
-		err := b.conn.CreateUser(b.Ctx.Context(), int64(m.Author.ID))
+		err := b.conn.CreateUser(b.Ctx.Context(), int64(user.ID))
 		if err != nil {
 			log.Err(err).
 				Str("Type", "LIST").
-				Int("user", int(m.Author.ID)).
+				Int("user", int(user.ID)).
 				Msg("Could not create user")
 
 			return err
@@ -45,29 +45,34 @@ func (b *Bot) List(m *gateway.MessageCreateEvent, _ ...*arguments.UserMention) e
 
 	// Make pages
 	for j := 0; j <= len(uData)/b.conf.ListLen; j++ {
-		p.Add(discord.Embed{
-			Title: fmt.Sprintf("%s's list", user.Username),
-			Description: func(l []db.Character) string {
-				var s strings.Builder
-				if len(l) >= 0 {
-					for i := b.conf.ListLen * j; i < b.conf.ListLen+b.conf.ListLen*j && i < len(l); i++ {
-						s.WriteString(fmt.Sprintf("`%d`\f - %s\n", l[i].ID, l[i].Name.String))
-					}
-					return s.String()
-				}
-				return ""
-			}(uData),
+		max := j + 1*b.conf.ListLen
+		if max > len(uData) {
+			max = len(uData)
+		}
 
-			Color: 3447003,
-		})
+		p.Add(
+			discord.Embed{
+				Title:       fmt.Sprintf("%s's list", user.Username),
+				Description: descriptionify(uData[j*b.conf.ListLen : max]),
+				Color:       3447003,
+			},
+		)
 	}
 
 	log.Trace().
 		Str("Type", "LIST").
 		Int("User", int(user.ID)).
-		Msg("Sent list embed")
+		Msg("sent list embed")
 
 	return p.Spawn()
+}
+
+func descriptionify(chars []db.Character) string {
+	var s strings.Builder
+	for _, v := range chars {
+		s.WriteString(fmt.Sprintf("`%d`\f - %s\n", v.ID, v.Name.String))
+	}
+	return s.String()
 }
 
 // Verify verify if someone has a waifu

@@ -15,9 +15,8 @@ type Character struct {
 }
 
 type User struct {
-	ID         int64         `json:"id"`
-	Quote      string        `json:"quote"`
-	Date       time.Time     `json:"date"`
-	Favorite   sql.NullInt64 `json:"favorite"`
-	ClaimCount int32         `json:"claim_count"`
+	ID       int64         `json:"id"`
+	Quote    string        `json:"quote"`
+	Date     time.Time     `json:"date"`
+	Favorite sql.NullInt64 `json:"favorite"`
 }

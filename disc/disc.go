@@ -7,11 +7,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/rs/zerolog/log"
-
-	"github.com/Karitham/WaifuBot/internal/anilist"
-	"github.com/Karitham/WaifuBot/internal/config"
-	"github.com/Karitham/WaifuBot/internal/db"
+	"github.com/Karitham/WaifuBot/anilist"
+	"github.com/Karitham/WaifuBot/config"
+	"github.com/Karitham/WaifuBot/db"
 	"github.com/diamondburned/arikawa/v2/bot"
 	"github.com/diamondburned/arikawa/v2/discord"
 	"github.com/diamondburned/arikawa/v2/gateway"
@@ -28,7 +26,7 @@ type Bot struct {
 }
 
 // Start starts the bot, registers the command and updates its status
-func Start(configuration *config.ConfStruct, connection *db.Queries) {
+func Start(configuration *config.ConfStruct, connection *db.Queries) (func() error, error) {
 	var b = &Bot{
 		Ctx: &bot.Context{},
 		dropper: &Dropper{
@@ -42,7 +40,7 @@ func Start(configuration *config.ConfStruct, connection *db.Queries) {
 	}
 
 	// Start the bot
-	wait, err := bot.Start(b.conf.BotToken, b, func(ctx *bot.Context) error {
+	waitFn, err := bot.Start(b.conf.BotToken, b, func(ctx *bot.Context) error {
 		ctx.HasPrefix = bot.NewPrefix(b.conf.Prefix...)
 
 		ctx.SilentUnknown.Command = true
@@ -77,7 +75,7 @@ func Start(configuration *config.ConfStruct, connection *db.Queries) {
 			Token: b.conf.BotToken,
 
 			Presence: &gateway.UpdateStatusData{
-				Activities: &[]discord.Activity{
+				Activities: []discord.Activity{
 					{
 						Name: b.conf.BotStatus,
 						Type: discord.GameActivity,
@@ -109,30 +107,15 @@ func Start(configuration *config.ConfStruct, connection *db.Queries) {
 		return nil
 	})
 	if err != nil {
-		log.Fatal().
-			Err(err).
-			Msg("Error on starting the bot")
+		return nil, err
 	}
 
 	b.Me, err = b.Ctx.Me()
 	if err != nil {
-		log.Err(err).
-			Msg("Error getting the current user")
+		return nil, err
 	}
 
-	guilds, err := b.Ctx.Guilds()
-	if err != nil {
-		log.Err(err).
-			Msg("Error getting the guilds")
-	}
-	fmt.Printf("Bot started in %d guild(s)\n", len(guilds))
-
-	// Wait for closing
-	if err := wait(); err != nil {
-		log.Fatal().
-			Err(err).
-			Msg("Error on keeping the bot alive")
-	}
+	return waitFn, nil
 }
 
 func parseArgs(b string) (ID int) {
