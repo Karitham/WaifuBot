@@ -59,7 +59,7 @@ func CharSearch(input CharSearchInput) (response CharSearchStruct, err error) {
 		  image {
 			large
 		  }
-		  media(perPage: 1, sort: POPULARITY_DESC) {
+		  media(perPage: 1) {
 			nodes {
 			  title {
 				romaji
@@ -94,7 +94,7 @@ func CharSearchByPopularity(id uint64) (response CharStruct, err error) {
 			name {
 			  full
 			}
-			media(perPage: 1, sort: POPULARITY_DESC) {
+			media(perPage: 1) {
 			  nodes {
 				title {
 				  romaji
