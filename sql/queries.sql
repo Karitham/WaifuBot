@@ -15,7 +15,8 @@ VALUES ($1, $2, $3, $4, $5);
 
 -- name: GiveChar :exec
 UPDATE characters
-SET user_id = $3
+SET "type" = 'TRADE',
+    "user_id" = $3
 WHERE characters.id = $1
     AND characters.user_id = $2;
 

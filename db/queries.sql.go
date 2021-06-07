@@ -83,7 +83,8 @@ func (q *Queries) GetChars(ctx context.Context, userID int64) ([]Character, erro
 
 const giveChar = `-- name: GiveChar :exec
 UPDATE characters
-SET user_id = $3
+SET "type" = 'TRADE',
+    "user_id" = $3
 WHERE characters.id = $1
     AND characters.user_id = $2
 `

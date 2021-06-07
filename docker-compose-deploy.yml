@@ -1,0 +1,68 @@
+services:
+  bot:
+    build:
+      context: .
+      dockerfile: dockerfile
+    restart: unless-stopped
+    container_name: waifubot
+    depends_on:
+      - db
+    environment:
+      # This is the config file, everything works well when set to default
+      # You only need to absolutely change the default "bot token" by your bot token
+      # Bot prefix.
+      PREFIX: ${PREFIX}
+      # Your discord bot token
+      TOKEN: ${TOKEN}
+      # The bot status is what the bot will be displaying as *Currently Playing*
+      STATUS: ${STATUS}
+      # This is the maximum number of random characters
+      # When pulled, the characters are sorted out of popularity
+      # That means you can roll out of the 15000 most popular characters
+      # The maximum is around 75000 right now, but is growing with the https://anilist.co/ database
+      MAX_CHAR_ROLL: ${MAX_CHAR_ROLL}
+
+      # This means that every time the user makes a meaningful action with the bot
+      # they have a change to drop a character to claim
+      INTERACT_DROPS: ${INTERACT_DROPS}
+      # List_Len is used to configure how big the list embed is
+      LIST_LEN: ${LIST_LEN}
+      # The same as the roll, but you can make it lower so people
+      # are more likely to know the character
+      MAX_CHAR_DROP: ${MAX_CHAR_DROP}
+      # When a user is checking their list, it refreshes the first embed sent if
+      # you are within X minutes of sending it
+      LIST_UPDATE_TIME: ${LIST_UPDATE_TIME}
+      # How much time between each user roll
+      ROLL_COOLDOWN: ${ROLL_COOLDOWN}
+      # Name of the DB, the one set in the docker-compose file
+      DB_NAME: ${DB_NAME}
+      # Host of the DB, should be `db` if ran with docker-compose
+      DB_HOST: ${DB_HOST}
+      # Password of the db, set inside the docker-compose file
+      DB_PASS: ${DB_PASS}
+      # User, see above
+      DB_USER: ${DB_USER}
+
+  db:
+    image: postgres:9.6-alpine
+    restart: unless-stopped
+    container_name: waifudb
+    volumes:
+      - "wdata:/data/postgres"
+    environment:
+      POSTGRES_PASSWORD: waifudb
+      POSTGRES_DB: waifudb
+      PGDATA: "/data/postgres"
+    ports:
+      - 5432:5432
+
+  adminer:
+    image: adminer
+    restart: always
+    container_name: adminer
+    ports:
+      - 8088:8080
+
+volumes:
+  wdata:

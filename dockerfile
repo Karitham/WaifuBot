@@ -18,15 +18,12 @@ RUN CGO_ENABLED=0 go build -ldflags="-w -s" -o /app/app
 
 # Build app image.
 # This image doesn't have a shell
-FROM scratch
+FROM alpine:3.13
 
 WORKDIR /app
 
 # Copy our static executable.
 COPY --from=builder /app/app ./app
-
-# Expose port
-EXPOSE $API_PORT
 
 # Run the binary
 ENTRYPOINT ["/app/app"]

@@ -88,6 +88,7 @@ func (bot *Bot) Claim(m *gateway.MessageCreateEvent, name ...Name) (*discord.Emb
 		UserID: int64(m.Author.ID),
 		Image:  char.Page.Characters[0].Image.Large,
 		Name:   char.Page.Characters[0].Name.Full,
+		Type:   "CLAIM",
 	})
 	if err != nil {
 		log.Err(err).
