@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   bot:
-    image: karithamdocker/go-waifubot:postgres
+    image: ghcr.io/karitham/waifubot:postgres
     restart: always
     container_name: WaifuBot
    volumes:

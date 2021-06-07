@@ -23,6 +23,4 @@ jobs:
           password: ${{ secrets.GR_PAT }}
 
       - name: build and push
-        run: |
-          docker buildx create --name builder0 --use
-          docker buildx build --platform linux/arm64,linux/amd64 --push --tag ghcr.io/karitham/waifubot:${GITHUB_REF##*/} .
+        run: docker buildx build --platform linux/arm64,linux/amd64 --push --tag ghcr.io/karitham/waifubot:${GITHUB_REF##*/} .
