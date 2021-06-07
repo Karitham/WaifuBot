@@ -12,7 +12,7 @@ jobs:
           clean: false
 
       - name: Copy config
-        run: cp ~/.config.toml.waifubot .config.toml
+        run: cp ~/config.toml.waifubot config.toml
 
       - name: build
         run: docker-compose up -d
