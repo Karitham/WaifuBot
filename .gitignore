@@ -2,3 +2,5 @@ config*.toml
 .vscode
 !config_example.toml
 database.vuerd.json
+*.env*
+!.env.example

@@ -10,7 +10,7 @@ import (
 
 func main() {
 	// Retrieve config
-	conf, err := config.Retrieve("config.toml")
+	conf, err := config.Retrieve()
 	if err != nil {
 		log.Fatal().Err(err).Msg("Error getting config")
 	}

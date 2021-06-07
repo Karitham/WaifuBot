@@ -39,7 +39,7 @@ func (b *Bot) List(m *gateway.MessageCreateEvent, _ ...*arguments.UserMention) e
 	p := dgwidgets.NewPaginator(b.Ctx.State, m.ChannelID)
 
 	// What to do when timeout
-	p.SetTimeout(b.conf.ListMaxUpdateTime.Duration)
+	p.SetTimeout(b.conf.ListMaxUpdateTime)
 	p.ColourWhenDone = 0xFFFF00
 
 	// Make pages

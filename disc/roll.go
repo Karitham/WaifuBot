@@ -29,7 +29,7 @@ func (b *Bot) Roll(m *gateway.MessageCreateEvent) (*discord.Embed, error) {
 		}
 	}
 
-	if nextRollTime := time.Until(p.Date.UTC().Add(b.conf.TimeBetweenRolls.Duration)); nextRollTime > 0 {
+	if nextRollTime := time.Until(p.Date.UTC().Add(b.conf.TimeBetweenRolls)); nextRollTime > 0 {
 		return nil, fmt.Errorf("**illegal roll**,\nroll in %s", nextRollTime.Truncate(time.Second))
 	}
 
@@ -50,7 +50,7 @@ func (b *Bot) Roll(m *gateway.MessageCreateEvent) (*discord.Embed, error) {
 		return n
 	}()
 
-	char, err := anilist.CharSearchByPopularity(b.seed.Uint64()%b.conf.MaxCharacterRoll, notIn)
+	char, err := anilist.CharSearchByPopularity(b.seed.Uint64()%uint64(b.conf.MaxCharacterRoll), notIn)
 	if err != nil {
 		log.Err(err).
 			Str("Type", "ROLL").

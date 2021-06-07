@@ -26,7 +26,7 @@ func (bot *Bot) drop(m *gateway.MessageCreateEvent) {
 	defer bot.dropper.Mutex.Unlock()
 
 	var err error
-	bot.dropper.Waifu[m.ChannelID], err = anilist.CharSearchByPopularity(bot.seed.Uint64()%bot.conf.MaxCharacterRoll, []int64{})
+	bot.dropper.Waifu[m.ChannelID], err = anilist.CharSearchByPopularity(bot.seed.Uint64()%uint64(bot.conf.MaxCharacterRoll), []int64{})
 	if err != nil {
 		log.Err(err).
 			Str("Type", "DROP").
