@@ -1,6 +1,9 @@
 name: Build Image
 
-on: push
+on:
+  push:
+    paths:
+      - "**.go"
 
 jobs:
   build-containers:

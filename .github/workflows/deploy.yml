@@ -1,8 +1,7 @@
 name: deploy
 
 on:
-  push:
-    branches: [postgres]
+  registry_package:
 
 jobs:
   run:
@@ -17,4 +16,4 @@ jobs:
         run: cp ~/.env.waifubot .env
 
       - name: build
-        run: docker-compose -f docker-compose-deploy.yml up -d --build
+        run: docker-compose up -d --build
