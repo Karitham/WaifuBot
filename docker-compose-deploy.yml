@@ -57,12 +57,5 @@ services:
     ports:
       - 5432:5432
 
-  adminer:
-    image: adminer
-    restart: always
-    container_name: adminer
-    ports:
-      - 8088:8080
-
 volumes:
   wdata:
