@@ -24,6 +24,7 @@ type Dropper struct {
 	Mutex   *sync.Mutex
 }
 
+// drop a random character
 func (bot *Bot) drop(m *gateway.MessageCreateEvent) {
 	bot.dropper.Mutex.Lock()
 	defer bot.dropper.Mutex.Unlock()
