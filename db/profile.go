@@ -63,6 +63,6 @@ SELECT characters.image as favorite_image,
         WHERE characters.user_id = $1
     ) as count
 FROM users
-    LEFT JOIN characters ON characters.row_id = users.favorite
+    LEFT JOIN characters ON characters.id = users.favorite
 WHERE users.user_id = $1
 `

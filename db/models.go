@@ -9,12 +9,11 @@ import (
 
 type Character struct {
 	Date   time.Time `json:"date"`
-	Type   string    `json:"type"`
 	Image  string    `json:"image"`
 	Name   string    `json:"name"`
+	Type   string    `json:"type"`
 	UserID int64     `json:"user_id"`
 	ID     int64     `json:"id"`
-	RowID  int32     `json:"row_id"`
 }
 
 type User struct {

@@ -19,7 +19,6 @@ services:
       # That means you can roll out of the 15000 most popular characters
       # The maximum is around 75000 right now, but is growing with the https://anilist.co/ database
       MAX_CHAR_ROLL: ${MAX_CHAR_ROLL}
-
       # This means that every time the user makes a meaningful action with the bot
       # he has a change to drop a character to claim
       # The more the user interact, the more chance he has to drop a character

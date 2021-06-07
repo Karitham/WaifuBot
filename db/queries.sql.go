@@ -18,7 +18,7 @@ func (q *Queries) CreateUser(ctx context.Context, userID int64) error {
 }
 
 const getChar = `-- name: GetChar :one
-SELECT row_id, user_id, id, image, name, date, type
+SELECT user_id, id, image, name, date, type
 FROM characters
 WHERE id = $1
     AND characters.user_id = $2
@@ -33,7 +33,6 @@ func (q *Queries) GetChar(ctx context.Context, arg GetCharParams) (Character, er
 	row := q.queryRow(ctx, q.getCharStmt, getChar, arg.ID, arg.UserID)
 	var i Character
 	err := row.Scan(
-		&i.RowID,
 		&i.UserID,
 		&i.ID,
 		&i.Image,
@@ -45,7 +44,7 @@ func (q *Queries) GetChar(ctx context.Context, arg GetCharParams) (Character, er
 }
 
 const getChars = `-- name: GetChars :many
-SELECT row_id, user_id, id, image, name, date, type
+SELECT user_id, id, image, name, date, type
 FROM characters
 WHERE characters.user_id = $1
 `
@@ -60,7 +59,6 @@ func (q *Queries) GetChars(ctx context.Context, userID int64) ([]Character, erro
 	for rows.Next() {
 		var i Character
 		if err := rows.Scan(
-			&i.RowID,
 			&i.UserID,
 			&i.ID,
 			&i.Image,

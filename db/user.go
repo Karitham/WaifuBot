@@ -14,7 +14,7 @@ func (q *Queries) UpdateUser(ctx context.Context, user User) error {
 		s = s.Set("date", user.Date)
 	}
 	if user.Favorite.Valid {
-		s = s.Set("favorite", user.Favorite)
+		s = s.Set("favorite", user.Favorite.Int64)
 	}
 	if user.Quote != "" {
 		s = s.Set("quote", user.Quote)

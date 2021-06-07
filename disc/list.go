@@ -44,7 +44,7 @@ func (b *Bot) List(m *gateway.MessageCreateEvent, _ ...*arguments.UserMention) e
 
 	// Make pages
 	for j := 0; j <= len(uData)/b.conf.ListLen; j++ {
-		max := j + 1*b.conf.ListLen
+		max := (j + 1) * b.conf.ListLen
 		if max > len(uData) {
 			max = len(uData)
 		}
