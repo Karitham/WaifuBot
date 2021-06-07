@@ -12,9 +12,6 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-
       - name: Login to GitHub Container Registry
         uses: azure/docker-login@v1
         with:
@@ -23,4 +20,6 @@ jobs:
           password: ${{ secrets.GR_PAT }}
 
       - name: build and push
-        run: docker buildx build --platform linux/arm64,linux/amd64 --push --tag ghcr.io/karitham/waifubot:${GITHUB_REF##*/} .
+        run: |
+          docker builx create --use builder0
+          docker buildx build --platform linux/arm64,linux/amd64 --push --tag ghcr.io/karitham/waifubot:${GITHUB_REF##*/} .
