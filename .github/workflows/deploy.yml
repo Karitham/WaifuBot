@@ -1,0 +1,18 @@
+on:
+  push:
+    branches: [postgres]
+
+jobs:
+  run:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          clean: false
+
+      - name: Copy config
+        run: cp ~/.config.toml.waifubot .config.toml
+
+      - name: build
+        run: docker-compose up -d
