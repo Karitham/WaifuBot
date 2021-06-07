@@ -5,26 +5,23 @@ package db
 
 import (
 	"context"
-	"database/sql"
-	"time"
 )
 
 const createUser = `-- name: CreateUser :exec
-INSERT INTO users (id)
+INSERT INTO users (user_id)
 VALUES ($1)
 `
 
-func (q *Queries) CreateUser(ctx context.Context, id int64) error {
-	_, err := q.exec(ctx, q.createUserStmt, createUser, id)
+func (q *Queries) CreateUser(ctx context.Context, userID int64) error {
+	_, err := q.exec(ctx, q.createUserStmt, createUser, userID)
 	return err
 }
 
 const getChar = `-- name: GetChar :one
-SELECT id, user_id, image, name
+SELECT row_id, user_id, id, image, name, date, type
 FROM characters
 WHERE id = $1
     AND characters.user_id = $2
-LIMIT 1
 `
 
 type GetCharParams struct {
@@ -36,83 +33,25 @@ func (q *Queries) GetChar(ctx context.Context, arg GetCharParams) (Character, er
 	row := q.queryRow(ctx, q.getCharStmt, getChar, arg.ID, arg.UserID)
 	var i Character
 	err := row.Scan(
-		&i.ID,
+		&i.RowID,
 		&i.UserID,
+		&i.ID,
 		&i.Image,
 		&i.Name,
-	)
-	return i, err
-}
-
-const getDate = `-- name: GetDate :one
-SELECT users.date
-FROM users
-WHERE users.id = $1
-`
-
-func (q *Queries) GetDate(ctx context.Context, id int64) (time.Time, error) {
-	row := q.queryRow(ctx, q.getDateStmt, getDate, id)
-	var date time.Time
-	err := row.Scan(&date)
-	return date, err
-}
-
-const getUser = `-- name: GetUser :one
-SELECT id, quote, date, favorite
-FROM users
-WHERE id = $1
-LIMIT 1
-`
-
-func (q *Queries) GetUser(ctx context.Context, id int64) (User, error) {
-	row := q.queryRow(ctx, q.getUserStmt, getUser, id)
-	var i User
-	err := row.Scan(
-		&i.ID,
-		&i.Quote,
 		&i.Date,
-		&i.Favorite,
+		&i.Type,
 	)
 	return i, err
 }
 
-const getUserCharsIDs = `-- name: GetUserCharsIDs :many
-SELECT id
+const getChars = `-- name: GetChars :many
+SELECT row_id, user_id, id, image, name, date, type
 FROM characters
 WHERE characters.user_id = $1
 `
 
-func (q *Queries) GetUserCharsIDs(ctx context.Context, userID int64) ([]int64, error) {
-	rows, err := q.query(ctx, q.getUserCharsIDsStmt, getUserCharsIDs, userID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []int64
-	for rows.Next() {
-		var id int64
-		if err := rows.Scan(&id); err != nil {
-			return nil, err
-		}
-		items = append(items, id)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const getUserList = `-- name: GetUserList :many
-SELECT id, user_id, image, name
-FROM characters
-WHERE characters.user_id = $1
-`
-
-func (q *Queries) GetUserList(ctx context.Context, userID int64) ([]Character, error) {
-	rows, err := q.query(ctx, q.getUserListStmt, getUserList, userID)
+func (q *Queries) GetChars(ctx context.Context, userID int64) ([]Character, error) {
+	rows, err := q.query(ctx, q.getCharsStmt, getChars, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -121,10 +60,13 @@ func (q *Queries) GetUserList(ctx context.Context, userID int64) ([]Character, e
 	for rows.Next() {
 		var i Character
 		if err := rows.Scan(
-			&i.ID,
+			&i.RowID,
 			&i.UserID,
+			&i.ID,
 			&i.Image,
 			&i.Name,
+			&i.Date,
+			&i.Type,
 		); err != nil {
 			return nil, err
 		}
@@ -137,42 +79,6 @@ func (q *Queries) GetUserList(ctx context.Context, userID int64) ([]Character, e
 		return nil, err
 	}
 	return items, nil
-}
-
-const getUserProfile = `-- name: GetUserProfile :one
-SELECT characters.image,
-    characters.name,
-    users.date,
-    users.quote,
-    (
-        SELECT count(id)
-        FROM characters
-        WHERE characters.user_id = $1
-    ) as count
-FROM users
-    LEFT JOIN characters ON characters.id = users.favorite
-WHERE users.id = $1
-`
-
-type GetUserProfileRow struct {
-	Image sql.NullString `json:"image"`
-	Name  sql.NullString `json:"name"`
-	Date  time.Time      `json:"date"`
-	Quote string         `json:"quote"`
-	Count interface{}    `json:"count"`
-}
-
-func (q *Queries) GetUserProfile(ctx context.Context, userID int64) (GetUserProfileRow, error) {
-	row := q.queryRow(ctx, q.getUserProfileStmt, getUserProfile, userID)
-	var i GetUserProfileRow
-	err := row.Scan(
-		&i.Image,
-		&i.Name,
-		&i.Date,
-		&i.Quote,
-		&i.Count,
-	)
-	return i, err
 }
 
 const giveChar = `-- name: GiveChar :exec
@@ -194,71 +100,25 @@ func (q *Queries) GiveChar(ctx context.Context, arg GiveCharParams) error {
 }
 
 const insertChar = `-- name: InsertChar :exec
-INSERT INTO characters ("id", "user_id", "image", "name")
-VALUES ($2, $1, $3, $4)
+INSERT INTO characters ("id", "user_id", "image", "name", "type")
+VALUES ($1, $2, $3, $4, $5)
 `
 
 type InsertCharParams struct {
-	UserID int64          `json:"user_id"`
-	ID     int64          `json:"id"`
-	Image  sql.NullString `json:"image"`
-	Name   sql.NullString `json:"name"`
+	Image  string `json:"image"`
+	Name   string `json:"name"`
+	Type   string `json:"type"`
+	ID     int64  `json:"id"`
+	UserID int64  `json:"user_id"`
 }
 
 func (q *Queries) InsertChar(ctx context.Context, arg InsertCharParams) error {
 	_, err := q.exec(ctx, q.insertCharStmt, insertChar,
-		arg.UserID,
 		arg.ID,
+		arg.UserID,
 		arg.Image,
 		arg.Name,
+		arg.Type,
 	)
-	return err
-}
-
-const setDate = `-- name: SetDate :exec
-UPDATE users
-SET date = $2
-WHERE users.id = $1
-`
-
-type SetDateParams struct {
-	ID   int64     `json:"id"`
-	Date time.Time `json:"date"`
-}
-
-func (q *Queries) SetDate(ctx context.Context, arg SetDateParams) error {
-	_, err := q.exec(ctx, q.setDateStmt, setDate, arg.ID, arg.Date)
-	return err
-}
-
-const setFavorite = `-- name: SetFavorite :exec
-UPDATE users
-SET favorite = $2
-WHERE users.id = $1
-`
-
-type SetFavoriteParams struct {
-	ID       int64         `json:"id"`
-	Favorite sql.NullInt64 `json:"favorite"`
-}
-
-func (q *Queries) SetFavorite(ctx context.Context, arg SetFavoriteParams) error {
-	_, err := q.exec(ctx, q.setFavoriteStmt, setFavorite, arg.ID, arg.Favorite)
-	return err
-}
-
-const setQuote = `-- name: SetQuote :exec
-UPDATE users
-SET quote = $2
-WHERE users.id = $1
-`
-
-type SetQuoteParams struct {
-	ID    int64  `json:"id"`
-	Quote string `json:"quote"`
-}
-
-func (q *Queries) SetQuote(ctx context.Context, arg SetQuoteParams) error {
-	_, err := q.exec(ctx, q.setQuoteStmt, setQuote, arg.ID, arg.Quote)
 	return err
 }

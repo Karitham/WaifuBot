@@ -2,7 +2,6 @@ package disc
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"strings"
 	"sync"
@@ -59,12 +58,6 @@ func (bot *Bot) drop(m *gateway.MessageCreateEvent) {
 	if err != nil {
 		log.Err(err).Str("Type", "DROP").Msg("Error sending drop message")
 	}
-
-	log.Trace().
-		Str("Type", "DROP").
-		Uint("ID", bot.dropper.Waifu[m.ChannelID].Page.Characters[0].ID).
-		Str("Name", bot.dropper.Waifu[m.ChannelID].Page.Characters[0].Name.Full).
-		Msg("dropped char")
 }
 
 // Claim a waifu and adds it to the user's database
@@ -90,28 +83,22 @@ func (bot *Bot) Claim(m *gateway.MessageCreateEvent, name ...Name) (*discord.Emb
 	}
 
 	// Add to db
-	err := bot.conn.InsertChar(context.Background(), db.InsertCharParams{
-		ID:     int64(char.Page.Characters[0].ID),
+	err := bot.DB.InsertChar(context.Background(), db.InsertCharParams{
+		ID:     char.Page.Characters[0].ID,
 		UserID: int64(m.Author.ID),
-		Image:  sql.NullString{String: char.Page.Characters[0].Image.Large, Valid: true},
-		Name:   sql.NullString{String: char.Page.Characters[0].Name.Full, Valid: true},
+		Image:  char.Page.Characters[0].Image.Large,
+		Name:   char.Page.Characters[0].Name.Full,
 	})
 	if err != nil {
 		log.Err(err).
 			Str("Type", "CLAIM").
-			Uint("ID", char.Page.Characters[0].ID).
+			Int64("ID", char.Page.Characters[0].ID).
 			Int("UserID", int(m.Author.ID)).
 			Msg("Error inserting the char")
 		return nil, err
 	}
 
 	delete(bot.dropper.Waifu, m.ChannelID)
-
-	log.Trace().
-		Str("Type", "CLAIM").
-		Uint("ID", char.Page.Characters[0].ID).
-		Int("UserID", int(m.Author.ID)).
-		Msg("user claimed char")
 
 	return &discord.Embed{
 		Title: "Claim successful",

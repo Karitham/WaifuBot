@@ -8,15 +8,19 @@ import (
 )
 
 type Character struct {
-	ID     int64          `json:"id"`
-	UserID int64          `json:"user_id"`
-	Image  sql.NullString `json:"image"`
-	Name   sql.NullString `json:"name"`
+	Date   time.Time `json:"date"`
+	Type   string    `json:"type"`
+	Image  string    `json:"image"`
+	Name   string    `json:"name"`
+	UserID int64     `json:"user_id"`
+	ID     int64     `json:"id"`
+	RowID  int32     `json:"row_id"`
 }
 
 type User struct {
-	ID       int64         `json:"id"`
-	Quote    string        `json:"quote"`
 	Date     time.Time     `json:"date"`
+	Quote    string        `json:"quote"`
 	Favorite sql.NullInt64 `json:"favorite"`
+	UserID   int64         `json:"user_id"`
+	ID       int32         `json:"id"`
 }

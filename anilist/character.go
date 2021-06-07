@@ -22,7 +22,6 @@ type CharStruct struct {
 
 // CharacterStruct represent character object
 type CharacterStruct struct {
-	ID      uint   `json:"id"`
 	SiteURL string `json:"siteUrl"`
 	Image   struct {
 		Large string `json:"large"`
@@ -37,12 +36,13 @@ type CharacterStruct struct {
 			}
 		}
 	}
+	ID int64 `json:"id"`
 }
 
 // CharSearchInput is used to input the arguments you want to search
 type CharSearchInput struct {
-	ID   int
 	Name string
+	ID   int
 }
 
 // CharSearch makes a query to the Anilist API based on the name/ID you input

@@ -18,24 +18,23 @@ import (
 func (b *Bot) List(m *gateway.MessageCreateEvent, _ ...*arguments.UserMention) error {
 	user := parseUser(m)
 
-	uData, err := b.conn.GetUserList(context.Background(), int64(user.ID))
+	uData, err := b.DB.GetChars(context.Background(), int64(user.ID))
 	if err == sql.ErrNoRows {
-		err := b.conn.CreateUser(b.Ctx.Context(), int64(user.ID))
+		err = b.DB.CreateUser(b.Ctx.Context(), int64(user.ID))
 		if err != nil {
 			log.Err(err).
 				Str("Type", "LIST").
 				Int("user", int(user.ID)).
 				Msg("Could not create user")
-
 			return err
 		}
 	} else if err != nil {
 		log.Err(err).
 			Str("Type", "LIST").
 			Msg("Could not get list")
-
 		return err
 	}
+
 	// Create widget
 	p := dgwidgets.NewPaginator(b.Ctx.State, m.ChannelID)
 
@@ -59,18 +58,13 @@ func (b *Bot) List(m *gateway.MessageCreateEvent, _ ...*arguments.UserMention) e
 		)
 	}
 
-	log.Trace().
-		Str("Type", "LIST").
-		Int("User", int(user.ID)).
-		Msg("sent list embed")
-
 	return p.Spawn()
 }
 
 func descriptionify(chars []db.Character) string {
 	var s strings.Builder
 	for _, v := range chars {
-		s.WriteString(fmt.Sprintf("`%d`\f - %s\n", v.ID, v.Name.String))
+		s.WriteString(fmt.Sprintf("`%d`\f - %s\n", v.ID, v.Name))
 	}
 	return s.String()
 }
@@ -78,13 +72,8 @@ func descriptionify(chars []db.Character) string {
 // Verify verify if someone has a waifu
 func (b *Bot) Verify(m *gateway.MessageCreateEvent, ID int64, _ ...*arguments.UserMention) (string, error) {
 	user := parseUser(m)
-	log.Trace().
-		Str("Type", "VERIFY").
-		Int("User", int(user.ID)).
-		Int64("Char", ID).
-		Msg("verifying ownership")
 
-	if _, err := b.conn.GetChar(context.Background(), db.GetCharParams{
+	if _, err := b.DB.GetChar(context.Background(), db.GetCharParams{
 		ID:     ID,
 		UserID: int64(user.ID),
 	}); err == sql.ErrNoRows {

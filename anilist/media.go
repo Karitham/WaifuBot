@@ -9,17 +9,17 @@ import (
 // MediaSearchStruct handles data from either manga or anime searches
 type MediaSearchStruct struct {
 	Media struct {
-		SiteURL   string `json:"siteUrl"`
-		Status    string `json:"status"`
-		MeanScore int    `json:"meanScore"`
-		IsAdult   bool   `json:"isAdult"`
-		Title     struct {
+		SiteURL string `json:"siteUrl"`
+		Status  string `json:"status"`
+		Title   struct {
 			Romaji string `json:"romaji"`
 		} `json:"title"`
 		CoverImage struct {
 			Medium string `json:"medium"`
 		} `json:"coverImage"`
 		Description string `json:"description"`
+		MeanScore   int    `json:"meanScore"`
+		IsAdult     bool   `json:"isAdult"`
 	} `json:"Media"`
 }
 

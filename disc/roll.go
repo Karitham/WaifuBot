@@ -1,11 +1,13 @@
 package disc
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 	"time"
 
 	"github.com/Karitham/WaifuBot/anilist"
+	"github.com/Karitham/WaifuBot/db"
 	"github.com/rs/zerolog/log"
 
 	"github.com/diamondburned/arikawa/v2/discord"
@@ -14,23 +16,24 @@ import (
 
 // Roll drops a random character and adds it to the database
 func (b *Bot) Roll(m *gateway.MessageCreateEvent) (*discord.Embed, error) {
-	t, err := b.conn.GetDate(b.Ctx.Context(), int64(m.Author.ID))
+	p, err := b.DB.GetProfile(b.Ctx.Context(), int64(m.Author.ID))
 	if err != nil {
-		err := b.conn.CreateUser(b.Ctx.Context(), int64(m.Author.ID))
-		if err != nil {
+		CreateErr := b.DB.CreateUser(b.Ctx.Context(), int64(m.Author.ID))
+		if CreateErr != nil {
 			log.Err(err).
 				Str("Type", "ROLL").
 				Int("user", int(m.Author.ID)).
+				AnErr("GetProfileErr", err).
 				Msg("Could not create user")
-
+			return nil, errors.New("error creating your user profile")
 		}
 	}
 
-	if nextRollTime := time.Until(t.UTC().Add(b.conf.TimeBetweenRolls.Duration)); nextRollTime > 0 {
+	if nextRollTime := time.Until(p.Date.UTC().Add(b.conf.TimeBetweenRolls.Duration)); nextRollTime > 0 {
 		return nil, fmt.Errorf("**illegal roll**,\nroll in %s", nextRollTime.Truncate(time.Second))
 	}
 
-	list, err := b.conn.GetUserCharsIDs(b.Ctx.Context(), int64(m.Author.ID))
+	list, err := b.DB.GetChars(b.Ctx.Context(), int64(m.Author.ID))
 	if err != nil {
 		log.Err(err).
 			Str("Type", "ROLL").
@@ -39,33 +42,42 @@ func (b *Bot) Roll(m *gateway.MessageCreateEvent) (*discord.Embed, error) {
 		return nil, err
 	}
 
-	char, err := anilist.CharSearchByPopularity(b.seed.Uint64()%b.conf.MaxCharacterRoll, list)
+	notIn := func() []int64 {
+		n := make([]int64, len(list))
+		for _, i := range list {
+			n = append(n, i.ID)
+		}
+		return n
+	}()
+
+	char, err := anilist.CharSearchByPopularity(b.seed.Uint64()%b.conf.MaxCharacterRoll, notIn)
 	if err != nil {
 		log.Err(err).
 			Str("Type", "ROLL").
-			Ints64("List", list).
+			Interface("List", list).
 			Msg("Could not search char")
 
 		return nil, err
 	}
 
-	log.Trace().
-		Str("Type", "ROLL").
-		Int("User", int(m.Author.ID)).
-		Uint("ID", char.Page.Characters[0].ID).
-		Str("Name", char.Page.Characters[0].Name.Full).
-		Msg("user rolled a waifu")
+	err = b.DB.Tx(func(q db.Querier) error {
+		err = q.InsertChar(
+			b.Ctx.Context(),
+			db.InsertCharParams{
+				Image:  char.Page.Characters[0].Image.Large,
+				Name:   strings.Join(strings.Fields(char.Page.Characters[0].Name.Full), " "),
+				Type:   "ROLL",
+				ID:     char.Page.Characters[0].ID,
+				UserID: int64(m.Author.ID),
+			},
+		)
+		if err != nil {
+			return err
+		}
 
-	err = b.conn.RollChar(
-		b.Ctx.Context(),
-		int64(m.Author.ID),
-		int64(char.Page.Characters[0].ID),
-		char.Page.Characters[0].Image.Large,
-		strings.Join(
-			strings.Fields(char.Page.Characters[0].Name.Full),
-			" ",
-		),
-	)
+		return q.UpdateUser(b.Ctx.Context(), db.User{Date: time.Now().UTC(), UserID: int64(m.Author.ID)})
+	})
+
 	if err != nil {
 		log.Err(err).
 			Str("Type", "ROLL").

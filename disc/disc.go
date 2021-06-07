@@ -22,12 +22,12 @@ type Bot struct {
 	seed    rand.Source64
 	Me      *discord.User
 	conf    *config.ConfStruct
-	conn    *db.Queries
+	DB      db.Querier
 }
 
 // Start starts the bot, registers the command and updates its status
-func Start(configuration *config.ConfStruct, connection *db.Queries) (func() error, error) {
-	var b = &Bot{
+func Start(configuration *config.ConfStruct, db db.Querier) (func() error, error) {
+	b := &Bot{
 		Ctx: &bot.Context{},
 		dropper: &Dropper{
 			Waifu:   make(map[discord.ChannelID]anilist.CharStruct),
@@ -36,7 +36,7 @@ func Start(configuration *config.ConfStruct, connection *db.Queries) (func() err
 		},
 		seed: rand.New(rand.NewSource(time.Now().UnixNano())),
 		conf: configuration,
-		conn: connection,
+		DB:   db,
 	}
 
 	// Start the bot

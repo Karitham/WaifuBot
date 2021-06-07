@@ -10,17 +10,17 @@ import (
 
 // ConfStruct is used to unmarshal the config.toml
 type ConfStruct struct {
-	Prefix            []string      `toml:"Prefix"`
+	Database          Database      `toml:"Database"`
 	BotToken          string        `toml:"Bot_Token"`
 	BotStatus         string        `toml:"Bot_Status"`
+	Prefix            []string      `toml:"Prefix"`
 	MaxCharacterRoll  uint64        `toml:"Max_Character_Roll"`
-	MaxCharacterDrop  uint          `toml:"Max_Character_Drop"`
 	DropsOnInteract   uint64        `toml:"Drops_On_Interact"`
 	ListLen           int           `toml:"List_Len"`
 	ListMaxUpdateTime duration      `toml:"List_Max_Update_Time"`
 	TimeBetweenRolls  duration      `toml:"Time_Between_Rolls"`
+	MaxCharacterDrop  uint          `toml:"Max_Character_Drop"`
 	LoggingLevel      zerolog.Level `toml:"Logging_Level"`
-	Database          Database      `toml:"Database"`
 }
 
 // Database represent the needed things for the database

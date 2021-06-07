@@ -1,18 +1,22 @@
-CREATE TABLE characters (
-  id BIGINT NOT NULL,
-  user_id BIGINT NOT NULL,
-  image CHARACTER VARYING(256),
-  name CHARACTER VARYING(128),
-  PRIMARY KEY (id, user_id)
-);
 CREATE TABLE users (
-  id BIGINT NOT NULL,
-  quote CHARACTER VARYING(1024) DEFAULT '' NOT NULL,
-  date timestamp NOT NULL DEFAULT '1970-01-01 00:00:00-00',
-  favorite BIGINT,
-  PRIMARY KEY (id)
+  "id" SERIAL NOT NULL,
+  "user_id" BIGINT NOT NULL PRIMARY KEY,
+  "quote" TEXT NOT NULL DEFAULT '',
+  "date" timestamp NOT NULL DEFAULT '1970-01-01 00:00:00-00',
+  "favorite" BIGINT
 );
-ALTER TABLE characters
-ADD CONSTRAINT FK_users_TO_characters FOREIGN KEY (user_id) REFERENCES users (id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+CREATE TABLE characters (
+  "row_id" SERIAL NOT NULL PRIMARY KEY,
+  "user_id" BIGINT NOT NULL,
+  "id" BIGINT NOT NULL,
+  "image" CHARACTER VARYING(256) NOT NULL DEFAULT '',
+  "name" CHARACTER VARYING(128) NOT NULL DEFAULT '',
+  "date" TIMESTAMP NOT NULL DEFAULT NOW(),
+  "type" VARCHAR NOT NULL DEFAULT '',
+  CONSTRAINT "id_user_id_unique" UNIQUE ("id", "user_id"),
+  CONSTRAINT "users_characters_fk" FOREIGN KEY (user_id) REFERENCES users (user_id)
+);
+
 ALTER TABLE users
-ADD CONSTRAINT FK_characters_TO_users FOREIGN KEY (favorite) REFERENCES characters (id) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD CONSTRAINT "characters_users_fk" FOREIGN KEY (favorite) REFERENCES characters (row_id);
