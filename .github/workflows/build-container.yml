@@ -31,5 +31,5 @@ jobs:
           push: true
           builder: ${{ steps.buildx.outputs.name }}
           tags: ghcr.io/karitham/waifubot:postgres
-          cache-from: type=registry,ref=user/app:latest
+          cache-from: type=registry,ref=karitham/waifuBot:postgres
           cache-to: type=inline
