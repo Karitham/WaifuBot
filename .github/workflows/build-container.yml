@@ -2,8 +2,6 @@ name: Build Image
 
 on:
   push:
-    paths:
-      - "**.go"
 
 jobs:
   build-containers:
@@ -18,14 +16,36 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
-      - name: Login to GitHub Container Registry
-        uses: azure/docker-login@v1
+      - name: Cache Docker layers
+        uses: actions/cache@v2
         with:
-          login-server: ghcr.io
-          username: karitham
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
           password: ${{ secrets.GR_PAT }}
 
-      - name: build and push
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          builder: ${{ steps.buildx.outputs.name }}
+          tags: ${{ github.repository_owner }}/waifubot:${GITHUB_REF##*/}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
+
+      # Temp fix
+      # https://github.com/docker/build-push-action/issues/252
+      # https://github.com/moby/buildkit/issues/1896
+      - name: Move cache
         run: |
-          docker buildx create --name builder0 --use
-          docker buildx build --platform linux/arm64,linux/amd64 --push --tag ghcr.io/karitham/waifubot .
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache

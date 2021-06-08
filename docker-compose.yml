@@ -2,7 +2,7 @@ services:
   bot:
     image: ghcr.io/karitham/waifubot:postgres
     restart: unless-stopped
-    container_name: waifubot
+    container_name: waifu_bot
     depends_on:
       - db
     environment:
@@ -45,15 +45,26 @@ services:
   db:
     image: postgres:9.6-alpine
     restart: unless-stopped
-    container_name: waifudb
+    container_name: waifu_db
     volumes:
       - "wdata:/data/postgres"
     environment:
       POSTGRES_PASSWORD: waifudb
       POSTGRES_DB: waifudb
       PGDATA: "/data/postgres"
+
+  api:
+    image: ghcr.io/go-waifubot/api:postgres
+    restart: unless-stopped
+    container_name: waifu_api
+    environment:
+      API_PORT: 3333
+      DB_NAME: ${DB_NAME}
+      DB_HOST: ${DB_HOST}
+      DB_PASS: ${DB_PASS}
+      DB_USER: ${DB_USER}
     ports:
-      - 5432:5432
+      - 3333:3333
 
 volumes:
   wdata:
