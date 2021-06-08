@@ -49,8 +49,8 @@ services:
     volumes:
       - "wdata:/data/postgres"
     environment:
-      POSTGRES_PASSWORD: waifudb
-      POSTGRES_DB: waifudb
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_DB: ${DB_NAME}
       PGDATA: "/data/postgres"
 
   api:
