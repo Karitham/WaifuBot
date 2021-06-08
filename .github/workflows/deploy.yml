@@ -1,10 +1,11 @@
 name: deploy
 
 on:
-  registry_package:
+  workflow_run:
+    workflows:
+      - "Build Image"
     types:
-      - updated
-      - published
+      - completed
 
 jobs:
   run:
