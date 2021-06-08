@@ -17,9 +17,9 @@ func (b *Bot) Give(m *gateway.MessageCreateEvent, ID int64, _ *arguments.UserMen
 
 label:
 	err := b.DB.GiveChar(context.Background(), db.GiveCharParams{
-		ID:       ID,
-		UserID:   int64(m.Author.ID),
-		UserID_2: int64(user.ID),
+		ID:    ID,
+		Giver: int64(m.Author.ID),
+		Given: int64(user.ID),
 	})
 	if err, ok := err.(*pq.Error); ok && err.Code == "23503" {
 		err := b.DB.CreateUser(b.Ctx.Context(), int64(user.ID))

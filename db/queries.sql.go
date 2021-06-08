@@ -82,19 +82,19 @@ func (q *Queries) GetChars(ctx context.Context, userID int64) ([]Character, erro
 const giveChar = `-- name: GiveChar :exec
 UPDATE characters
 SET "type" = 'TRADE',
-    "user_id" = $3
-WHERE characters.id = $1
-    AND characters.user_id = $2
+    "user_id" = $1
+WHERE characters.id = $2
+    AND characters.user_id = $3
 `
 
 type GiveCharParams struct {
-	ID       int64 `json:"id"`
-	UserID   int64 `json:"user_id"`
-	UserID_2 int64 `json:"user_id_2"`
+	Given int64 `json:"given"`
+	ID    int64 `json:"id"`
+	Giver int64 `json:"giver"`
 }
 
 func (q *Queries) GiveChar(ctx context.Context, arg GiveCharParams) error {
-	_, err := q.exec(ctx, q.giveCharStmt, giveChar, arg.ID, arg.UserID, arg.UserID_2)
+	_, err := q.exec(ctx, q.giveCharStmt, giveChar, arg.Given, arg.ID, arg.Giver)
 	return err
 }
 

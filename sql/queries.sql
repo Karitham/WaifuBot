@@ -16,9 +16,9 @@ VALUES ($1, $2, $3, $4, $5);
 -- name: GiveChar :exec
 UPDATE characters
 SET "type" = 'TRADE',
-    "user_id" = $3
-WHERE characters.id = $1
-    AND characters.user_id = $2;
+    "user_id" = @given
+WHERE characters.id = @id
+    AND characters.user_id = @giver;
 
 -- name: CreateUser :exec
 INSERT INTO users (user_id)
