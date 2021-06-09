@@ -2,6 +2,7 @@ package disc
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -76,7 +77,7 @@ func (bot *Bot) drop(m *gateway.MessageCreateEvent) {
 // Claim a waifu and adds it to the user's database
 func (bot *Bot) Claim(m *gateway.MessageCreateEvent, name ...Name) (*discord.Embed, error) {
 	if len(name) == 0 {
-		return nil, fmt.Errorf("if you want to claim a character, use `claim <name>`")
+		return nil, errors.New("if you want to claim a character, use `claim <name>`")
 	}
 
 	// Lock because we are reading from the map
@@ -85,14 +86,14 @@ func (bot *Bot) Claim(m *gateway.MessageCreateEvent, name ...Name) (*discord.Emb
 	char, ok := bot.dropper.Waifu[m.ChannelID]
 
 	if !ok {
-		return nil, fmt.Errorf("there is no character to claim")
+		return nil, errors.New("there is no character to claim")
 	}
 
 	if !strings.EqualFold(
 		strings.Join(name, " "),
 		char.Page.Characters[0].Name.Full,
 	) {
-		return nil, fmt.Errorf("wrong name entered")
+		return nil, errors.New("wrong name entered")
 	}
 
 	// Add to db
@@ -109,7 +110,7 @@ func (bot *Bot) Claim(m *gateway.MessageCreateEvent, name ...Name) (*discord.Emb
 			Int64("ID", char.Page.Characters[0].ID).
 			Int("UserID", int(m.Author.ID)).
 			Msg("Error inserting the char")
-		return nil, err
+		return nil, errors.New("invalid claim. You already own this character")
 	}
 
 	delete(bot.dropper.Waifu, m.ChannelID)
