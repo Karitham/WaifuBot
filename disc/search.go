@@ -49,7 +49,7 @@ func (s *Search) Manga(_ *gateway.MessageCreateEvent, name ...Name) (string, err
 			Str("Type", "MANGA SEARCH").
 			Msg("Could not get manga")
 
-		return "", err
+		return "", errors.New("error getting manga, please check the name entered is right and retry later")
 	}
 
 	return r.Media.SiteURL, nil
@@ -71,7 +71,7 @@ func (s *Search) Anime(_ *gateway.MessageCreateEvent, name ...Name) (string, err
 			Str("Type", "ANIME SEARCH").
 			Msg("Could not get anime")
 
-		return "", err
+		return "", errors.New("error getting anime, please check the name entered is right and retry later")
 	}
 
 	return r.Media.SiteURL, nil
@@ -101,7 +101,7 @@ func (s *Search) Character(_ *gateway.MessageCreateEvent, name ...Name) (string,
 			Str("Type", "CHAR SEARCH").
 			Msg("Could not get character")
 
-		return "", err
+		return "", errors.New("error getting character, please check the name entered is right and retry later")
 	}
 
 	return r.Character.SiteURL, nil
@@ -123,7 +123,7 @@ func (s *Search) User(_ *gateway.MessageCreateEvent, name ...Name) (string, erro
 			Str("Type", "USER SEARCH").
 			Msg("Could not get user")
 
-		return "", err
+		return "", errors.New("error getting user, please check the name entered is right and retry later")
 	}
 
 	return r.User.SiteURL, nil

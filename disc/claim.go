@@ -105,7 +105,8 @@ func (bot *Bot) Claim(m *gateway.MessageCreateEvent, name ...Name) (*discord.Emb
 		Type:   "CLAIM",
 	})
 	if err != nil {
-		log.Err(err).
+		log.Debug().
+			Err(err).
 			Str("Type", "CLAIM").
 			Int64("ID", char.Page.Characters[0].ID).
 			Int("UserID", int(m.Author.ID)).

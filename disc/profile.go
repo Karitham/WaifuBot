@@ -26,7 +26,7 @@ func (b *Bot) Profile(m *gateway.MessageCreateEvent, _ ...*arguments.UserMention
 		err = b.DB.CreateUser(b.Ctx.Context(), int64(user.ID))
 		if err != nil {
 			log.Err(err).Msg("Error creating user")
-			return nil, err
+			return nil, errors.New("error creating your profile")
 		}
 	} else if err != nil {
 		log.Debug().
@@ -34,7 +34,7 @@ func (b *Bot) Profile(m *gateway.MessageCreateEvent, _ ...*arguments.UserMention
 			Str("Type", "PROFILE").
 			Msg("Error getting user profile")
 
-		return nil, err
+		return nil, errors.New("error getting your profile")
 	}
 
 	return &discord.Embed{
@@ -71,7 +71,7 @@ func (b *Bot) Favorite(m *gateway.MessageCreateEvent, name ...Name) (string, err
 			Str("Type", "FAVORITE").
 			Msg("Error Searching anilist")
 
-		return "", err
+		return "", errors.New("error getting a character, please check the ID/Name entered is right and retry later")
 	}
 
 	err = b.DB.UpdateUser(context.Background(), db.User{
@@ -88,13 +88,12 @@ func (b *Bot) Favorite(m *gateway.MessageCreateEvent, name ...Name) (string, err
 			Msg("Error setting favorite")
 
 		return "", errors.New("you do not own this character")
-
 	} else if err != nil {
 		log.Err(err).
 			Str("Type", "FAVORITE").
 			Msg("Error setting favorite")
 
-		return "", err
+		return "", errors.New("an error occured setting this character as favorite, please retry later or raise an issue on https://github.com/Karitham/WaifuBot")
 	}
 
 	return fmt.Sprintf("New waifu set, check your profile\n<%s>", char.Character.SiteURL), nil
@@ -106,6 +105,9 @@ func (b *Bot) Quote(m *gateway.MessageCreateEvent, quote ...string) (string, err
 		return "", errors.New("no quote entered")
 	}
 	q := strings.Join(quote, " ")
+	if len(q) > 1048 {
+		return "", errors.New("quote too long. please submit a quote with a length lower than 1048 characters")
+	}
 
 	err := b.DB.UpdateUser(context.Background(), db.User{
 		Quote:  q,
@@ -116,7 +118,7 @@ func (b *Bot) Quote(m *gateway.MessageCreateEvent, quote ...string) (string, err
 			Err(err).
 			Str("Type", "QUOTE").
 			Msg("Error setting quote")
-		return "", err
+		return "", errors.New("an error occured setting this as your profile quote, please retry later or raise an issue on https://github.com/Karitham/WaifuBot")
 	}
 
 	return fmt.Sprintf("New quote set :\n%s", q), nil
