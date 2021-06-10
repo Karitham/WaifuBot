@@ -93,7 +93,7 @@ func (b *Bot) Favorite(m *gateway.MessageCreateEvent, name ...Name) (string, err
 			Str("Type", "FAVORITE").
 			Msg("Error setting favorite")
 
-		return "", errors.New("an error occured setting this character as favorite, please retry later or raise an issue on https://github.com/Karitham/WaifuBot")
+		return "", errors.New("an error occured setting this character as favorite, please retry later or raise an issue on <https://github.com/Karitham/WaifuBot>")
 	}
 
 	return fmt.Sprintf("New waifu set, check your profile\n<%s>", char.Character.SiteURL), nil
@@ -118,7 +118,7 @@ func (b *Bot) Quote(m *gateway.MessageCreateEvent, quote ...string) (string, err
 			Err(err).
 			Str("Type", "QUOTE").
 			Msg("Error setting quote")
-		return "", errors.New("an error occured setting this as your profile quote, please retry later or raise an issue on https://github.com/Karitham/WaifuBot")
+		return "", errors.New("an error occured setting this as your profile quote, please retry later or raise an issue on <https://github.com/Karitham/WaifuBot>")
 	}
 
 	return fmt.Sprintf("New quote set :\n%s", q), nil

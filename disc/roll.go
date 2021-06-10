@@ -25,7 +25,7 @@ func (b *Bot) Roll(m *gateway.MessageCreateEvent) (*discord.Embed, error) {
 				Int("user", int(m.Author.ID)).
 				AnErr("GetProfileErr", err).
 				Msg("Could not create user")
-			return nil, errors.New("error creating your user profile, please raise an issue on https://github.com/Karitham/WaifuBot")
+			return nil, errors.New("error creating your user profile, please raise an issue on <https://github.com/Karitham/WaifuBot>")
 		}
 	}
 
@@ -39,7 +39,7 @@ func (b *Bot) Roll(m *gateway.MessageCreateEvent) (*discord.Embed, error) {
 			Str("Type", "ROLL").
 			Msg("Could not get chars from DB")
 
-		return nil, errors.New("error getting your current characters, please raise an issue on https://github.com/Karitham/WaifuBot")
+		return nil, errors.New("error getting your current characters, please raise an issue on <https://github.com/Karitham/WaifuBot>")
 	}
 
 	notIn := func() []int64 {
@@ -83,7 +83,7 @@ func (b *Bot) Roll(m *gateway.MessageCreateEvent) (*discord.Embed, error) {
 			Str("Type", "ROLL").
 			Msg("Could not add char to the database")
 
-		return nil, errors.New("could not add this character to your list, you can retry. If this error occurs multiple times, please raise an issue on https://github.com/Karitham/WaifuBot")
+		return nil, errors.New("could not add this character to your list, you can retry. If this error occurs multiple times, please raise an issue on <https://github.com/Karitham/WaifuBot>")
 	}
 
 	return &discord.Embed{

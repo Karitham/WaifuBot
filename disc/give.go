@@ -32,7 +32,7 @@ label:
 				Int("Receiver", int(user.ID)).
 				Msg("Could not create user")
 
-			return "", errors.New("you already own this character. Give failed")
+			return "", errors.New("there was an error giving the character. Please retry later or raise an issue on <https://github.com/Karitham/WaifuBot>")
 		}
 		goto label
 	} else if err != nil {
@@ -44,7 +44,7 @@ label:
 			Int("Receiver", int(user.ID)).
 			Msg("Could not give")
 
-		return "", errors.New("there was an error giving the character. Please retry later or raise an issue on https://github.com/Karitham/WaifuBot")
+		return "", errors.New("you already own this character. Give failed")
 	}
 
 	return fmt.Sprintf("You have given %d to %s", ID, user.Username), nil
