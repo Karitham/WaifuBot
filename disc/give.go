@@ -17,7 +17,7 @@ func (b *Bot) Give(m *gateway.MessageCreateEvent, ID int64, _ *arguments.UserMen
 	user := parseUser(m)
 
 label:
-	err := b.DB.GiveChar(context.Background(), db.GiveCharParams{
+	char, err := b.DB.GiveChar(context.Background(), db.GiveCharParams{
 		ID:    ID,
 		Giver: int64(m.Author.ID),
 		Given: int64(user.ID),
@@ -47,5 +47,5 @@ label:
 		return "", errors.New("you already own this character. Give failed")
 	}
 
-	return fmt.Sprintf("You have given %d to %s", ID, user.Username), nil
+	return fmt.Sprintf("You have given %s to %s", char.Name, user.Username), nil
 }

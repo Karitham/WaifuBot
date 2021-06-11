@@ -9,7 +9,7 @@ type Querier interface {
 	UpdateUser(ctx context.Context, user User) error
 
 	InsertChar(ctx context.Context, arg InsertCharParams) error
-	GiveChar(ctx context.Context, arg GiveCharParams) error
+	GiveChar(ctx context.Context, arg GiveCharParams) (Character, error)
 
 	GetChar(context.Context, GetCharParams) (Character, error)
 	GetChars(ctx context.Context, userID int64) ([]Character, error)

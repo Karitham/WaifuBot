@@ -79,12 +79,13 @@ func (q *Queries) GetChars(ctx context.Context, userID int64) ([]Character, erro
 	return items, nil
 }
 
-const giveChar = `-- name: GiveChar :exec
+const giveChar = `-- name: GiveChar :one
 UPDATE characters
 SET "type" = 'TRADE',
     "user_id" = $1
 WHERE characters.id = $2
     AND characters.user_id = $3
+RETURNING user_id, id, image, name, date, type
 `
 
 type GiveCharParams struct {
@@ -93,9 +94,18 @@ type GiveCharParams struct {
 	Giver int64 `json:"giver"`
 }
 
-func (q *Queries) GiveChar(ctx context.Context, arg GiveCharParams) error {
-	_, err := q.exec(ctx, q.giveCharStmt, giveChar, arg.Given, arg.ID, arg.Giver)
-	return err
+func (q *Queries) GiveChar(ctx context.Context, arg GiveCharParams) (Character, error) {
+	row := q.queryRow(ctx, q.giveCharStmt, giveChar, arg.Given, arg.ID, arg.Giver)
+	var i Character
+	err := row.Scan(
+		&i.UserID,
+		&i.ID,
+		&i.Image,
+		&i.Name,
+		&i.Date,
+		&i.Type,
+	)
+	return i, err
 }
 
 const insertChar = `-- name: InsertChar :exec
