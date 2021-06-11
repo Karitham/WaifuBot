@@ -2,6 +2,9 @@ name: Build Image
 
 on:
   push:
+    paths:
+      - "**.go"
+      - .github/workflows/build-container.yml
 
 jobs:
   build-containers:
