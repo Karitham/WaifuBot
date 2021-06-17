@@ -3,6 +3,8 @@ services:
     image: ghcr.io/karitham/waifubot:postgres
     restart: unless-stopped
     container_name: waifu_bot
+    networks:
+      - default
     depends_on:
       - db
     environment:
@@ -46,6 +48,8 @@ services:
     image: postgres:9.6-alpine
     restart: unless-stopped
     container_name: waifu_db
+    networks:
+      - default
     volumes:
       - "wdata:/data/postgres"
     environment:
@@ -57,6 +61,8 @@ services:
     image: ghcr.io/go-waifubot/api:postgres
     restart: unless-stopped
     container_name: waifu_api
+    networks:
+      - default
     environment:
       API_PORT: 3333
       DB_NAME: ${DB_NAME}
@@ -66,5 +72,27 @@ services:
     ports:
       - 3333:3333
 
+  backup:
+    build:
+      context: ./
+      dockerfile: $PWD/dockerfile-otc
+    container_name: waifu_otc
+    networks:
+      - default
+    environment:
+      # PG variables
+      PGHOST: db
+      PGUSER: ${DB_USER}
+      PGPASSWORD: ${DB_PASS}
+      PGDATABASE: ${DB_NAME}
+
+      # OTC variables
+      SCHEDULE_LOOP: 25s
+      DROPBOX_TOKEN: ${DROPBOX_TOKEN}
+    command: c cmd -c pg_dump -a '-Fc -w' dropbox -f waifu.dump
+
 volumes:
   wdata:
+
+networks:
+  default:

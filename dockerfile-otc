@@ -1,0 +1,2 @@
+FROM ghcr.io/karitham/otc
+RUN apk add --no-cache postgresql-client
