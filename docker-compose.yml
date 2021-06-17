@@ -87,7 +87,7 @@ services:
       PGDATABASE: ${DB_NAME}
 
       # OTC variables
-      SCHEDULE_LOOP: 25s
+      SCHEDULE_LOOP: 15m
       DROPBOX_TOKEN: ${DROPBOX_TOKEN}
     command: c cmd -c pg_dump -a '-Fc -w' dropbox -f waifu.dump
 
