@@ -23,6 +23,7 @@ type Bot struct {
 	Me      *discord.User
 	conf    *config.ConfStruct
 	DB      db.Querier
+	giveMu  *sync.Mutex
 }
 
 // Start starts the bot, registers the command and updates its status
@@ -34,9 +35,10 @@ func Start(configuration *config.ConfStruct, db db.Querier) (func() error, error
 			ChanInc: make(map[discord.ChannelID]uint64),
 			Mutex:   new(sync.Mutex),
 		},
-		seed: rand.New(rand.NewSource(time.Now().UnixNano())),
-		conf: configuration,
-		DB:   db,
+		seed:   rand.New(rand.NewSource(time.Now().UnixNano())),
+		conf:   configuration,
+		DB:     db,
+		giveMu: new(sync.Mutex),
 	}
 
 	// Start the bot
@@ -86,7 +88,7 @@ func Start(configuration *config.ConfStruct, db db.Querier) (func() error, error
 			},
 		}
 
-		ctx.Session.Gateway.AddIntents(gateway.IntentGuildMessageReactions)
+		ctx.Gateway.AddIntents(gateway.IntentGuildMessageReactions)
 		ctx.AddHandler(func(m *gateway.MessageCreateEvent) {
 			// Filter bot message
 			if m.Author.Bot {
