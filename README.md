@@ -16,26 +16,26 @@ View your list at [waifugui.kar.moe](https://waifugui.kar.moe) and retrieve any 
 Help
 ---
 Commands
-claim|c|C string...: claim a dropped character
-favorite|f|F string...: set a char as favorite
-give|g|G int64 @user: give a char to a user
-help|h|H: display general help
-invite|i|I: send invite link
-list|l|L @user...: display user characters
-profile|p|P @user...: display user profile
-quote|q|Q string...: set profile quote
-roll|r|R: roll a random character
-verify|v|V int64 @user...: check if a user owns the waifu
+      claim|c|C string...: claim a dropped character
+      favorite|f|F string...: set a char as favorite
+      give|g|G int64 @user: give a char to a user
+      help|h|H: display general help
+      invite|i|I: send invite link
+      list|l|L @user...: display user characters
+      profile|p|P @user...: display user profile
+      quote|q|Q string...: set profile quote
+      roll|r|R: roll a random character
+      verify|v|V int64 @user...: check if a user owns the waifu
 ---
 Subcommands
-search|s: Search for characters, anime, manga and users
-search anime|a|A string...: search for an anime
-search character|c|C string...: search for a character
-search manga|m|M string...: search for a manga
-search user|u|U string...: search for an anilist user
-trending|t: View trending manga and anime
-trending anime: search for an anime
-trending manga: search for a manga
+      search|s: Search for characters, anime, manga and users
+            search anime|a|A string...: search for an anime
+            search character|c|C string...: search for a character
+            search manga|m|M string...: search for a manga
+            search user|u|U string...: search for an anilist user
+      trending|t: View trending manga and anime
+            trending anime: search for an anime
+            trending manga: search for a manga
 ```
 
 ## Feature Requests
