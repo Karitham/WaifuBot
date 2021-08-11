@@ -116,13 +116,24 @@ func (bot *Bot) Claim(m *gateway.MessageCreateEvent, name ...Name) (*discord.Emb
 
 	delete(bot.dropper.Waifu, m.ChannelID)
 
-	return &discord.Embed{
-		Title: "Claim successful",
-		URL:   char.Page.Characters[0].SiteURL,
-		Description: fmt.Sprintf(
+	// Check for a medium
+	var description string
+	if len(char.Page.Characters[0].Media.Nodes) > 0 {
+		description = fmt.Sprintf(
 			"Well done %s you claimed %d\nIt appears in :\n- %s",
 			m.Author.Username, char.Page.Characters[0].ID, char.Page.Characters[0].Media.Nodes[0].Title.Romaji,
-		),
+		)
+	} else {
+		description = fmt.Sprintf(
+			"Well done %s you claimed %d\nIt does not appear in any medium ¯\\_(ツ)_/¯",
+			m.Author.Username, char.Page.Characters[0].ID,
+		)
+	}
+
+	return &discord.Embed{
+		Title:       "Claim successful",
+		URL:         char.Page.Characters[0].SiteURL,
+		Description: description,
 		Thumbnail: &discord.EmbedThumbnail{
 			URL: char.Page.Characters[0].Image.Large,
 		},
