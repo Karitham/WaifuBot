@@ -1,0 +1,3 @@
+# Waifu Bot
+
+WIP REWRITE
