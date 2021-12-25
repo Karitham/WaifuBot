@@ -2,7 +2,6 @@ package discord
 
 import (
 	"database/sql"
-	"fmt"
 	"time"
 
 	"github.com/Karitham/WaifuBot/internal/anilist"
@@ -40,14 +39,14 @@ func (b *Bot) Roller(w corde.ResponseWriter, i *corde.Interaction) {
 	chars, err := b.Store.Characters(i.Member.User.ID)
 	if err != nil {
 		log.Err(err).Msg("error with db service")
-		ephemeral(w, "An error occurred dialing the database, please try again later")
+		w.Respond(corde.NewResp().Content("An error occurred dialing the database, please try again later").Ephemeral().B())
 		return
 	}
 
 	c, err := b.AnimeService.Random(IDs(chars))
 	if err != nil {
 		log.Err(err).Msg("error with anime service")
-		ephemeral(w, "An error getting a random character occurred, please try again later")
+		w.Respond(corde.NewResp().Content("An error getting a random character occurred, please try again later").Ephemeral().B())
 		return
 	}
 
@@ -60,33 +59,19 @@ func (b *Bot) Roller(w corde.ResponseWriter, i *corde.Interaction) {
 		ID:     int64(c.ID),
 	}); err != nil {
 		log.Err(err).Msg("error with db service")
-		ephemeral(w, "An error occurred dialing the database, please try again later")
+		w.Respond(corde.NewResp().Content("An error occurred dialing the database, please try again later").Ephemeral().B())
 		return
 	}
 
-	w.WithSource(&corde.InteractionRespData{
-		Embeds: []corde.Embed{{
-			Title:       c.Name.Full,
-			Description: fmt.Sprintf("You rolled %s.\nCongratulations!", c.Name.Full),
-			URL:         c.SiteURL,
-			Color:       anilist.Color,
-			Footer: corde.Footer{
-				IconURL: anilist.IconURL,
-				Text:    "View them on anilist",
-			},
-			Thumbnail: corde.Image{
-				URL: c.Image.Large,
-			},
-		}},
-	},
-	)
-}
-
-func ephemeral(w corde.ResponseWriter, message string) {
-	w.WithSource(&corde.InteractionRespData{
-		Content: message,
-		Flags:   corde.RESPONSE_FLAGS_EPHEMERAL,
-	})
+	w.Respond(corde.NewResp().Embeds(corde.NewEmbed().
+		Title(c.Name.Full).
+		URL(c.SiteURL).
+		Color(anilist.Color).
+		Footer(corde.Footer{IconURL: anilist.IconURL, Text: "View them on anilist"}).
+		Thumbnail(corde.Image{URL: c.Image.Large}).
+		Descriptionf("You rolled %s.\nCongratulations!", c.Name.Full).
+		B(),
+	).B())
 }
 
 func IDs(c []Character) []int {

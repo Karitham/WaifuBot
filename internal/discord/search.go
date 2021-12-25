@@ -16,21 +16,16 @@ type animeSearcher interface {
 }
 
 func (b *Bot) SearchAnime(w corde.ResponseWriter, i *corde.Interaction) {
-	search, ok := i.Data.Options["search"].(string)
-	if !ok {
-		ephemeral(w, "please provide a search term")
-	}
+	search := i.Data.Options.String("search")
 
 	anime, err := b.AnimeService.Anime(search)
 	if err != nil {
 		log.Err(err).Msg("error with anime service")
-		ephemeral(w, "Error searching for this anime, either it doesn't exist or something went wrong")
+		w.Respond(corde.NewResp().Content("Error searching for this anime, either it doesn't exist or something went wrong").Ephemeral().B())
 		return
 	}
 
-	w.WithSource(&corde.InteractionRespData{
-		Embeds: []corde.Embed{buildMediaEmbed(anime[0])},
-	})
+	w.Respond(corde.NewResp().Embeds(mediaEmbed(anime[0])).B())
 }
 
 type mangaSearcher interface {
@@ -38,22 +33,16 @@ type mangaSearcher interface {
 }
 
 func (b *Bot) SearchManga(w corde.ResponseWriter, i *corde.Interaction) {
-	search, ok := i.Data.Options["search"].(string)
-	if !ok {
-		ephemeral(w, "please provide a search term")
-		return
-	}
+	search := i.Data.Options.String("search")
 
 	manga, err := b.AnimeService.Manga(search)
 	if err != nil || len(manga) < 1 {
-		log.Err(err).Msg("error with anime service")
-		ephemeral(w, "Error searching for this manga, either it doesn't exist or something went wrong")
+		log.Err(err).Msg("error with manga service")
+		w.Respond(corde.NewResp().Content("Error searching for this manga, either it doesn't exist or something went wrong").Ephemeral().B())
 		return
 	}
 
-	w.WithSource(&corde.InteractionRespData{
-		Embeds: []corde.Embed{buildMediaEmbed(manga[0])},
-	})
+	w.Respond(corde.NewResp().Embeds(mediaEmbed(manga[0])).B())
 }
 
 type userSearcher interface {
@@ -61,22 +50,16 @@ type userSearcher interface {
 }
 
 func (b *Bot) SearchUser(w corde.ResponseWriter, i *corde.Interaction) {
-	search, ok := i.Data.Options["search"].(string)
-	if !ok {
-		ephemeral(w, "please provide a search term")
-		return
-	}
+	search := i.Data.Options.String("search")
 
 	user, err := b.AnimeService.User(search)
-	if err != nil && len(user) < 1 {
-		log.Err(err).Msg("error with anime service")
-		ephemeral(w, "Error searching for this user, either it doesn't exist or something went wrong")
+	if err != nil || len(user) < 1 {
+		log.Err(err).Msg("error with user service")
+		w.Respond(corde.NewResp().Content("Error searching for this user, either it doesn't exist or something went wrong").Ephemeral().B())
 		return
 	}
 
-	w.WithSource(&corde.InteractionRespData{
-		Embeds: []corde.Embed{buildUserEmbed(user[0])},
-	})
+	w.Respond(corde.NewResp().Embeds(userEmbed(user[0])).B())
 }
 
 type charSearcher interface {
@@ -84,70 +67,71 @@ type charSearcher interface {
 }
 
 func (b *Bot) SearchChar(w corde.ResponseWriter, i *corde.Interaction) {
-	search, ok := i.Data.Options["search"].(string)
-	if !ok {
-		ephemeral(w, "please provide a search term")
-		return
-	}
+	search := i.Data.Options.String("search")
 
 	char, err := b.AnimeService.Character(search)
 	if err != nil || len(char) < 1 {
-		log.Err(err).Msg("error with anime service")
-		ephemeral(w, "Error searching for this character, either it doesn't exist or something went wrong")
+		log.Err(err).Msg("error with char service")
+		w.Respond(corde.NewResp().Content("Error searching for this character, either it doesn't exist or something went wrong").Ephemeral().B())
 		return
 	}
 
-	w.WithSource(&corde.InteractionRespData{
-		Embeds: []corde.Embed{buildCharEmbed(char[0])},
+	w.Respond(corde.NewResp().Embeds(charEmbed(char[0])).B())
+}
+
+func mediaEmbed(m anilist.Media) corde.Embed {
+	return applyEmbedOpt(corde.NewEmbed().
+		Title(FixString(m.Title.Romaji)).
+		URL(m.Siteurl).
+		Color(ColorToInt(m.CoverImage.Color)).
+		Image(corde.Image{URL: m.BannerImage}).
+		Thumbnail(corde.Image{URL: m.CoverImage.Large}),
+
+		description(m.Description),
+		anilistFooter,
+	).B()
+}
+
+func userEmbed(u anilist.User) corde.Embed {
+	return applyEmbedOpt(corde.NewEmbed().
+		Title(FixString(u.Name)).
+		URL(u.Siteurl).
+		Color(anilist.Color).
+		Image(corde.Image{URL: fmt.Sprintf("https://img.anili.st/user/%d", u.ID)}),
+
+		description(u.About),
+		anilistFooter,
+	).B()
+}
+
+func charEmbed(c anilist.Character) corde.Embed {
+	return applyEmbedOpt(corde.NewEmbed().
+		Title(FixString(c.Name.Full)).
+		Color(anilist.Color).
+		URL(c.SiteURL).
+		Thumbnail(corde.Image{URL: c.Image.Large}),
+
+		description(c.Description),
+		anilistFooter,
+	).B()
+}
+
+func anilistFooter(b *corde.EmbedB) *corde.EmbedB {
+	return b.Footer(corde.Footer{
+		Text:    "View on anilist",
+		IconURL: anilist.IconURL,
 	})
 }
 
-func buildMediaEmbed(m anilist.Media) corde.Embed {
-	return corde.Embed{
-		Title:       FixString(m.Title.Romaji),
-		Description: Sanitize(m.Description),
-		URL:         m.Siteurl,
-		Thumbnail:   corde.Image{URL: m.CoverImage.Large},
-		Color:       ColorToInt(m.CoverImage.Color),
-		Footer: corde.Footer{
-			Text:    "View on anilist",
-			IconURL: anilist.IconURL,
-		},
-		Image: corde.Image{URL: m.BannerImage},
-	}
+func description(d string) func(*corde.EmbedB) *corde.EmbedB {
+	return func(b *corde.EmbedB) *corde.EmbedB { return b.Description(Sanitize(d)) }
 }
 
-func buildUserEmbed(u anilist.User) corde.Embed {
-	return corde.Embed{
-		Title:       u.Name,
-		Description: Sanitize(u.About),
-		URL:         u.Siteurl,
-		Thumbnail:   corde.Image{URL: u.Avatar.Large},
-		// Anilist blue
-		Color: anilist.Color,
-		Footer: corde.Footer{
-			Text:    "View on anilist",
-			IconURL: anilist.IconURL,
-		},
-		Image: corde.Image{
-			URL: fmt.Sprintf("https://img.anili.st/user/%d", u.ID),
-		},
+func applyEmbedOpt(b *corde.EmbedB, opts ...func(*corde.EmbedB) *corde.EmbedB) *corde.EmbedB {
+	for _, opt := range opts {
+		b = opt(b)
 	}
-}
-
-func buildCharEmbed(c anilist.Character) corde.Embed {
-	return corde.Embed{
-		Title:       FixString(c.Name.Full),
-		Description: Sanitize(c.Description),
-		URL:         c.SiteURL,
-		Thumbnail:   corde.Image{URL: c.Image.Large},
-		// Anilist blue
-		Color: anilist.Color,
-		Footer: corde.Footer{
-			Text:    "View on anilist",
-			IconURL: anilist.IconURL,
-		},
-	}
+	return b
 }
 
 // SanitizeHTML removes all HTML tags from the given string.

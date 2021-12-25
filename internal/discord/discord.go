@@ -19,6 +19,7 @@ type AnimeService interface {
 
 type Bot struct {
 	mux          *corde.Mux
+	listState    listState
 	Store        Store
 	AnimeService AnimeService
 	AppID        corde.Snowflake
@@ -32,23 +33,21 @@ func Run(b *Bot) {
 	mux := corde.NewMux(b.PublicKey, b.AppID, b.BotToken)
 
 	for _, c := range commands {
-		err := mux.RegisterCommand(c, corde.Guild(b.GuildID))
+		err := mux.RegisterCommand(c, corde.GuildOpt(b.GuildID))
 		if err != nil {
 			log.Err(err).Msg("error creating command")
 		}
 	}
 
-	mux.SetRoute(appCommand("roll"), b.Roller)
-	mux.SetRoute(appCommand("search/char"), b.SearchChar)
-	mux.SetRoute(appCommand("search/user"), b.SearchUser)
-	mux.SetRoute(appCommand("search/manga"), b.SearchManga)
-	mux.SetRoute(appCommand("search/anime"), b.SearchAnime)
-	mux.SetRoute(appCommand("list"), b.List)
+	mux.Command("roll", b.Roller)
+	mux.Command("search/char", b.SearchChar)
+	mux.Command("search/user", b.SearchUser)
+	mux.Command("search/manga", b.SearchManga)
+	mux.Command("search/anime", b.SearchAnime)
+	mux.Command("list", b.List())
+	mux.Button("list/back", b.listBack)
+	mux.Button("list/next", b.listNext)
 
 	log.Info().Msg("Gateway connected")
 	mux.ListenAndServe(":8070")
-}
-
-func appCommand(route string) corde.InteractionCommand {
-	return corde.InteractionCommand{Type: corde.APPLICATION_COMMAND, Route: route}
 }

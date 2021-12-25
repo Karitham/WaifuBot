@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	Color   = 0x19212d
+	Color   = 0x02a9ff
 	IconURL = "https://anilist.co/img/icons/favicon-32x32.png"
 )
 
