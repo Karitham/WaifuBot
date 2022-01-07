@@ -35,18 +35,18 @@ type User struct {
 	ID       int32           `json:"id"`
 }
 
-func (b *Bot) Roller(w corde.ResponseWriter, i *corde.Interaction) {
+func (b *Bot) roll(w corde.ResponseWriter, i *corde.InteractionRequest) {
 	chars, err := b.Store.Characters(i.Member.User.ID)
 	if err != nil {
 		log.Err(err).Msg("error with db service")
-		w.Respond(corde.NewResp().Content("An error occurred dialing the database, please try again later").Ephemeral().B())
+		w.Respond(corde.NewResp().Content("An error occurred dialing the database, please try again later").Ephemeral())
 		return
 	}
 
 	c, err := b.AnimeService.Random(IDs(chars))
 	if err != nil {
 		log.Err(err).Msg("error with anime service")
-		w.Respond(corde.NewResp().Content("An error getting a random character occurred, please try again later").Ephemeral().B())
+		w.Respond(corde.NewResp().Content("An error getting a random character occurred, please try again later").Ephemeral())
 		return
 	}
 
@@ -59,19 +59,18 @@ func (b *Bot) Roller(w corde.ResponseWriter, i *corde.Interaction) {
 		ID:     int64(c.ID),
 	}); err != nil {
 		log.Err(err).Msg("error with db service")
-		w.Respond(corde.NewResp().Content("An error occurred dialing the database, please try again later").Ephemeral().B())
+		w.Respond(corde.NewResp().Content("An error occurred dialing the database, please try again later").Ephemeral())
 		return
 	}
 
-	w.Respond(corde.NewResp().Embeds(corde.NewEmbed().
+	w.Respond(corde.NewEmbed().
 		Title(c.Name.Full).
 		URL(c.SiteURL).
 		Color(anilist.Color).
 		Footer(corde.Footer{IconURL: anilist.IconURL, Text: "View them on anilist"}).
 		Thumbnail(corde.Image{URL: c.Image.Large}).
-		Descriptionf("You rolled %s.\nCongratulations!", c.Name.Full).
-		B(),
-	).B())
+		Descriptionf("You rolled %s.\nCongratulations!", c.Name.Full),
+	)
 }
 
 func IDs(c []Character) []int {

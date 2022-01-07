@@ -11,75 +11,82 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+func (b *Bot) search(m *corde.Mux) {
+	m.Command("char", b.SearchChar)
+	m.Command("user", b.SearchUser)
+	m.Command("manga", b.SearchManga)
+	m.Command("anime", b.SearchAnime)
+}
+
 type animeSearcher interface {
 	Anime(string) ([]anilist.Media, error)
 }
 
-func (b *Bot) SearchAnime(w corde.ResponseWriter, i *corde.Interaction) {
-	search := i.Data.Options.String("search")
+func (b *Bot) SearchAnime(w corde.ResponseWriter, i *corde.InteractionRequest) {
+	search := i.Data.Options.String("name")
 
 	anime, err := b.AnimeService.Anime(search)
 	if err != nil {
 		log.Err(err).Msg("error with anime service")
-		w.Respond(corde.NewResp().Content("Error searching for this anime, either it doesn't exist or something went wrong").Ephemeral().B())
+		w.Respond(corde.NewResp().Content("Error searching for this anime, either it doesn't exist or something went wrong").Ephemeral())
 		return
 	}
 
-	w.Respond(corde.NewResp().Embeds(mediaEmbed(anime[0])).B())
+	w.Respond(mediaEmbed(anime[0]))
 }
 
 type mangaSearcher interface {
 	Manga(string) ([]anilist.Media, error)
 }
 
-func (b *Bot) SearchManga(w corde.ResponseWriter, i *corde.Interaction) {
-	search := i.Data.Options.String("search")
+func (b *Bot) SearchManga(w corde.ResponseWriter, i *corde.InteractionRequest) {
+	search := i.Data.Options.String("name")
 
 	manga, err := b.AnimeService.Manga(search)
 	if err != nil || len(manga) < 1 {
 		log.Err(err).Msg("error with manga service")
-		w.Respond(corde.NewResp().Content("Error searching for this manga, either it doesn't exist or something went wrong").Ephemeral().B())
+		w.Respond(corde.NewResp().Content("Error searching for this manga, either it doesn't exist or something went wrong").Ephemeral())
 		return
 	}
 
-	w.Respond(corde.NewResp().Embeds(mediaEmbed(manga[0])).B())
+	w.Respond(mediaEmbed(manga[0]))
 }
 
 type userSearcher interface {
 	User(string) ([]anilist.User, error)
 }
 
-func (b *Bot) SearchUser(w corde.ResponseWriter, i *corde.Interaction) {
-	search := i.Data.Options.String("search")
+func (b *Bot) SearchUser(w corde.ResponseWriter, i *corde.InteractionRequest) {
+	search := i.Data.Options.String("name")
 
 	user, err := b.AnimeService.User(search)
 	if err != nil || len(user) < 1 {
 		log.Err(err).Msg("error with user service")
-		w.Respond(corde.NewResp().Content("Error searching for this user, either it doesn't exist or something went wrong").Ephemeral().B())
+		w.Respond(corde.NewResp().Content("Error searching for this user, either it doesn't exist or something went wrong").Ephemeral())
 		return
 	}
 
-	w.Respond(corde.NewResp().Embeds(userEmbed(user[0])).B())
+	w.Respond(userEmbed(user[0]))
 }
 
 type charSearcher interface {
 	Character(string) ([]anilist.Character, error)
 }
 
-func (b *Bot) SearchChar(w corde.ResponseWriter, i *corde.Interaction) {
-	search := i.Data.Options.String("search")
+func (b *Bot) SearchChar(w corde.ResponseWriter, i *corde.InteractionRequest) {
+	search := i.Data.Options.String("name")
 
 	char, err := b.AnimeService.Character(search)
 	if err != nil || len(char) < 1 {
 		log.Err(err).Msg("error with char service")
-		w.Respond(corde.NewResp().Content("Error searching for this character, either it doesn't exist or something went wrong").Ephemeral().B())
+		w.Respond(corde.NewResp().Content("Error searching for this character, either it doesn't exist or something went wrong").Ephemeral())
 		return
 	}
 
-	w.Respond(corde.NewResp().Embeds(charEmbed(char[0])).B())
+	w.Respond(charEmbed(char[0]))
 }
 
-func mediaEmbed(m anilist.Media) corde.Embed {
+func mediaEmbed(m anilist.Media) *corde.EmbedB {
 	return applyEmbedOpt(corde.NewEmbed().
 		Title(FixString(m.Title.Romaji)).
 		URL(m.Siteurl).
@@ -89,10 +96,10 @@ func mediaEmbed(m anilist.Media) corde.Embed {
 
 		description(m.Description),
 		anilistFooter,
-	).B()
+	)
 }
 
-func userEmbed(u anilist.User) corde.Embed {
+func userEmbed(u anilist.User) *corde.EmbedB {
 	return applyEmbedOpt(corde.NewEmbed().
 		Title(FixString(u.Name)).
 		URL(u.Siteurl).
@@ -101,10 +108,10 @@ func userEmbed(u anilist.User) corde.Embed {
 
 		description(u.About),
 		anilistFooter,
-	).B()
+	)
 }
 
-func charEmbed(c anilist.Character) corde.Embed {
+func charEmbed(c anilist.Character) *corde.EmbedB {
 	return applyEmbedOpt(corde.NewEmbed().
 		Title(FixString(c.Name.Full)).
 		Color(anilist.Color).
@@ -113,7 +120,7 @@ func charEmbed(c anilist.Character) corde.Embed {
 
 		description(c.Description),
 		anilistFooter,
-	).B()
+	)
 }
 
 func anilistFooter(b *corde.EmbedB) *corde.EmbedB {
@@ -153,8 +160,8 @@ func FixString(s string) string {
 
 // ColorToInt
 // Turn an hex color string beginning with a # into a uint32 representing a color.
-func ColorToInt(s string) int64 {
+func ColorToInt(s string) uint32 {
 	s = strings.Trim(s, "#")
-	u, _ := strconv.ParseInt(s, 16, 64)
-	return u
+	u, _ := strconv.ParseUint(s, 16, 32)
+	return uint32(u)
 }

@@ -1,5 +1,5 @@
-github.com/Karitham/corde v0.4.1 h1:ncGqwFhfIm9DLZoNTu4GtfxqAXtiq3RoXJxMxQi0k9E=
-github.com/Karitham/corde v0.4.1/go.mod h1:bFyB5SHqrrSu2a7KBnhsaOCyuU/7eXlbovbz0EjebuI=
+github.com/Karitham/corde v0.6.0 h1:T5uDKLCzIeiaWM42VbVMCav8qlp3i7H1QO5X0SO57lE=
+github.com/Karitham/corde v0.6.0/go.mod h1:37EsBl0rfe6S3+vsWzkUaYRxLw5iVguX2hMC5PbGCkc=
 github.com/akrennmair/go-radix v1.0.1-0.20211215212324-49d05194b0a3 h1:cC+usowX2qUArGE+BauZSn2qCxHqBXhBmA3CkFMULBg=
 github.com/akrennmair/go-radix v1.0.1-0.20211215212324-49d05194b0a3/go.mod h1:YPJ4C/zdh9bNuHZCccyEX3xnq7vtjMw2Lu8RgBohgRk=
 github.com/coreos/go-systemd/v22 v22.3.2/go.mod h1:Y58oyj3AT4RCenI/lSvhwexgC+NSVTIJ3seZv2GcEnc=
@@ -11,7 +11,6 @@ github.com/joho/godotenv v1.4.0/go.mod h1:f4LDr5Voq0i2e/R5DDNOoa2zzDfwtkZa6DnEwA
 github.com/machinebox/graphql v0.2.2 h1:dWKpJligYKhYKO5A2gvNhkJdQMNZeChZYyBbrZkBZfo=
 github.com/machinebox/graphql v0.2.2/go.mod h1:F+kbVMHuwrQ5tYgU9JXlnskM8nOaFxCAEolaQybkjWA=
 github.com/matryer/is v1.4.0 h1:sosSmIWwkYITGrxZ25ULNDeKiMNzFSr4V/eqBQP0PeE=
-github.com/matryer/is v1.4.0/go.mod h1:8I/i5uYgLzgsgEloJE1U6xx5HkBQpAZvepWuujKwMRU=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
 github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/rs/xid v1.3.0/go.mod h1:trrq9SKmegXys3aeAKXMUTdJsYXVwGY3RLcfgqegfbg=

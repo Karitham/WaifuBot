@@ -40,7 +40,13 @@ var btnNext = corde.Component{
 	CustomID: "list/next",
 }
 
-func (b *Bot) List() func(w corde.ResponseWriter, i *corde.Interaction) {
+func (b *Bot) list(m *corde.Mux) {
+	m.Command("", b.listCommand())
+	m.Button("back", b.listBack)
+	m.Button("next", b.listNext)
+}
+
+func (b *Bot) listCommand() func(w corde.ResponseWriter, i *corde.InteractionRequest) {
 	b.listState.state = make(map[corde.Snowflake]pageState)
 	// Garbage collector
 	go func() {
@@ -57,7 +63,7 @@ func (b *Bot) List() func(w corde.ResponseWriter, i *corde.Interaction) {
 		}
 	}()
 
-	return func(w corde.ResponseWriter, i *corde.Interaction) {
+	return func(w corde.ResponseWriter, i *corde.InteractionRequest) {
 		u := i.Member.User.ID
 		name := i.Member.User.Username
 
@@ -68,12 +74,12 @@ func (b *Bot) List() func(w corde.ResponseWriter, i *corde.Interaction) {
 
 		chars, err := b.Store.Characters(u)
 		if err != nil {
-			w.Respond(corde.NewResp().Content("An error occurred dialing the database, please try again later").Ephemeral().B())
+			w.Respond(corde.NewResp().Content("An error occurred dialing the database, please try again later").Ephemeral())
 			return
 		}
 
 		if len(chars) == 0 {
-			w.Respond(corde.NewResp().Content("This user doesn't appear to have any characters").Ephemeral().B())
+			w.Respond(corde.NewResp().Content("This user doesn't appear to have any characters").Ephemeral())
 			return
 		}
 
@@ -92,13 +98,12 @@ func (b *Bot) List() func(w corde.ResponseWriter, i *corde.Interaction) {
 
 		w.Respond(corde.NewResp().
 			Embeds(listEmbed(name, c)).
-			ActionRow(setCustomID(i.ID.String(), btnBack, btnNext)...).
-			B(),
+			ActionRow(setCustomID(i.ID.String(), btnBack, btnNext)...),
 		)
 	}
 }
 
-func (b *Bot) listNext(w corde.ResponseWriter, i *corde.Interaction) {
+func (b *Bot) listNext(w corde.ResponseWriter, i *corde.InteractionRequest) {
 	b.listState.mu.Lock()
 	defer b.listState.mu.Unlock()
 
@@ -107,12 +112,12 @@ func (b *Bot) listNext(w corde.ResponseWriter, i *corde.Interaction) {
 
 	chars, err := b.Store.Characters(s.userID)
 	if err != nil {
-		w.Update(corde.NewResp().Content("An error occurred dialing the database, please try again later").Ephemeral().B())
+		w.Update(corde.NewResp().Content("An error occurred dialing the database, please try again later").Ephemeral())
 		return
 	}
 
 	if len(chars) == 0 {
-		w.Update(corde.NewResp().Content("No characters found").Ephemeral().B())
+		w.Update(corde.NewResp().Content("No characters found").Ephemeral())
 		return
 	}
 
@@ -127,12 +132,11 @@ func (b *Bot) listNext(w corde.ResponseWriter, i *corde.Interaction) {
 
 	w.Update(corde.NewResp().
 		Embeds(listEmbed(s.user, c)).
-		ActionRow(setCustomID(id.String(), btnBack, btnNext)...).
-		B(),
+		ActionRow(setCustomID(id.String(), btnBack, btnNext)...),
 	)
 }
 
-func (b *Bot) listBack(w corde.ResponseWriter, i *corde.Interaction) {
+func (b *Bot) listBack(w corde.ResponseWriter, i *corde.InteractionRequest) {
 	b.listState.mu.Lock()
 	defer b.listState.mu.Unlock()
 
@@ -141,12 +145,12 @@ func (b *Bot) listBack(w corde.ResponseWriter, i *corde.Interaction) {
 
 	chars, err := b.Store.Characters(s.userID)
 	if err != nil {
-		w.Update(corde.NewResp().Content("An error occurred dialing the database, please try again later").Ephemeral().B())
+		w.Update(corde.NewResp().Content("An error occurred dialing the database, please try again later").Ephemeral())
 		return
 	}
 
 	if len(chars) == 0 {
-		w.Update(corde.NewResp().Content("No characters found").Ephemeral().B())
+		w.Update(corde.NewResp().Content("No characters found").Ephemeral())
 		return
 	}
 
@@ -161,8 +165,7 @@ func (b *Bot) listBack(w corde.ResponseWriter, i *corde.Interaction) {
 
 	w.Update(corde.NewResp().
 		Embeds(listEmbed(s.user, c)).
-		ActionRow(setCustomID(id.String(), btnBack, btnNext)...).
-		B(),
+		ActionRow(setCustomID(id.String(), btnBack, btnNext)...),
 	)
 }
 
@@ -183,12 +186,11 @@ func getMessageID(customID string) corde.Snowflake {
 	return corde.SnowflakeFromString(s[len(s)-1])
 }
 
-func listEmbed(name string, chars []Character) corde.Embed {
+func listEmbed(name string, chars []Character) *corde.EmbedB {
 	return corde.NewEmbed().
 		Titlef("%s's List", name).
 		Color(anilist.Color).
-		Fields(list(chars)...).
-		B()
+		Fields(list(chars)...)
 }
 
 func list(chars []Character) []corde.Field {

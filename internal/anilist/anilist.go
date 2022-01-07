@@ -25,7 +25,7 @@ func New() *Anilist {
 	return &Anilist{
 		URL:      graphURL,
 		c:        graphql.NewClient(graphURL),
-		MaxChars: 80_000,
+		MaxChars: 100_000,
 		seed:     rand.New(rand.NewSource(time.Now().Unix())),
 	}
 }
