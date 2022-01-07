@@ -1,4 +1,7 @@
 FROM golang:1.18beta1-alpine as builder
+
+RUN apk add git
+
 WORKDIR /build
 
 # For Cache
