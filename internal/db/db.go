@@ -31,6 +31,9 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.getCharsStmt, err = db.PrepareContext(ctx, getChars); err != nil {
 		return nil, fmt.Errorf("error preparing query getChars: %w", err)
 	}
+	if q.getCharsWhoseIDStartWithStmt, err = db.PrepareContext(ctx, getCharsWhoseIDStartWith); err != nil {
+		return nil, fmt.Errorf("error preparing query getCharsWhoseIDStartWith: %w", err)
+	}
 	if q.getProfileStmt, err = db.PrepareContext(ctx, getProfile); err != nil {
 		return nil, fmt.Errorf("error preparing query getProfile: %w", err)
 	}
@@ -61,6 +64,11 @@ func (q *Queries) Close() error {
 	if q.getCharsStmt != nil {
 		if cerr := q.getCharsStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing getCharsStmt: %w", cerr)
+		}
+	}
+	if q.getCharsWhoseIDStartWithStmt != nil {
+		if cerr := q.getCharsWhoseIDStartWithStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getCharsWhoseIDStartWithStmt: %w", cerr)
 		}
 	}
 	if q.getProfileStmt != nil {
@@ -120,27 +128,29 @@ func (q *Queries) queryRow(ctx context.Context, stmt *sql.Stmt, query string, ar
 }
 
 type Queries struct {
-	db             DBTX
-	tx             *sql.Tx
-	createUserStmt *sql.Stmt
-	getCharStmt    *sql.Stmt
-	getCharsStmt   *sql.Stmt
-	getProfileStmt *sql.Stmt
-	getUserStmt    *sql.Stmt
-	giveCharStmt   *sql.Stmt
-	insertCharStmt *sql.Stmt
+	db                           DBTX
+	tx                           *sql.Tx
+	createUserStmt               *sql.Stmt
+	getCharStmt                  *sql.Stmt
+	getCharsStmt                 *sql.Stmt
+	getCharsWhoseIDStartWithStmt *sql.Stmt
+	getProfileStmt               *sql.Stmt
+	getUserStmt                  *sql.Stmt
+	giveCharStmt                 *sql.Stmt
+	insertCharStmt               *sql.Stmt
 }
 
 func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 	return &Queries{
-		db:             tx,
-		tx:             tx,
-		createUserStmt: q.createUserStmt,
-		getCharStmt:    q.getCharStmt,
-		getCharsStmt:   q.getCharsStmt,
-		getProfileStmt: q.getProfileStmt,
-		getUserStmt:    q.getUserStmt,
-		giveCharStmt:   q.giveCharStmt,
-		insertCharStmt: q.insertCharStmt,
+		db:                           tx,
+		tx:                           tx,
+		createUserStmt:               q.createUserStmt,
+		getCharStmt:                  q.getCharStmt,
+		getCharsStmt:                 q.getCharsStmt,
+		getCharsWhoseIDStartWithStmt: q.getCharsWhoseIDStartWithStmt,
+		getProfileStmt:               q.getProfileStmt,
+		getUserStmt:                  q.getUserStmt,
+		giveCharStmt:                 q.giveCharStmt,
+		insertCharStmt:               q.insertCharStmt,
 	}
 }

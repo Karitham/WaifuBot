@@ -17,11 +17,13 @@ import (
 //go:generate sqlc generate -f ./internal/sqlc.yaml
 
 func main() {
-	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
-	log.Logger = log.Level(zerolog.TraceLevel)
-
 	//nolint:errcheck
 	godotenv.Load()
+
+	log.Logger = log.Level(zerolog.TraceLevel)
+	if os.Getenv("ENV") == "dev" {
+		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+	}
 	token := os.Getenv("BOT_TOKEN")
 	publicKey := os.Getenv("PUBLIC_KEY")
 	port := os.Getenv("PORT")

@@ -17,6 +17,16 @@ var searchCmd = corde.NewSlashCommand("search", "search for anything on anilist"
 	corde.NewSubcommand("user", "search for a user", nameOpt),
 )
 
-var profileCmd = corde.NewSlashCommand("profile", "view a user's profile",
-	corde.NewUserOption("user", "user to view profile for", false),
+var profileCmd = corde.NewSlashCommand("profile", "interact with your profile or view someone else's",
+	corde.NewSubcommand("view", "view a user's profile",
+		corde.NewUserOption("user", "user to view profile for", false),
+	),
+	corde.NewSubcommandGroup("edit", "edit your profile",
+		corde.NewSubcommand("favorite", "set your favorite character",
+			corde.NewIntOption("id", "id of the character", true).CanAutocomplete(),
+		),
+		corde.NewSubcommand("quote", "set your quote",
+			corde.NewStringOption("value", "quote value to set", true),
+		),
+	),
 )

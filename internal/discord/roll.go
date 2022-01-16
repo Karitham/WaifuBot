@@ -10,7 +10,7 @@ import (
 )
 
 type randomCharGetter interface {
-	RandomChar(notIn ...int) (anilist.Character, error)
+	RandomChar(notIn ...int) (anilist.CharAndMedia, error)
 }
 
 type Character struct {
@@ -31,7 +31,7 @@ type User struct {
 }
 
 func (b *Bot) roll(w corde.ResponseWriter, i *corde.InteractionRequest) {
-	var char anilist.Character
+	var char anilist.CharAndMedia
 
 	if err := b.Store.Tx(func(s Store) error {
 		user, err := s.User(i.Context, i.Member.User.ID)
@@ -109,10 +109,9 @@ func (b *Bot) roll(w corde.ResponseWriter, i *corde.InteractionRequest) {
 	w.Respond(corde.NewEmbed().
 		Title(char.Name.Full).
 		URL(char.SiteURL).
-		Color(anilist.Color).
 		Footer(corde.Footer{IconURL: anilist.IconURL, Text: "View them on anilist"}).
 		Thumbnail(corde.Image{URL: char.Image.Large}).
-		Descriptionf("You rolled %s.\nCongratulations!", char.Name.Full),
+		Descriptionf("You rolled %s\nIt appears in :\n- %s", char.Name.Full, char.MediaTitle),
 	)
 }
 

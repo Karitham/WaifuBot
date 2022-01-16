@@ -7,10 +7,27 @@ import (
 	"github.com/machinebox/graphql"
 )
 
-func (a *Anilist) RandomChar(notIn ...int) (Character, error) {
+// CharAndMedia represent character object
+type CharAndMedia struct {
+	Character
+	MediaTitle string
+}
+
+func (a *Anilist) RandomChar(notIn ...int) (CharAndMedia, error) {
+	type CharNMediaTmp struct {
+		Character
+		Media struct {
+			Nodes []struct {
+				Title struct {
+					Romaji string `json:"romaji"`
+				}
+			}
+		}
+	}
+
 	var q struct {
 		Page struct {
-			Characters []Character `json:"characters"`
+			Characters []CharNMediaTmp `json:"characters"`
 		} `json:"Page"`
 	}
 
@@ -43,11 +60,19 @@ func (a *Anilist) RandomChar(notIn ...int) (Character, error) {
 
 	err := a.c.Run(context.Background(), req, &q)
 	if err != nil {
-		return Character{}, err
+		return CharAndMedia{}, err
 	}
 	if len(q.Page.Characters) < 1 {
-		return Character{}, errors.New("no characters found")
+		return CharAndMedia{}, errors.New("no characters found")
 	}
 
-	return q.Page.Characters[0], nil
+	media := ""
+	if len(q.Page.Characters[0].Media.Nodes) > 0 {
+		media = q.Page.Characters[0].Media.Nodes[0].Title.Romaji
+	}
+
+	return CharAndMedia{
+		Character:  q.Page.Characters[0].Character,
+		MediaTitle: media,
+	}, nil
 }

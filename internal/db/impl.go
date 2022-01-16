@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"strings"
 	"time"
 
 	"github.com/Karitham/WaifuBot/internal/discord"
@@ -23,7 +24,7 @@ func (q *Queries) PutChar(ctx context.Context, userID corde.Snowflake, c discord
 		ID:     c.ID,
 		UserID: uint64(c.UserID),
 		Image:  c.Image,
-		Name:   c.Name,
+		Name:   strings.Join(strings.Fields(c.Name), " "),
 		Type:   c.Type,
 	}
 
@@ -104,7 +105,7 @@ func (q *Queries) updateUser(ctx context.Context, userID corde.Snowflake, opts .
 }
 
 // withFavorite sets user favorite
-func withFav(f int) func(*squirrel.UpdateBuilder) {
+func withFav(f int64) func(*squirrel.UpdateBuilder) {
 	return func(s *squirrel.UpdateBuilder) {
 		*s = s.Set("favorite", f)
 	}
@@ -139,6 +140,43 @@ func (q *Queries) SetUserDate(ctx context.Context, userID corde.Snowflake, d tim
 // SetUserToken sets the user's token
 func (q *Queries) SetUserToken(ctx context.Context, userID corde.Snowflake, token string) error {
 	return q.updateUser(ctx, userID, withToken(token))
+}
+
+// SetUserFavorite sets the user's favorite
+func (q *Queries) SetUserFavorite(ctx context.Context, userID corde.Snowflake, c int64) error {
+	return q.updateUser(ctx, userID, withFav(c))
+}
+
+// SetUserQuote sets the user's quote
+func (q *Queries) SetUserQuote(ctx context.Context, userID corde.Snowflake, quote string) error {
+	return q.updateUser(ctx, userID, withQuote(quote))
+}
+
+// CharsStartingWith returns characters starting with the given string
+func (q *Queries) CharsStartingWith(ctx context.Context, userID corde.Snowflake, s string) ([]discord.Character, error) {
+	dbchs, err := q.getCharsWhoseIDStartWith(ctx, getCharsWhoseIDStartWithParams{
+		UserID:  uint64(userID),
+		Lim:     50,
+		Off:     0,
+		LikeStr: s + "%",
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	chars := make([]discord.Character, 0, len(dbchs))
+	for _, c := range dbchs {
+		chars = append(chars, discord.Character{
+			Date:   c.Date,
+			Image:  c.Image,
+			Name:   c.Name,
+			Type:   c.Type,
+			UserID: corde.Snowflake(c.UserID),
+			ID:     c.ID,
+		})
+	}
+
+	return chars, nil
 }
 
 // Profile returns the user's profile

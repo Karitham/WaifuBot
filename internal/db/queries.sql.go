@@ -89,6 +89,57 @@ func (q *Queries) getChars(ctx context.Context, arg getCharsParams) ([]Character
 	return items, nil
 }
 
+const getCharsWhoseIDStartWith = `-- name: getCharsWhoseIDStartWith :many
+SELECT user_id, id, image, name, date, type
+FROM characters
+WHERE characters.user_id = $1
+    AND characters.id::varchar LIKE $2::string
+ORDER BY characters.date DESC
+LIMIT $4 OFFSET $3
+`
+
+type getCharsWhoseIDStartWithParams struct {
+	UserID  uint64 `json:"user_id"`
+	LikeStr string `json:"like_str"`
+	Off     int32  `json:"off"`
+	Lim     int32  `json:"lim"`
+}
+
+func (q *Queries) getCharsWhoseIDStartWith(ctx context.Context, arg getCharsWhoseIDStartWithParams) ([]Character, error) {
+	rows, err := q.query(ctx, q.getCharsWhoseIDStartWithStmt, getCharsWhoseIDStartWith,
+		arg.UserID,
+		arg.LikeStr,
+		arg.Off,
+		arg.Lim,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Character
+	for rows.Next() {
+		var i Character
+		if err := rows.Scan(
+			&i.UserID,
+			&i.ID,
+			&i.Image,
+			&i.Name,
+			&i.Date,
+			&i.Type,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getProfile = `-- name: getProfile :one
 SELECT characters.image as favorite_image,
     characters.name as favorite_name,

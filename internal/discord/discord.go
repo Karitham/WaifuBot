@@ -13,9 +13,12 @@ import (
 type Store interface {
 	PutChar(context.Context, corde.Snowflake, Character) error
 	Chars(context.Context, corde.Snowflake) ([]Character, error)
+	CharsStartingWith(context.Context, corde.Snowflake, string) ([]Character, error)
 	User(context.Context, corde.Snowflake) (User, error)
 	Profile(context.Context, corde.Snowflake) (Profile, error)
 	SetUserDate(context.Context, corde.Snowflake, time.Time) error
+	SetUserFavorite(context.Context, corde.Snowflake, int64) error
+	SetUserQuote(context.Context, corde.Snowflake, string) error
 	Tx(fn func(s Store) error) error
 }
 
@@ -55,9 +58,9 @@ func New(b *Bot) *corde.Mux {
 	}
 
 	b.mux.Route("search", b.search)
+	b.mux.Route("profile", b.profile)
 	b.mux.Command("list", trace(b.list))
 	b.mux.Command("roll", trace(b.roll))
-	b.mux.Command("profile", trace(b.profile))
 
 	return b.mux
 }
@@ -114,8 +117,8 @@ func remove[T any](s []T, i int) []T {
 func trace(next corde.Handler) corde.Handler {
 	return func(w corde.ResponseWriter, i *corde.InteractionRequest) {
 		start := time.Now()
-		defer log.Trace().Stringer("user", i.Member.User.ID).TimeDiff("took", time.Now(), start).Msg(i.Data.Name)
 
 		next(w, i)
+		log.Trace().Str("route", i.Data.Name).Stringer("user", i.Member.User.ID).Int("type", int(i.Type)).Dur("took", time.Since(start)).Send()
 	}
 }
