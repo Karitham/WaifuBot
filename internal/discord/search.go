@@ -12,10 +12,10 @@ import (
 )
 
 func (b *Bot) search(m *corde.Mux) {
-	m.Command("char", b.SearchChar)
-	m.Command("user", b.SearchUser)
-	m.Command("manga", b.SearchManga)
-	m.Command("anime", b.SearchAnime)
+	m.Command("char", trace(b.SearchChar))
+	m.Command("user", trace(b.SearchUser))
+	m.Command("manga", trace(b.SearchManga))
+	m.Command("anime", trace(b.SearchAnime))
 }
 
 type animeSearcher interface {
@@ -23,7 +23,7 @@ type animeSearcher interface {
 }
 
 func (b *Bot) SearchAnime(w corde.ResponseWriter, i *corde.InteractionRequest) {
-	search := i.Data.Options.String("name")
+	search, _ := i.Data.Options.String("name")
 
 	anime, err := b.AnimeService.Anime(search)
 	if err != nil {
@@ -40,7 +40,7 @@ type mangaSearcher interface {
 }
 
 func (b *Bot) SearchManga(w corde.ResponseWriter, i *corde.InteractionRequest) {
-	search := i.Data.Options.String("name")
+	search, _ := i.Data.Options.String("name")
 
 	manga, err := b.AnimeService.Manga(search)
 	if err != nil || len(manga) < 1 {
@@ -57,7 +57,7 @@ type userSearcher interface {
 }
 
 func (b *Bot) SearchUser(w corde.ResponseWriter, i *corde.InteractionRequest) {
-	search := i.Data.Options.String("name")
+	search, _ := i.Data.Options.String("name")
 
 	user, err := b.AnimeService.User(search)
 	if err != nil || len(user) < 1 {
@@ -74,7 +74,7 @@ type charSearcher interface {
 }
 
 func (b *Bot) SearchChar(w corde.ResponseWriter, i *corde.InteractionRequest) {
-	search := i.Data.Options.String("name")
+	search, _ := i.Data.Options.String("name")
 
 	char, err := b.AnimeService.Character(search)
 	if err != nil || len(char) < 1 {

@@ -1,71 +1,83 @@
 package discord
 
 import (
+	"context"
+	"time"
+
+	"github.com/Karitham/WaifuBot/internal/anilist"
 	"github.com/Karitham/corde"
 	"github.com/rs/zerolog/log"
 )
 
+// Store is the database
 type Store interface {
-	charStore
+	PutChar(context.Context, corde.Snowflake, Character) error
+	Chars(context.Context, corde.Snowflake) ([]Character, error)
+	User(context.Context, corde.Snowflake) (User, error)
+	Profile(context.Context, corde.Snowflake) (Profile, error)
+	SetUserDate(context.Context, corde.Snowflake, time.Time) error
+	Tx(fn func(s Store) error) error
 }
 
+// Check that anilist actually implements the interface
+var _ AnimeService = (*anilist.Anilist)(nil)
+
+// AnimeService is the interface for the anilist service
 type AnimeService interface {
-	randomer
+	randomCharGetter
 	animeSearcher
 	charSearcher
 	mangaSearcher
 	userSearcher
 }
 
+// Bot holds the bot state
 type Bot struct {
 	ForceRegisterCMD bool
 	mux              *corde.Mux
-	listState        listState
 	Store            Store
 	AnimeService     AnimeService
 	AppID            corde.Snowflake
 	GuildID          corde.Snowflake
 	BotToken         string
 	PublicKey        string
+	RollTimeout      time.Duration
+	TokensNeeded     int32
 }
 
 // New runs the bot
 func New(b *Bot) *corde.Mux {
-	m := corde.NewMux(b.PublicKey, b.AppID, b.BotToken)
-	m.OnNotFound = b.RemoveUnknownCommands
-	commands, err := m.GetCommands(corde.GuildOpt(b.GuildID))
+	b.mux = corde.NewMux(b.PublicKey, b.AppID, b.BotToken)
+	b.mux.OnNotFound = b.RemoveUnknownCommands
+
+	if err := b.registerCommands(); err != nil {
+		log.Err(err).Msg("failed to register commands")
+	}
+
+	b.mux.Route("search", b.search)
+	b.mux.Command("list", trace(b.list))
+	b.mux.Command("roll", trace(b.roll))
+	b.mux.Command("profile", trace(b.profile))
+
+	return b.mux
+}
+
+func (b *Bot) registerCommands() error {
+	actual := []corde.CreateCommand{searchCmd, rollCmd, listCmd, profileCmd}
+
+	commands, err := b.mux.GetCommands(corde.GuildOpt(b.GuildID))
 	if err != nil {
 		log.Err(err).Msg("Failed to get commands")
 	}
 
-	if err := registerCommands(b, m, commands, b.ForceRegisterCMD); err != nil {
-		log.Err(err).Msg("failed to register commands")
-	}
+	if b.ForceRegisterCMD {
+		var toRegister []corde.CreateCommander
+		for _, c := range actual {
+			toRegister = append(toRegister, c)
+		}
 
-	m.Route("search", b.search)
-	if b.Store != nil {
-		m.Command("roll", b.roll)
-		m.Route("list", b.list)
-	}
-
-	return m
-}
-
-func registerCommands(b *Bot, m *corde.Mux, commands []corde.Command, force bool) error {
-	if force {
-		return m.BulkRegisterCommand(
-			[]corde.CreateCommander{
-				searchCmd,
-				listCmd,
-				rollCmd,
-			},
-			corde.GuildOpt(b.GuildID),
-		)
-	}
-
-	actual := []corde.CreateCommand{searchCmd}
-	if b.Store != nil {
-		actual = append(actual, rollCmd, listCmd)
+		log.Info().Msg("Forcing register of CMD")
+		return b.mux.BulkRegisterCommand(toRegister, corde.GuildOpt(b.GuildID))
 	}
 
 	for _, c := range commands {
@@ -83,7 +95,7 @@ func registerCommands(b *Bot, m *corde.Mux, commands []corde.Command, force bool
 			toRegister = append(toRegister, c)
 		}
 
-		return m.BulkRegisterCommand(toRegister, corde.GuildOpt(b.GuildID))
+		return b.mux.BulkRegisterCommand(toRegister, corde.GuildOpt(b.GuildID))
 	}
 
 	return nil
@@ -97,4 +109,13 @@ func (b *Bot) RemoveUnknownCommands(r corde.ResponseWriter, i *corde.Interaction
 func remove[T any](s []T, i int) []T {
 	s[i] = s[len(s)-1]
 	return s[:len(s)-1]
+}
+
+func trace(next corde.Handler) corde.Handler {
+	return func(w corde.ResponseWriter, i *corde.InteractionRequest) {
+		start := time.Now()
+		defer log.Trace().Stringer("user", i.Member.User.ID).TimeDiff("took", time.Now(), start).Msg(i.Data.Name)
+
+		next(w, i)
+	}
 }

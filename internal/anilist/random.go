@@ -7,7 +7,7 @@ import (
 	"github.com/machinebox/graphql"
 )
 
-func (a *Anilist) Random(notIn []int) (Character, error) {
+func (a *Anilist) RandomChar(notIn ...int) (Character, error) {
 	var q struct {
 		Page struct {
 			Characters []Character `json:"characters"`

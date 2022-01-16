@@ -1,7 +1,7 @@
 package discord
 
 import (
-	"database/sql"
+	"errors"
 	"time"
 
 	"github.com/Karitham/WaifuBot/internal/anilist"
@@ -9,13 +9,8 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-type randomer interface {
-	Random(notIn []int) (anilist.Character, error)
-}
-
-type charStore interface {
-	Put(userID corde.Snowflake, c Character) error
-	Characters(userID corde.Snowflake) ([]Character, error)
+type randomCharGetter interface {
+	RandomChar(notIn ...int) (anilist.Character, error)
 }
 
 type Character struct {
@@ -30,46 +25,94 @@ type Character struct {
 type User struct {
 	Date     time.Time       `json:"date"`
 	Quote    string          `json:"quote"`
-	Favorite sql.NullInt64   `json:"favorite"`
+	Favorite uint64          `json:"favorite"`
 	UserID   corde.Snowflake `json:"user_id"`
-	ID       int32           `json:"id"`
+	Tokens   int32           `json:"tokens"`
 }
 
 func (b *Bot) roll(w corde.ResponseWriter, i *corde.InteractionRequest) {
-	chars, err := b.Store.Characters(i.Member.User.ID)
-	if err != nil {
-		log.Err(err).Msg("error with db service")
-		w.Respond(corde.NewResp().Content("An error occurred dialing the database, please try again later").Ephemeral())
-		return
-	}
+	var char anilist.Character
 
-	c, err := b.AnimeService.Random(IDs(chars))
-	if err != nil {
-		log.Err(err).Msg("error with anime service")
-		w.Respond(corde.NewResp().Content("An error getting a random character occurred, please try again later").Ephemeral())
-		return
-	}
+	if err := b.Store.Tx(func(s Store) error {
+		user, err := s.User(i.Context, i.Member.User.ID)
+		if err != nil {
+			return err
+		}
 
-	if err := b.Store.Put(i.Member.User.ID, Character{
-		Date:   time.Now(),
-		Image:  c.Image.Large,
-		Name:   c.Name.Full,
-		Type:   "ROLL",
-		UserID: i.Member.User.ID,
-		ID:     int64(c.ID),
+		var toUpdate int = 0
+		switch {
+		case time.Now().After(user.Date.Add(b.RollTimeout)):
+			toUpdate = 1 // Time
+		case user.Tokens > b.TokensNeeded:
+			toUpdate = 2 // Tokens
+		default:
+			w.Respond(corde.NewResp().
+				Contentf("Invalid roll.\nYou need %d tokens to roll, you have %d, or you can wait %s until next free roll.",
+					b.TokensNeeded,
+					user.Tokens,
+					time.Until(user.Date.Add(b.RollTimeout)).Round(time.Second),
+				))
+			return errors.New("not enough tokens")
+		}
+
+		chars, err := s.Chars(i.Context, i.Member.User.ID)
+		if err != nil {
+			log.Err(err).Msg("error with db service")
+			w.Respond(corde.NewResp().Content("An error occurred dialing the database, please try again later").Ephemeral())
+			return err
+		}
+
+		c, err := b.AnimeService.RandomChar(IDs(chars)...)
+		if err != nil {
+			log.Err(err).Msg("error with anime service")
+			w.Respond(corde.NewResp().Content("An error getting a random character occurred, please try again later").Ephemeral())
+			return err
+		}
+		char = c
+
+		if err := s.PutChar(
+			i.Context,
+			i.Member.User.ID,
+			Character{
+				Date:   time.Now(),
+				Image:  c.Image.Large,
+				Name:   c.Name.Full,
+				Type:   "ROLL",
+				UserID: i.Member.User.ID,
+				ID:     int64(c.ID),
+			}); err != nil {
+			log.Err(err).Msg("error with db service")
+			w.Respond(corde.NewResp().Content("An error occurred dialing the database, please try again later").Ephemeral())
+			return err
+		}
+
+		switch toUpdate {
+		case 1:
+			if err := s.SetUserDate(i.Context, i.Member.User.ID, time.Now()); err != nil {
+				log.Err(err).Msg("error with db service")
+				w.Respond(corde.NewResp().Content("An error occurred dialing the database, please try again later").Ephemeral())
+				return err
+			}
+		case 2: // TODO: doesn't exist yet
+			// if err := s.SetUserTokens(i.Context, i.Member.User.ID, user.Tokens-b.TokensNeeded); err != nil {
+			// 	log.Err(err).Msg("error with db service")
+			// 	w.Respond(corde.NewResp().Content("An error occurred dialing the database, please try again later").Ephemeral())
+			// 	return err
+			// }
+		}
+
+		return nil
 	}); err != nil {
-		log.Err(err).Msg("error with db service")
-		w.Respond(corde.NewResp().Content("An error occurred dialing the database, please try again later").Ephemeral())
 		return
 	}
 
 	w.Respond(corde.NewEmbed().
-		Title(c.Name.Full).
-		URL(c.SiteURL).
+		Title(char.Name.Full).
+		URL(char.SiteURL).
 		Color(anilist.Color).
 		Footer(corde.Footer{IconURL: anilist.IconURL, Text: "View them on anilist"}).
-		Thumbnail(corde.Image{URL: c.Image.Large}).
-		Descriptionf("You rolled %s.\nCongratulations!", c.Name.Full),
+		Thumbnail(corde.Image{URL: char.Image.Large}).
+		Descriptionf("You rolled %s.\nCongratulations!", char.Name.Full),
 	)
 }
 

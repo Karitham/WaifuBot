@@ -16,3 +16,7 @@ var searchCmd = corde.NewSlashCommand("search", "search for anything on anilist"
 	corde.NewSubcommand("char", "search for a character", nameOpt),
 	corde.NewSubcommand("user", "search for a user", nameOpt),
 )
+
+var profileCmd = corde.NewSlashCommand("profile", "view a user's profile",
+	corde.NewUserOption("user", "user to view profile for", false),
+)
