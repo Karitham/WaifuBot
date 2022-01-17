@@ -43,11 +43,7 @@ func (q *Queries) PutChar(ctx context.Context, userID corde.Snowflake, c discord
 
 // Chars returns the user's characters
 func (q *Queries) Chars(ctx context.Context, userID corde.Snowflake) ([]discord.Character, error) {
-	dbchs, err := q.getChars(ctx, getCharsParams{
-		UserID: uint64(userID),
-		Limit:  20,
-		Offset: 0,
-	})
+	dbchs, err := q.getChars(ctx, uint64(userID))
 	if err != nil {
 		return nil, err
 	}
@@ -65,6 +61,11 @@ func (q *Queries) Chars(ctx context.Context, userID corde.Snowflake) ([]discord.
 	}
 
 	return chars, nil
+}
+
+// CharsIDs returns the user's character's ID
+func (q *Queries) CharsIDs(ctx context.Context, userID corde.Snowflake) ([]int64, error) {
+	return q.getCharsID(ctx, uint64(userID))
 }
 
 // User returns a user

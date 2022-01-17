@@ -2,8 +2,11 @@
 SELECT *
 FROM characters
 WHERE characters.user_id = $1
-ORDER BY characters.date DESC
-LIMIT $2 OFFSET $3;
+ORDER BY characters.date DESC;
+-- name: getCharsID :many
+SELECT id
+FROM characters
+WHERE user_id = $1;
 -- name: getCharsWhoseIDStartWith :many
 SELECT *
 FROM characters

@@ -10,7 +10,7 @@ import (
 )
 
 type randomCharGetter interface {
-	RandomChar(notIn ...int) (anilist.CharAndMedia, error)
+	RandomChar(notIn ...int64) (anilist.CharAndMedia, error)
 }
 
 type Character struct {
@@ -51,18 +51,18 @@ func (b *Bot) roll(w corde.ResponseWriter, i *corde.InteractionRequest) {
 					b.TokensNeeded,
 					user.Tokens,
 					time.Until(user.Date.Add(b.RollTimeout)).Round(time.Second),
-				))
+				).Ephemeral())
 			return errors.New("not enough tokens")
 		}
 
-		chars, err := s.Chars(i.Context, i.Member.User.ID)
+		charsIDs, err := s.CharsIDs(i.Context, i.Member.User.ID)
 		if err != nil {
 			log.Err(err).Msg("error with db service")
 			w.Respond(corde.NewResp().Content("An error occurred dialing the database, please try again later").Ephemeral())
 			return err
 		}
 
-		c, err := b.AnimeService.RandomChar(IDs(chars)...)
+		c, err := b.AnimeService.RandomChar(charsIDs...)
 		if err != nil {
 			log.Err(err).Msg("error with anime service")
 			w.Respond(corde.NewResp().Content("An error getting a random character occurred, please try again later").Ephemeral())
@@ -113,13 +113,4 @@ func (b *Bot) roll(w corde.ResponseWriter, i *corde.InteractionRequest) {
 		Thumbnail(corde.Image{URL: char.Image.Large}).
 		Descriptionf("You rolled %s\nIt appears in :\n- %s", char.Name.Full, char.MediaTitle),
 	)
-}
-
-func IDs(c []Character) []int {
-	ids := make([]int, len(c))
-	for i, v := range c {
-		ids[i] = int(v.ID)
-	}
-
-	return ids
 }

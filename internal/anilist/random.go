@@ -13,7 +13,7 @@ type CharAndMedia struct {
 	MediaTitle string
 }
 
-func (a *Anilist) RandomChar(notIn ...int) (CharAndMedia, error) {
+func (a *Anilist) RandomChar(notIn ...int64) (CharAndMedia, error) {
 	type CharNMediaTmp struct {
 		Character
 		Media struct {

@@ -31,6 +31,9 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.getCharsStmt, err = db.PrepareContext(ctx, getChars); err != nil {
 		return nil, fmt.Errorf("error preparing query getChars: %w", err)
 	}
+	if q.getCharsIDStmt, err = db.PrepareContext(ctx, getCharsID); err != nil {
+		return nil, fmt.Errorf("error preparing query getCharsID: %w", err)
+	}
 	if q.getCharsWhoseIDStartWithStmt, err = db.PrepareContext(ctx, getCharsWhoseIDStartWith); err != nil {
 		return nil, fmt.Errorf("error preparing query getCharsWhoseIDStartWith: %w", err)
 	}
@@ -64,6 +67,11 @@ func (q *Queries) Close() error {
 	if q.getCharsStmt != nil {
 		if cerr := q.getCharsStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing getCharsStmt: %w", cerr)
+		}
+	}
+	if q.getCharsIDStmt != nil {
+		if cerr := q.getCharsIDStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getCharsIDStmt: %w", cerr)
 		}
 	}
 	if q.getCharsWhoseIDStartWithStmt != nil {
@@ -133,6 +141,7 @@ type Queries struct {
 	createUserStmt               *sql.Stmt
 	getCharStmt                  *sql.Stmt
 	getCharsStmt                 *sql.Stmt
+	getCharsIDStmt               *sql.Stmt
 	getCharsWhoseIDStartWithStmt *sql.Stmt
 	getProfileStmt               *sql.Stmt
 	getUserStmt                  *sql.Stmt
@@ -147,6 +156,7 @@ func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 		createUserStmt:               q.createUserStmt,
 		getCharStmt:                  q.getCharStmt,
 		getCharsStmt:                 q.getCharsStmt,
+		getCharsIDStmt:               q.getCharsIDStmt,
 		getCharsWhoseIDStartWithStmt: q.getCharsWhoseIDStartWithStmt,
 		getProfileStmt:               q.getProfileStmt,
 		getUserStmt:                  q.getUserStmt,

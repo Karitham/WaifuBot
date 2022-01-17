@@ -13,6 +13,7 @@ import (
 type Store interface {
 	PutChar(context.Context, corde.Snowflake, Character) error
 	Chars(context.Context, corde.Snowflake) ([]Character, error)
+	CharsIDs(ctx context.Context, userID corde.Snowflake) ([]int64, error)
 	CharsStartingWith(context.Context, corde.Snowflake, string) ([]Character, error)
 	User(context.Context, corde.Snowflake) (User, error)
 	Profile(context.Context, corde.Snowflake) (Profile, error)

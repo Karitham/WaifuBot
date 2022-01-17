@@ -50,17 +50,10 @@ SELECT user_id, id, image, name, date, type
 FROM characters
 WHERE characters.user_id = $1
 ORDER BY characters.date DESC
-LIMIT $2 OFFSET $3
 `
 
-type getCharsParams struct {
-	UserID uint64 `json:"user_id"`
-	Limit  int32  `json:"limit"`
-	Offset int32  `json:"offset"`
-}
-
-func (q *Queries) getChars(ctx context.Context, arg getCharsParams) ([]Character, error) {
-	rows, err := q.query(ctx, q.getCharsStmt, getChars, arg.UserID, arg.Limit, arg.Offset)
+func (q *Queries) getChars(ctx context.Context, userID uint64) ([]Character, error) {
+	rows, err := q.query(ctx, q.getCharsStmt, getChars, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -79,6 +72,35 @@ func (q *Queries) getChars(ctx context.Context, arg getCharsParams) ([]Character
 			return nil, err
 		}
 		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getCharsID = `-- name: getCharsID :many
+SELECT id
+FROM characters
+WHERE user_id = $1
+`
+
+func (q *Queries) getCharsID(ctx context.Context, userID uint64) ([]int64, error) {
+	rows, err := q.query(ctx, q.getCharsIDStmt, getCharsID, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []int64
+	for rows.Next() {
+		var id int64
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		items = append(items, id)
 	}
 	if err := rows.Close(); err != nil {
 		return nil, err

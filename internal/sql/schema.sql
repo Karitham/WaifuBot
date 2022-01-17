@@ -15,5 +15,10 @@ CREATE TABLE characters (
     PRIMARY KEY ("id", "user_id"),
     CONSTRAINT "users_characters_fk" FOREIGN KEY (user_id) REFERENCES users (user_id)
 );
+-- constraint
 ALTER TABLE users
 ADD CONSTRAINT "characters_users_fk" FOREIGN KEY (favorite, user_id) REFERENCES characters (id, user_id);
+-- index
+CREATE INDEX characters_id_user_id_idx ON characters (user_id, id);
+CREATE INDEX characters_user_id_idx ON characters (user_id);
+CREATE INDEX users_user_id_idx ON users (user_id);
