@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"github.com/machinebox/graphql"
+	"github.com/rs/zerolog/log"
 )
 
 // CharAndMedia represent character object
@@ -14,6 +15,46 @@ type CharAndMedia struct {
 }
 
 func (a *Anilist) RandomChar(notIn ...int64) (CharAndMedia, error) {
+	c := a.internalCache["random"]
+	c.Lock()
+	defer c.Unlock()
+	rest := []CharAndMedia{}
+two:
+	for id, char := range c.cache {
+		for _, n := range notIn {
+			if n == id {
+				continue two
+			}
+		}
+
+		rest = append(rest, char.(CharAndMedia))
+	}
+
+	if len(c.cache) < 20 {
+		for i := 0; i < 5; i++ {
+			go func() {
+				ch, err := a.randomChar(notIn...)
+				if err != nil {
+					return
+				}
+				c.Lock()
+				defer c.Unlock()
+				c.cache[ch.ID] = ch
+			}()
+		}
+	}
+
+	if len(rest) > 0 {
+		char := rest[a.seed.Int63()%(int64(len(rest)))]
+		log.Trace().Str("char", char.Name.Full).Int("cache size", len(c.cache)).Msg("Hit cache")
+		delete(c.cache, char.ID)
+		return char, nil
+	}
+
+	return a.randomChar(notIn...)
+}
+
+func (a *Anilist) randomChar(notIn ...int64) (CharAndMedia, error) {
 	type CharNMediaTmp struct {
 		Character
 		Media struct {

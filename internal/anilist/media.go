@@ -27,14 +27,14 @@ type Media struct {
 }
 
 func (a *Anilist) Anime(name string) ([]Media, error) {
-	return a.Media(name, "ANIME")
+	return a.media(name, "ANIME")
 }
 
 func (a *Anilist) Manga(name string) ([]Media, error) {
-	return a.Media(name, "MANGA")
+	return a.media(name, "MANGA")
 }
 
-func (a *Anilist) Media(name, typ string) ([]Media, error) {
+func (a *Anilist) media(name, typ string) ([]Media, error) {
 	var q struct {
 		Page struct {
 			Media []Media `json:"media"`

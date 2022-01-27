@@ -25,6 +25,11 @@ type Character struct {
 
 // User queries the anilist user.
 func (a *Anilist) Character(name string) ([]Character, error) {
+	return a.char(name)
+}
+
+// User queries the anilist user.
+func (a *Anilist) char(name string) ([]Character, error) {
 	var q struct {
 		Page struct {
 			Characters []Character `json:"characters"`
