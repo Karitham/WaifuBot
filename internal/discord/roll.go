@@ -43,29 +43,28 @@ func (b *Bot) roll(w corde.ResponseWriter, i *corde.InteractionRequest) {
 		switch {
 		case time.Now().After(user.Date.Add(b.RollTimeout)):
 			toUpdate = 1 // Time
-		case user.Tokens > b.TokensNeeded:
+		case user.Tokens >= b.TokensNeeded:
 			toUpdate = 2 // Tokens
 		default:
-			w.Respond(corde.NewResp().
-				Contentf("Invalid roll.\nYou need %d tokens to roll, you have %d, or you can wait %s until next free roll.",
-					b.TokensNeeded,
-					user.Tokens,
-					time.Until(user.Date.Add(b.RollTimeout)).Round(time.Second),
-				).Ephemeral())
+			w.Respond(newErrf("Invalid roll.\nYou need %d tokens to roll, you have %d, or you can wait %s until next free roll.",
+				b.TokensNeeded,
+				user.Tokens,
+				time.Until(user.Date.Add(b.RollTimeout)).Round(time.Second),
+			))
 			return errors.New("not enough tokens")
 		}
 
 		charsIDs, err := s.CharsIDs(i.Context, i.Member.User.ID)
 		if err != nil {
 			log.Err(err).Msg("error with db service")
-			w.Respond(corde.NewResp().Content("An error occurred dialing the database, please try again later").Ephemeral())
+			w.Respond(rspErr("An error occurred dialing the database, please try again later"))
 			return err
 		}
 
 		c, err := b.AnimeService.RandomChar(charsIDs...)
 		if err != nil {
 			log.Err(err).Msg("error with anime service")
-			w.Respond(corde.NewResp().Content("An error getting a random character occurred, please try again later").Ephemeral())
+			w.Respond(rspErr("An error getting a random character occurred, please try again later"))
 			return err
 		}
 		char = c
@@ -82,7 +81,7 @@ func (b *Bot) roll(w corde.ResponseWriter, i *corde.InteractionRequest) {
 				ID:     int64(c.ID),
 			}); err != nil {
 			log.Err(err).Msg("error with db service")
-			w.Respond(corde.NewResp().Content("An error occurred dialing the database, please try again later").Ephemeral())
+			w.Respond(rspErr("An error occurred dialing the database, please try again later"))
 			return err
 		}
 
@@ -90,13 +89,13 @@ func (b *Bot) roll(w corde.ResponseWriter, i *corde.InteractionRequest) {
 		case 1:
 			if err := s.SetUserDate(i.Context, i.Member.User.ID, time.Now()); err != nil {
 				log.Err(err).Msg("error with db service")
-				w.Respond(corde.NewResp().Content("An error occurred dialing the database, please try again later").Ephemeral())
+				w.Respond(rspErr("An error occurred dialing the database, please try again later"))
 				return err
 			}
 		case 2: // TODO: doesn't exist yet
 			// if err := s.SetUserTokens(i.Context, i.Member.User.ID, user.Tokens-b.TokensNeeded); err != nil {
 			// 	log.Err(err).Msg("error with db service")
-			// 	w.Respond(corde.NewResp().Content("An error occurred dialing the database, please try again later").Ephemeral())
+			// 	w.Respond(newErr("An error occurred dialing the database, please try again later"))
 			// 	return err
 			// }
 		}
@@ -111,6 +110,6 @@ func (b *Bot) roll(w corde.ResponseWriter, i *corde.InteractionRequest) {
 		URL(char.SiteURL).
 		Footer(corde.Footer{IconURL: anilist.IconURL, Text: "View them on anilist"}).
 		Thumbnail(corde.Image{URL: char.Image.Large}).
-		Descriptionf("You rolled %s\nIt appears in :\n- %s", char.Name.Full, char.MediaTitle),
+		Descriptionf("You rolled %s, id: %d\nIt appears in :\n- %s", char.Name.Full, char.ID, char.MediaTitle),
 	)
 }

@@ -14,12 +14,12 @@ func (b *Bot) list(w corde.ResponseWriter, i *corde.InteractionRequest) {
 
 	chars, err := b.Store.Chars(i.Context, user.ID)
 	if err != nil {
-		w.Respond(corde.NewResp().Content("An error occurred dialing the database, please try again later").Ephemeral())
+		w.Respond(rspErr("An error occurred dialing the database, please try again later"))
 		return
 	}
 
 	if len(chars) == 0 {
-		w.Respond(corde.NewResp().Content("This user doesn't appear to have any characters").Ephemeral())
+		w.Respond(rspErr("This user doesn't appear to have any characters"))
 		return
 	}
 

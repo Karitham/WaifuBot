@@ -20,7 +20,7 @@ func (b *Bot) profile(m *corde.Mux) {
 		m.Command("quote", trace(b.profileEditQuote))
 		m.Route("favorite", func(m *corde.Mux) {
 			m.Command("", trace(b.profileEditFavorite))
-			m.Autocomplete("", trace(b.profileEditFavoriteComplete))
+			m.Autocomplete("id", trace(b.profileEditFavoriteComplete))
 		})
 	})
 }

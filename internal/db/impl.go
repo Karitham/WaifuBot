@@ -202,3 +202,12 @@ func (q *Queries) Profile(ctx context.Context, userID corde.Snowflake) (discord.
 		},
 	}, nil
 }
+
+func (q *Queries) GiveUserChar(ctx context.Context, dst corde.Snowflake, src corde.Snowflake, charID int64) error {
+	_, err := q.giveChar(ctx, giveCharParams{
+		Given: int64(dst),
+		ID:    charID,
+		Giver: int64(src),
+	})
+	return err
+}

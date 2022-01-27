@@ -28,7 +28,7 @@ func (b *Bot) SearchAnime(w corde.ResponseWriter, i *corde.InteractionRequest) {
 	anime, err := b.AnimeService.Anime(search)
 	if err != nil {
 		log.Err(err).Msg("error with anime service")
-		w.Respond(corde.NewResp().Content("Error searching for this anime, either it doesn't exist or something went wrong").Ephemeral())
+		w.Respond(rspErr("Error searching for this anime, either it doesn't exist or something went wrong"))
 		return
 	}
 
@@ -45,7 +45,7 @@ func (b *Bot) SearchManga(w corde.ResponseWriter, i *corde.InteractionRequest) {
 	manga, err := b.AnimeService.Manga(search)
 	if err != nil || len(manga) < 1 {
 		log.Err(err).Msg("error with manga service")
-		w.Respond(corde.NewResp().Content("Error searching for this manga, either it doesn't exist or something went wrong").Ephemeral())
+		w.Respond(rspErr("Error searching for this manga, either it doesn't exist or something went wrong"))
 		return
 	}
 
@@ -62,7 +62,7 @@ func (b *Bot) SearchUser(w corde.ResponseWriter, i *corde.InteractionRequest) {
 	user, err := b.AnimeService.User(search)
 	if err != nil || len(user) < 1 {
 		log.Err(err).Msg("error with user service")
-		w.Respond(corde.NewResp().Content("Error searching for this user, either it doesn't exist or something went wrong").Ephemeral())
+		w.Respond(rspErr("Error searching for this user, either it doesn't exist or something went wrong"))
 		return
 	}
 
@@ -79,7 +79,7 @@ func (b *Bot) SearchChar(w corde.ResponseWriter, i *corde.InteractionRequest) {
 	char, err := b.AnimeService.Character(search)
 	if err != nil || len(char) < 1 {
 		log.Err(err).Msg("error with char service")
-		w.Respond(corde.NewResp().Content("Error searching for this character, either it doesn't exist or something went wrong").Ephemeral())
+		w.Respond(rspErr("Error searching for this character, either it doesn't exist or something went wrong"))
 		return
 	}
 
@@ -148,7 +148,7 @@ var SanitizeHTML = regexp.MustCompile(`<[^>]*>|\|\|[^|]*\|\||\s{2,}|img[\d\%]*\(
 // Sanitize removes all HTML tags from the given string.
 // It also removes double newlines and double || characters.
 func Sanitize(s string) string {
-	return SanitizeHTML.ReplaceAllString(s, " ")
+	return SanitizeHTML.ReplaceAllString(s, "")
 }
 
 // FixString removes eventual

@@ -20,6 +20,7 @@ type Store interface {
 	SetUserDate(context.Context, corde.Snowflake, time.Time) error
 	SetUserFavorite(context.Context, corde.Snowflake, int64) error
 	SetUserQuote(context.Context, corde.Snowflake, string) error
+	GiveUserChar(ctx context.Context, dst corde.Snowflake, src corde.Snowflake, charID int64) error
 	Tx(fn func(s Store) error) error
 }
 
@@ -58,68 +59,12 @@ func New(b *Bot) *corde.Mux {
 		log.Err(err).Msg("failed to register commands")
 	}
 
+	b.mux.Route("give", b.give)
 	b.mux.Route("search", b.search)
 	b.mux.Route("profile", b.profile)
 	b.mux.Command("list", trace(b.list))
 	b.mux.Command("roll", trace(b.roll))
+	b.mux.Command("info", trace(b.info))
 
 	return b.mux
-}
-
-func (b *Bot) registerCommands() error {
-	actual := []corde.CreateCommand{searchCmd, rollCmd, listCmd, profileCmd}
-
-	commands, err := b.mux.GetCommands(corde.GuildOpt(b.GuildID))
-	if err != nil {
-		log.Err(err).Msg("Failed to get commands")
-	}
-
-	if b.ForceRegisterCMD {
-		var toRegister []corde.CreateCommander
-		for _, c := range actual {
-			toRegister = append(toRegister, c)
-		}
-
-		log.Info().Msg("Forcing register of CMD")
-		return b.mux.BulkRegisterCommand(toRegister, corde.GuildOpt(b.GuildID))
-	}
-
-	for _, c := range commands {
-		for i, r := range actual {
-			if c.Name == r.Name {
-				actual = remove(actual, i)
-				break
-			}
-		}
-	}
-
-	if len(actual) != 0 {
-		var toRegister []corde.CreateCommander
-		for _, c := range actual {
-			toRegister = append(toRegister, c)
-		}
-
-		return b.mux.BulkRegisterCommand(toRegister, corde.GuildOpt(b.GuildID))
-	}
-
-	return nil
-}
-
-func (b *Bot) RemoveUnknownCommands(r corde.ResponseWriter, i *corde.InteractionRequest) {
-	r.Respond(corde.NewResp().Content("I don't know what that means, you shouldn't be able to do that").Ephemeral())
-	b.mux.DeleteCommand(i.ID, corde.GuildOpt(b.GuildID))
-}
-
-func remove[T any](s []T, i int) []T {
-	s[i] = s[len(s)-1]
-	return s[:len(s)-1]
-}
-
-func trace(next corde.Handler) corde.Handler {
-	return func(w corde.ResponseWriter, i *corde.InteractionRequest) {
-		start := time.Now()
-
-		next(w, i)
-		log.Trace().Str("route", i.Data.Name).Stringer("user", i.Member.User.ID).Int("type", int(i.Type)).Dur("took", time.Since(start)).Send()
-	}
 }
