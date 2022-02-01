@@ -1,16 +1,25 @@
 package discord
 
 import (
+	"context"
 	"errors"
 	"time"
 
-	"github.com/Karitham/WaifuBot/internal/anilist"
 	"github.com/Karitham/corde"
 	"github.com/rs/zerolog/log"
 )
 
-type randomCharGetter interface {
-	RandomChar(notIn ...int64) (anilist.CharAndMedia, error)
+type RandomCharer interface {
+	RandomChar(ctx context.Context, notIn ...int64) (MediaCharacter, error)
+}
+
+type MediaCharacter struct {
+	ID          int64
+	Name        string
+	ImageURL    string
+	URL         string
+	Description string
+	MediaTitle  string
 }
 
 type Character struct {
@@ -31,7 +40,7 @@ type User struct {
 }
 
 func (b *Bot) roll(w corde.ResponseWriter, i *corde.InteractionRequest) {
-	var char anilist.CharAndMedia
+	var char MediaCharacter
 
 	if err := b.Store.Tx(func(s Store) error {
 		user, err := s.User(i.Context, i.Member.User.ID)
@@ -41,7 +50,7 @@ func (b *Bot) roll(w corde.ResponseWriter, i *corde.InteractionRequest) {
 
 		var toUpdate int = 0
 		switch {
-		case time.Now().After(user.Date.Add(b.RollTimeout)):
+		case time.Now().After(user.Date.Add(b.RollCooldown)):
 			toUpdate = 1 // Time
 		case user.Tokens >= b.TokensNeeded:
 			toUpdate = 2 // Tokens
@@ -49,7 +58,7 @@ func (b *Bot) roll(w corde.ResponseWriter, i *corde.InteractionRequest) {
 			w.Respond(newErrf("Invalid roll.\nYou need %d tokens to roll, you have %d, or you can wait %s until next free roll.",
 				b.TokensNeeded,
 				user.Tokens,
-				time.Until(user.Date.Add(b.RollTimeout)).Round(time.Second),
+				time.Until(user.Date.Add(b.RollCooldown)).Round(time.Second),
 			))
 			return errors.New("not enough tokens")
 		}
@@ -61,7 +70,7 @@ func (b *Bot) roll(w corde.ResponseWriter, i *corde.InteractionRequest) {
 			return err
 		}
 
-		c, err := b.AnimeService.RandomChar(charsIDs...)
+		c, err := b.AnimeService.RandomChar(i.Context, charsIDs...)
 		if err != nil {
 			log.Err(err).Msg("error with anime service")
 			w.Respond(rspErr("An error getting a random character occurred, please try again later"))
@@ -74,8 +83,8 @@ func (b *Bot) roll(w corde.ResponseWriter, i *corde.InteractionRequest) {
 			i.Member.User.ID,
 			Character{
 				Date:   time.Now(),
-				Image:  c.Image.Large,
-				Name:   c.Name.Full,
+				Image:  c.ImageURL,
+				Name:   c.Name,
 				Type:   "ROLL",
 				UserID: i.Member.User.ID,
 				ID:     int64(c.ID),
@@ -106,10 +115,10 @@ func (b *Bot) roll(w corde.ResponseWriter, i *corde.InteractionRequest) {
 	}
 
 	w.Respond(corde.NewEmbed().
-		Title(char.Name.Full).
-		URL(char.SiteURL).
-		Footer(corde.Footer{IconURL: anilist.IconURL, Text: "View them on anilist"}).
-		Thumbnail(corde.Image{URL: char.Image.Large}).
-		Descriptionf("You rolled %s, id: %d\nIt appears in :\n- %s", char.Name.Full, char.ID, char.MediaTitle),
+		Title(char.Name).
+		URL(char.URL).
+		Footer(corde.Footer{IconURL: AnilistIconURL, Text: "View them on anilist"}).
+		Thumbnail(corde.Image{URL: char.ImageURL}).
+		Descriptionf("You rolled %s, id: %d\nIt appears in :\n- %s", char.Name, char.ID, char.MediaTitle),
 	)
 }

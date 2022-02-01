@@ -1,0 +1,8 @@
+schema: schema.graphql
+operations:
+  - queries.graphql
+generated: gql.gen.go
+
+bindings:
+  Int:
+    type: int64

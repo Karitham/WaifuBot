@@ -24,40 +24,51 @@ func main() {
 	if os.Getenv("ENV") == "dev" {
 		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 	}
+
 	token := os.Getenv("BOT_TOKEN")
 	publicKey := os.Getenv("PUBLIC_KEY")
-	port := os.Getenv("PORT")
 	appID := corde.SnowflakeFromString(os.Getenv("APP_ID"))
 	guildID := corde.SnowflakeFromString(os.Getenv("GUILD_ID"))
-	_, force := os.LookupEnv("FORCE_REGISTER_CMD")
 
-	store, err := db.NewDB(os.Getenv("DB_STR"))
-	if err != nil {
-		log.Fatal().Err(err).Msg("Error connecting to db")
+	rollCD, _ := time.ParseDuration(os.Getenv("ROLL_TIMEOUT"))
+	if rollCD == 0 {
+		rollCD = time.Minute * 5
 	}
 
-	rollTimeout, _ := time.ParseDuration(os.Getenv("ROLL_TIMEOUT"))
-	if rollTimeout == 0 {
-		rollTimeout = time.Minute * 5
-	}
 	tokensNeeded, _ := strconv.Atoi(os.Getenv("TOKENS_NEEDED"))
 	if tokensNeeded == 0 {
 		tokensNeeded = 3
 	}
 
 	bot := &discord.Bot{
-		Store:            store,
-		AnimeService:     anilist.New(),
-		AppID:            appID,
-		BotToken:         token,
-		PublicKey:        publicKey,
-		ForceRegisterCMD: force,
-		GuildID:          guildID,
-		RollTimeout:      rollTimeout,
-		TokensNeeded:     int32(tokensNeeded),
+		AppID:        appID,
+		BotToken:     token,
+		PublicKey:    publicKey,
+		GuildID:      guildID,
+		RollCooldown: rollCD,
+		TokensNeeded: int32(tokensNeeded),
 	}
 
-	log.Info().Str("PORT", port).Msg("starting bot")
+	// register commands
+	if len(os.Args) > 1 && os.Args[1] == "register" {
+		err := bot.RegisterCommands()
+		if err != nil {
+			log.Err(err).Msg("failed to register commands")
+		}
+
+		log.Info().Msg("registered commands")
+		return
+	}
+
+	store, err := db.NewDB(os.Getenv("DB_STR"))
+	if err != nil {
+		log.Fatal().Err(err).Msg("Error connecting to db")
+	}
+
+	bot.Store = store
+	bot.AnimeService = anilist.New()
+
+	port := os.Getenv("PORT")
 	if err := discord.New(bot).ListenAndServe(":" + port); err != nil {
 		log.Fatal().Err(err).Msg("error running bot")
 	}

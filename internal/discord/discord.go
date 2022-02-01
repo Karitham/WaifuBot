@@ -4,9 +4,13 @@ import (
 	"context"
 	"time"
 
-	"github.com/Karitham/WaifuBot/internal/anilist"
 	"github.com/Karitham/corde"
 	"github.com/rs/zerolog/log"
+)
+
+const (
+	AnilistColor   = 0x02a9ff
+	AnilistIconURL = "https://anilist.co/img/icons/favicon-32x32.png"
 )
 
 // Store is the database
@@ -24,40 +28,32 @@ type Store interface {
 	Tx(fn func(s Store) error) error
 }
 
-// Check that anilist actually implements the interface
-var _ AnimeService = (*anilist.Anilist)(nil)
-
-// AnimeService is the interface for the anilist service
-type AnimeService interface {
-	randomCharGetter
-	animeSearcher
-	charSearcher
-	mangaSearcher
-	userSearcher
+// TrackingService is the interface for the anilist service
+type TrackingService interface {
+	RandomCharer
+	AnimeSearcher
+	CharSearcher
+	MangaSearcher
+	UserSearcher
 }
 
 // Bot holds the bot state
 type Bot struct {
-	ForceRegisterCMD bool
-	mux              *corde.Mux
-	Store            Store
-	AnimeService     AnimeService
-	AppID            corde.Snowflake
-	GuildID          corde.Snowflake
-	BotToken         string
-	PublicKey        string
-	RollTimeout      time.Duration
-	TokensNeeded     int32
+	mux          *corde.Mux
+	Store        Store
+	AnimeService TrackingService
+	AppID        corde.Snowflake
+	GuildID      corde.Snowflake
+	BotToken     string
+	PublicKey    string
+	RollCooldown time.Duration
+	TokensNeeded int32
 }
 
 // New runs the bot
 func New(b *Bot) *corde.Mux {
 	b.mux = corde.NewMux(b.PublicKey, b.AppID, b.BotToken)
 	b.mux.OnNotFound = b.RemoveUnknownCommands
-
-	if err := b.registerCommands(); err != nil {
-		log.Err(err).Msg("failed to register commands")
-	}
 
 	b.mux.Route("give", b.give)
 	b.mux.Route("search", b.search)
@@ -67,4 +63,10 @@ func New(b *Bot) *corde.Mux {
 	b.mux.Command("info", trace(b.info))
 
 	return b.mux
+}
+
+func (b *Bot) RemoveUnknownCommands(r corde.ResponseWriter, i *corde.InteractionRequest) {
+	log.Error().Str("command", i.Data.Name).Int("type", int(i.Type)).Msg("Unknown command")
+	r.Respond(corde.NewResp().Content("I don't know what that means, you shouldn't be able to do that").Ephemeral())
+	b.mux.DeleteCommand(i.ID, corde.GuildOpt(b.GuildID))
 }

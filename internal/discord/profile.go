@@ -39,7 +39,7 @@ func (b *Bot) profileView(w corde.ResponseWriter, i *corde.InteractionRequest) {
 	}
 
 	resp := corde.NewEmbed().
-		Titlef("%s' Profile", user.Username).
+		Title(user.Username).
 		URL(fmt.Sprintf("https://waifugui.kar.moe/#/list/%s", user.ID.String())).
 		Descriptionf(
 			"%s\n%s last rolled %s ago and has %d tokens.\nThey have %d characters.\nTheir favorite character is %s",
