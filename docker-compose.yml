@@ -1,6 +1,6 @@
 services:
   bot:
-    image: ghcr.io/karitham/waifubot:postgres
+    image: ghcr.io/karitham/waifubot:main
     restart: unless-stopped
     container_name: waifu_bot
     networks:

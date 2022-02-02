@@ -3,7 +3,7 @@ name: Build Image
 on:
   push:
     branches:
-      - postgres
+      - main
 
 jobs:
   build-containers:
@@ -32,6 +32,6 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           builder: ${{ steps.buildx.outputs.name }}
-          tags: ghcr.io/karitham/waifubot:postgres
-          cache-from: type=registry,ref=karitham/waifuBot:postgres
+          tags: ghcr.io/karitham/waifubot:${GITHUB_REF#refs/*/}
+          cache-from: type=registry,ref=karitham/waifuBot:${GITHUB_REF#refs/*/}
           cache-to: type=inline
