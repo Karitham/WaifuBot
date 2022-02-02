@@ -32,13 +32,13 @@ func Start(configuration *config.ConfStruct, db db.Querier) (func() error, error
 		Ctx: &bot.Context{},
 		dropper: &Dropper{
 			Waifu:   make(map[discord.ChannelID]anilist.CharStruct),
-			ChanInc: make(map[discord.ChannelID]uint64),
-			Mutex:   new(sync.Mutex),
+			ChanInc: make(map[discord.ChannelID]int),
+			Mutex:   &sync.Mutex{},
 		},
 		seed:   rand.New(rand.NewSource(time.Now().UnixNano())),
 		conf:   configuration,
 		DB:     db,
-		giveMu: new(sync.Mutex),
+		giveMu: &sync.Mutex{},
 	}
 
 	// Start the bot
@@ -95,12 +95,16 @@ func Start(configuration *config.ConfStruct, db db.Querier) (func() error, error
 				return
 			}
 
-			// Higher chances the more you interact with the bot
-			r := b.seed.Uint64() % (uint64(b.conf.DropsOnInteract) - b.dropper.ChanInc[m.ChannelID])
+			b.dropper.Mutex.Lock()
+			defer b.dropper.Mutex.Unlock()
 
-			if r == 0 || (uint64(b.conf.DropsOnInteract)-b.dropper.ChanInc[m.ChannelID]) == 1 {
+			// Higher chances the more you interact with the bot
+			r := int(b.seed.Int63()) % ((b.conf.DropsOnInteract) - b.dropper.ChanInc[m.ChannelID])
+
+			if r == 0 || (b.conf.DropsOnInteract+1) == b.dropper.ChanInc[m.ChannelID] {
 				b.drop(m)
 				b.dropper.ChanInc[m.ChannelID] = 0
+				return
 			}
 
 			b.dropper.ChanInc[m.ChannelID]++

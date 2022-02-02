@@ -34,7 +34,7 @@ func (b *Bot) Give(m *gateway.MessageCreateEvent, ID int64, _ *arguments.UserMen
 
 		if err == nil {
 			return fmt.Sprintf("You have given %s to %s", char.Name, user.Username), nil
-		} else if err != nil {
+		} else {
 			err, ok := err.(*pq.Error)
 			if !ok {
 				log.Err(err).

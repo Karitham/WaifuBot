@@ -21,15 +21,12 @@ import (
 // Dropper is used to handle the dropping mechanism
 type Dropper struct {
 	Waifu   map[discord.ChannelID]anilist.CharStruct
-	ChanInc map[discord.ChannelID]uint64
+	ChanInc map[discord.ChannelID]int
 	Mutex   *sync.Mutex
 }
 
 // drop a random character
 func (bot *Bot) drop(m *gateway.MessageCreateEvent) {
-	bot.dropper.Mutex.Lock()
-	defer bot.dropper.Mutex.Unlock()
-
 	var err error
 	bot.dropper.Waifu[m.ChannelID], err = anilist.CharSearchByPopularity(bot.seed.Uint64()%uint64(bot.conf.MaxCharacterRoll), []int64{})
 	if err != nil {
