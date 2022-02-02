@@ -63,7 +63,6 @@ func Start(configuration *config.ConfStruct, db db.Querier) (func() error, error
 		ctx.ChangeCommandInfo("Claim", "", "claim a dropped character")
 
 		ctx.AddAliases("List", "l", "L")
-		ctx.AddAliases("Invite", "i", "I")
 		ctx.AddAliases("Roll", "r", "R")
 		ctx.AddAliases("Profile", "p", "P")
 		ctx.AddAliases("Help", "h", "H")
