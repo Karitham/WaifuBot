@@ -32,6 +32,6 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           builder: ${{ steps.buildx.outputs.name }}
-          tags: ghcr.io/karitham/waifubot:${GITHUB_REF#refs/*/}
-          cache-from: type=registry,ref=karitham/waifuBot:${GITHUB_REF#refs/*/}
+          tags: ghcr.io/karitham/waifubot:main
+          cache-from: type=registry,ref=karitham/waifuBot:main
           cache-to: type=inline
