@@ -11,6 +11,6 @@ COPY . .
 RUN CGO_ENABLED=0 go build -ldflags="-w -s" -o /build/bot
 
 # Runner
-FROM alpine:3.14
+FROM alpine:3.15
 COPY --from=builder /build/bot /bin/bot
 ENTRYPOINT ["/bin/bot"]

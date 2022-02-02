@@ -1,9 +1,9 @@
 package disc
 
 import (
-	"fmt"
 	"math/rand"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -44,6 +44,7 @@ func Start(configuration *config.ConfStruct, db db.Querier) (func() error, error
 	// Start the bot
 	waitFn, err := bot.Start(b.conf.BotToken, b, func(ctx *bot.Context) error {
 		ctx.HasPrefix = bot.NewPrefix(b.conf.Prefix...)
+		ctx.AddHandler(b.Drop)
 
 		ctx.SilentUnknown.Command = true
 		ctx.SilentUnknown.Subcommand = true
@@ -58,7 +59,6 @@ func Start(configuration *config.ConfStruct, db db.Querier) (func() error, error
 		ctx.ChangeCommandInfo("List", "", "display user characters")
 		ctx.ChangeCommandInfo("Help", "", "display general help")
 		ctx.ChangeCommandInfo("Give", "", "give a char to a user")
-		ctx.ChangeCommandInfo("Invite", "", "send invite link")
 		ctx.ChangeCommandInfo("Verify", "", "check if a user owns the waifu")
 		ctx.ChangeCommandInfo("Claim", "", "claim a dropped character")
 
@@ -89,27 +89,6 @@ func Start(configuration *config.ConfStruct, db db.Querier) (func() error, error
 		}
 
 		ctx.Gateway.AddIntents(gateway.IntentGuildMessageReactions)
-		ctx.AddHandler(func(m *gateway.MessageCreateEvent) {
-			// Filter bot message
-			if m.Author.Bot {
-				return
-			}
-
-			b.dropper.Mutex.Lock()
-			defer b.dropper.Mutex.Unlock()
-
-			// Higher chances the more you interact with the bot
-			r := int(b.seed.Int63()) % ((b.conf.DropsOnInteract) - b.dropper.ChanInc[m.ChannelID])
-
-			if r == 0 || (b.conf.DropsOnInteract+1) == b.dropper.ChanInc[m.ChannelID] {
-				b.drop(m)
-				b.dropper.ChanInc[m.ChannelID] = 0
-				return
-			}
-
-			b.dropper.ChanInc[m.ChannelID]++
-		})
-
 		return nil
 	})
 	if err != nil {
@@ -131,21 +110,32 @@ func parseArgs(b string) (ID int) {
 	return
 }
 
-// Invite sends invite link
-func (b *Bot) Invite(_ *gateway.MessageCreateEvent) (*discord.Embed, error) {
-	return &discord.Embed{
-		Title: "Invite",
-		URL: fmt.Sprintf(
-			"https://discord.com/oauth2/authorize?scope=bot&client_id=%d&permissions=%d",
-			b.Me.ID,
-			92224,
-		),
-	}, nil
-}
-
 func parseUser(m *gateway.MessageCreateEvent) (user discord.User) {
 	if len(m.Mentions) > 0 {
 		return m.Mentions[0].User
 	}
 	return m.Author
+}
+
+func (b *Bot) Drop(m *gateway.MessageCreateEvent) {
+	// Filter bot message
+	// We need that to ensure that the bot doesn't trigger a drop before validating the claim
+	// The simplest, temporary way to do this is to just filter out the claims from the counted messages
+	if m.Author.Bot || strings.Contains(strings.ToLower(m.Content), "w.c") {
+		return
+	}
+
+	b.dropper.Mutex.Lock()
+	defer b.dropper.Mutex.Unlock()
+
+	// Higher chances the more you interact with the bot
+	r := int(b.seed.Int63()) % ((b.conf.DropsOnInteract) - b.dropper.ChanInc[m.ChannelID])
+
+	if r == 0 || (b.conf.DropsOnInteract+1) == b.dropper.ChanInc[m.ChannelID] {
+		b.drop(m)
+		b.dropper.ChanInc[m.ChannelID] = 0
+		return
+	}
+
+	b.dropper.ChanInc[m.ChannelID]++
 }

@@ -20,7 +20,6 @@ Commands
       favorite|f|F string...: set a char as favorite
       give|g|G int64 @user: give a char to a user
       help|h|H: display general help
-      invite|i|I: send invite link
       list|l|L @user...: display user characters
       profile|p|P @user...: display user profile
       quote|q|Q string...: set profile quote
@@ -42,18 +41,6 @@ Subcommands
 
 I'm open to new feature requests, please follow the template given and/or formulate a clear request
 
-## Contribution
-
-If you want to contribute, please try to formulate an issue first so we can discuss the eventual changes. I'm open to anything, so don't hesitate
-
-Try to space your code and follow general programming guidelines
-
-**About comments :**
-
-> Good code is its own best documentation. As you’re about to add a comment, ask yourself, ‘How can I improve the code so that this comment isn’t needed?
-
-– Steve McConnell
-
 ## Deploying Yourself
 
 ### Requirements
@@ -74,7 +61,7 @@ Rename `.env.example` to `.env` and change the values according to your needs
 
 ## Development
 
-The database part is generated using `sqlc`. See the documentation on [the site](https://sqlc.dev) or [the repo](https://github.com/kjconroy/sqlc)
+The database part is generated using `sqlc`. See the documentation on [the repo](https://github.com/kjconroy/sqlc)
 
 If you make any modifications to the files in `/sql` you can re-generate the code using either the docker image like so,
 
