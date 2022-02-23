@@ -41,9 +41,9 @@ services:
     restart: unless-stopped
     container_name: waifu_api
     volumes:
-      - "$HOME/.postgresql/root.crt:/etc/certs/postgresql/root.crt"
+      - "${HOME}/.postgresql/root.crt:/etc/certs/postgresql/root.crt"
     environment:
-      API_PORT: 3333
+      PORT: 3333
       DB_URL: ${DB_URL}
     ports:
       - 3333:3333

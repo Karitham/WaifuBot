@@ -19,5 +19,5 @@ jobs:
 
       - name: build
         run: |
-          docker-compose pull
+          docker-compose --env-file ~/.env.waifubot -f docker-compose.deploy.yml pull
           docker-compose --env-file ~/.env.waifubot -f docker-compose.deploy.yml up -d --remove-orphans
