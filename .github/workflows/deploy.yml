@@ -17,10 +17,7 @@ jobs:
         with:
           clean: false
 
-      - name: Copy config
-        run: cp ~/.env.waifubot .env
-
       - name: build
         run: |
           docker-compose pull
-          docker-compose up -d --remove-orphans
+          docker-compose --env-file ~/.env.waifubot -f docker-compose.deploy.yml up -d --remove-orphans

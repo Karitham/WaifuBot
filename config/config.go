@@ -9,7 +9,7 @@ import (
 
 // ConfStruct is used to unmarshal the environ
 type ConfStruct struct {
-	Database          Database
+	DatabaseURL       string        `env:"DB_URL,required=true,default=postgres://db:5432/waifudb?sslmode=disable"`
 	BotToken          string        `env:"TOKEN,required=true"`
 	BotStatus         string        `env:"STATUS,defaul=use w.help for help"`
 	Prefix            Prefixes      `env:"PREFIX,default=w."`
@@ -20,14 +20,6 @@ type ConfStruct struct {
 	TimeBetweenRolls  time.Duration `env:"ROLL_COOLDOWN,default=2h"`
 	MaxCharacterDrop  int           `env:"MAX_CHAR_DROP,default=5000"`
 	LoggingLevel      int           `env:"LOG_LEVEL,default=3"`
-}
-
-// Database represent the needed things for the database
-type Database struct {
-	Dbname   string `env:"DB_NAME,default=waifudb"`
-	Host     string `env:"DB_HOST,default=db"`
-	Password string `env:"DB_PASS,default=waifudb"`
-	User     string `env:"DB_USER,default=postgres"`
 }
 
 // Retrieve retrieves the config from the file

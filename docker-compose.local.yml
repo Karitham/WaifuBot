@@ -3,53 +3,43 @@ services:
     image: ghcr.io/karitham/waifubot:main
     restart: unless-stopped
     container_name: waifu_bot
-    networks:
-      - default
     depends_on:
       - db
     environment:
       # This is the config file, everything works well when set to default
       # You only need to absolutely change the default "bot token" by your bot token
       # Bot prefix.
-      PREFIX: ${PREFIX}
+      PREFIX: ${PREFIX-w.}
       # Your discord bot token
       TOKEN: ${TOKEN}
       # The bot status is what the bot will be displaying as *Currently Playing*
-      STATUS: ${STATUS}
+      STATUS: ${STATUS-w.r to roll the bot}
       # This is the maximum number of random characters
       # When pulled, the characters are sorted out of popularity
       # That means you can roll out of the 15000 most popular characters
       # The maximum is around 75000 right now, but is growing with the https://anilist.co/ database
-      MAX_CHAR_ROLL: ${MAX_CHAR_ROLL}
+      MAX_CHAR_ROLL: ${MAX_CHAR_ROLL-20000}
       # This means that every time the user makes a meaningful action with the bot
       # he has a change to drop a character to claim
       # The more the user interact, the more chance he has to drop a character
-      INTERACT_DROPS: ${INTERACT_DROPS}
+      INTERACT_DROPS: ${INTERACT_DROPS-25}
       # List_Len is used to configure how big the list embed is
-      LIST_LEN: ${LIST_LEN}
+      LIST_LEN: ${LIST_LEN-15}
       # The same as the roll, but you can make it lower so people
       # are more likely to know the character
-      MAX_CHAR_DROP: ${MAX_CHAR_DROP}
+      MAX_CHAR_DROP: ${MAX_CHAR_DROP-5000}
       # When a user is checking their list, it refreshes the first embed sent if
       # you are within X minutes of sending it
-      LIST_UPDATE_TIME: ${LIST_UPDATE_TIME}
+      LIST_UPDATE_TIME: ${LIST_UPDATE_TIME-5m}
       # How much time between each user roll
-      ROLL_COOLDOWN: ${ROLL_COOLDOWN}
-      # Name of the DB, the one set in the docker-compose file
-      DB_NAME: ${DB_NAME}
-      # Host of the DB, should be `db` if ran with docker-compose
-      DB_HOST: ${DB_HOST}
-      # Password of the db, set inside the docker-compose file
-      DB_PASS: ${DB_PASS}
-      # User, see above
-      DB_USER: ${DB_USER}
+      ROLL_COOLDOWN: ${ROLL_COOLDOWN-2h}
+      # DB_URL is the full database url.
+      DB_URL: ${DB_URL-postgres://db:5432/waifudb?sslmode=disable}
 
   db:
     image: postgres:9.6-alpine
     restart: unless-stopped
     container_name: waifu_db
-    networks:
-      - default
     volumes:
       - "wdata:/data/postgres"
     environment:
@@ -61,38 +51,12 @@ services:
     image: ghcr.io/go-waifubot/api:postgres
     restart: unless-stopped
     container_name: waifu_api
-    networks:
-      - default
     environment:
-      API_PORT: 3333
-      DB_NAME: ${DB_NAME}
-      DB_HOST: ${DB_HOST}
-      DB_PASS: ${DB_PASS}
-      DB_USER: ${DB_USER}
+      PORT: ${PORT:3333}
+      # DB_URL is the full database url.
+      DB_URL: ${DB_URL-postgres://db:5432/waifudb?sslmode=disable}
     ports:
       - 3333:3333
 
-  backup:
-    build:
-      context: ./
-      dockerfile: $PWD/dockerfile-otc
-    container_name: waifu_otc
-    networks:
-      - default
-    environment:
-      # PG variables
-      PGHOST: db
-      PGUSER: ${DB_USER}
-      PGPASSWORD: ${DB_PASS}
-      PGDATABASE: ${DB_NAME}
-
-      # OTC variables
-      SCHEDULE_LOOP: 15m
-      DROPBOX_TOKEN: ${DROPBOX_TOKEN}
-    command: c cmd -c pg_dump -a '-Fc -w' dropbox -f waifu.dump
-
 volumes:
   wdata:
-
-networks:
-  default:

@@ -16,7 +16,7 @@ func main() {
 	}
 
 	// Setup db
-	conn, err := db.Init(conf.Database)
+	conn, err := db.Init(conf.DatabaseURL)
 	if err != nil {
 		log.Fatal().Err(err).Msg("Couldn't connect to db")
 	}
