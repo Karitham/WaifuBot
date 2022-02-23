@@ -1,0 +1,21 @@
+name: deployment
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows:
+      - "Build Image"
+    types:
+      - completed
+
+jobs:
+  deployment:
+    runs-on: self-hosted
+    environment: prod
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: build
+        run: |
+          docker-compose --env-file ~/.env.waifubot -f docker-compose.deploy.yml pull
+          docker-compose --env-file ~/.env.waifubot -f docker-compose.deploy.yml up -d --remove-orphans
