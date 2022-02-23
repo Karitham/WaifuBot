@@ -5,8 +5,6 @@ services:
     container_name: waifu_bot
     volumes:
       - "$HOME/.postgresql/root.crt:/etc/certs/postgresql/root.crt"
-    depends_on:
-      - db
     environment:
       # This is the config file, everything works well when set to default
       # You only need to absolutely change the default "bot token" by your bot token
