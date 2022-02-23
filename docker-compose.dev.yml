@@ -34,7 +34,7 @@ services:
       # How much time between each user roll
       ROLL_COOLDOWN: ${ROLL_COOLDOWN-2h}
       # DB_URL is the full database url.
-      DB_URL: ${DB_URL-postgres://db:5432/waifudb?sslmode=disable}
+      DB_URL: ${DB_URL-postgres://postgres:waifudb@db:5432/waifudb?sslmode=disable}
 
   db:
     image: postgres:9.6-alpine
@@ -52,11 +52,12 @@ services:
     restart: unless-stopped
     container_name: waifu_api
     environment:
-      PORT: ${PORT:3333}
+      # PORT on which the API should serve
+      PORT: ${PORT-3333}
       # DB_URL is the full database url.
-      DB_URL: ${DB_URL-postgres://db:5432/waifudb?sslmode=disable}
+      DB_URL: ${DB_URL-postgres://postgres:waifudb@db:5432/waifudb?sslmode=disable}
     ports:
-      - 3333:3333
+      - 3333:${PORT-3333}
 
 volumes:
   wdata:

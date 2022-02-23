@@ -35,15 +35,3 @@ services:
       ROLL_COOLDOWN: ${ROLL_COOLDOWN-2h}
       # DB_URL is the full database url.
       DB_URL: ${DB_URL}
-
-  api:
-    image: ghcr.io/go-waifubot/api:postgres
-    restart: unless-stopped
-    container_name: waifu_api
-    volumes:
-      - "${HOME}/.postgresql/root.crt:/etc/certs/postgresql/root.crt"
-    environment:
-      PORT: 3333
-      DB_URL: ${DB_URL}
-    ports:
-      - 3333:3333

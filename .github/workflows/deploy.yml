@@ -11,13 +11,12 @@ on:
 jobs:
   run:
     runs-on: self-hosted
+    environment: prod
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-        with:
-          clean: false
 
       - name: build
         run: |
-          docker-compose --env-file ~/.env.waifubot -f docker-compose.deploy.yml pull
-          docker-compose --env-file ~/.env.waifubot -f docker-compose.deploy.yml up -d --remove-orphans
+          docker-compose -f docker-compose.deploy.yml pull
+          docker-compose -f docker-compose.deploy.yml up -d --remove-orphans

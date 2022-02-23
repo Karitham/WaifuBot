@@ -9,7 +9,7 @@ import (
 
 // ConfStruct is used to unmarshal the environ
 type ConfStruct struct {
-	DatabaseURL       string        `env:"DB_URL,required=true,default=postgres://db:5432/waifudb?sslmode=disable"`
+	DatabaseURL       string        `env:"DB_URL,required=true"`
 	BotToken          string        `env:"TOKEN,required=true"`
 	BotStatus         string        `env:"STATUS,defaul=use w.help for help"`
 	Prefix            Prefixes      `env:"PREFIX,default=w."`
