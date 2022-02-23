@@ -12,6 +12,17 @@ jobs:
   run:
     runs-on: self-hosted
     environment: prod
+    env:
+      PREFIX: ${{ secrets.PREFIX }}
+      TOKEN: ${{ secrets.TOKEN }}
+      STATUS: ${{ secrets.STATUS }}
+      MAX_CHAR_ROLL: ${{ secrets.MAX_CHAR_ROLL }}
+      INTERACT_DROPS: ${{ secrets.INTERACT_DROPS }}
+      LIST_LEN: ${{ secrets.LIST_LEN }}
+      MAX_CHAR_DROP: ${{ secrets.MAX_CHAR_DROP }}
+      LIST_UPDATE_TIME: ${{ secrets.LIST_UPDATE_TIME }}
+      ROLL_COOLDOWN: ${{ secrets.ROLL_COOLDOWN }}
+      DB_URL: ${{ secrets.DB_URL }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
