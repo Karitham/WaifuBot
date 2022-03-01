@@ -12,10 +12,21 @@ jobs:
   deployment:
     runs-on: self-hosted
     environment: prod
+    env:
+      PREFIX: ${{ secrets.PREFIX }}
+      STATUS: ${{ secrets.STATUS }}
+      INTERACT_DROPS: ${{ secrets.INTERACT_DROPS }}
+      LIST_LEN: ${{ secrets.LIST_LEN }}
+      MAX_CHAR_ROLL: ${{ secrets.MAX_CHAR_ROLL }}
+      MAX_CHAR_DROP: ${{ secrets.MAX_CHAR_DROP }}
+      LIST_UPDATE_TIME: ${{ secrets.LIST_UPDATE_TIME }}
+      ROLL_COOLDOWN: ${{ secrets.ROLL_COOLDOWN }}
+      TOKEN: ${{ secrets.TOKEN }}
+      DB_URL: ${{ secrets.DB_URL }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
       - name: build
         run: |
-          docker-compose --env-file ~/.env.waifubot -f docker-compose.deploy.yml pull
-          docker-compose --env-file ~/.env.waifubot -f docker-compose.deploy.yml up -d --remove-orphans
+          docker-compose -f docker-compose.deploy.yml pull
+          docker-compose -f docker-compose.deploy.yml up -d --remove-orphans
