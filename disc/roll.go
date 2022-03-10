@@ -60,7 +60,17 @@ func (b *Bot) Roll(m *gateway.MessageCreateEvent) (*discord.Embed, error) {
 		return nil, errors.New("could not get a random character. Anilist is most likely down, please retry later")
 	}
 
-	err = b.DB.Tx(func(q db.Querier) error {
+	if err = b.DB.Tx(func(q db.Querier) error {
+		p, err = q.GetProfile(b.Ctx.Context(), int64(m.Author.ID))
+		if nextRollTime := time.Until(p.Date.UTC().Add(b.conf.TimeBetweenRolls)); err != nil || nextRollTime > 0 {
+			return fmt.Errorf("**illegal roll**,\nroll in %s", nextRollTime.Truncate(time.Second))
+		}
+
+		err = q.UpdateUser(b.Ctx.Context(), db.User{Date: time.Now().UTC(), UserID: p.UserID})
+		if err != nil {
+			return errors.New("could not add this character to your list, you can retry. If this error occurs multiple times, please raise an issue on <https://github.com/Karitham/WaifuBot>")
+		}
+
 		err = q.InsertChar(
 			b.Ctx.Context(),
 			db.InsertCharParams{
@@ -72,18 +82,16 @@ func (b *Bot) Roll(m *gateway.MessageCreateEvent) (*discord.Embed, error) {
 			},
 		)
 		if err != nil {
-			return err
+			return errors.New("could not add this character to your list, you can retry. If this error occurs multiple times, please raise an issue on <https://github.com/Karitham/WaifuBot>")
 		}
 
-		return q.UpdateUser(b.Ctx.Context(), db.User{Date: time.Now().UTC(), UserID: int64(m.Author.ID)})
-	})
-
-	if err != nil {
-		log.Err(err).
+		return nil
+	}); err != nil {
+		log.Debug().AnErr("err", err).
 			Str("Type", "ROLL").
 			Msg("Could not add char to the database")
 
-		return nil, errors.New("could not add this character to your list, you can retry. If this error occurs multiple times, please raise an issue on <https://github.com/Karitham/WaifuBot>")
+		return nil, err
 	}
 
 	return &discord.Embed{

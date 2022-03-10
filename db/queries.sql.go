@@ -114,11 +114,11 @@ VALUES ($1, $2, $3, $4, $5)
 `
 
 type InsertCharParams struct {
+	ID     int64  `json:"id"`
+	UserID int64  `json:"user_id"`
 	Image  string `json:"image"`
 	Name   string `json:"name"`
 	Type   string `json:"type"`
-	ID     int64  `json:"id"`
-	UserID int64  `json:"user_id"`
 }
 
 func (q *Queries) InsertChar(ctx context.Context, arg InsertCharParams) error {
