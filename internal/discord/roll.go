@@ -50,7 +50,7 @@ func (b *Bot) roll(w corde.ResponseWriter, i *corde.Request[components.SlashComm
 			return err
 		}
 
-		var toUpdate int = 0
+		toUpdate := 0
 		switch {
 		case time.Now().After(user.Date.Add(b.RollCooldown)):
 			toUpdate = 1 // Time
