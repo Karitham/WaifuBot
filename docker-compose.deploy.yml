@@ -2,6 +2,7 @@ services:
   bot:
     image: ghcr.io/karitham/waifubot:main
     restart: unless-stopped
+    pull_policy: always
     container_name: waifu_bot
     volumes:
       - "$HOME/.postgresql/root.crt:/etc/certs/postgresql/root.crt"
