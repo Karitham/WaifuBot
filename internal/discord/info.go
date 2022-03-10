@@ -7,9 +7,10 @@ import (
 	"time"
 
 	"github.com/Karitham/corde"
+	"github.com/Karitham/corde/components"
 )
 
-func (b *Bot) info(w corde.ResponseWriter, i *corde.InteractionRequest) {
+func (b *Bot) info(w corde.ResponseWriter, i *corde.Request[components.SlashCommandInteractionData]) {
 	infob := strings.Builder{}
 	infob.WriteString("Version: ")
 	infob.WriteString(runtime.Version())
@@ -34,8 +35,8 @@ func (b *Bot) info(w corde.ResponseWriter, i *corde.InteractionRequest) {
 	infob.WriteString(time.Duration(int64(s.PauseTotalNs)).String())
 	infob.WriteRune('\n')
 
-	w.Respond(corde.NewResp().Ephemeral().Embeds(
-		corde.NewEmbed().
+	w.Respond(components.NewResp().Ephemeral().Embeds(
+		components.NewEmbed().
 			Title("Info").
 			Descriptionf(
 				"A gacha game bot to collect and trade characters, and discover anything manga related.\n```info\n%s```",

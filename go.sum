@@ -1,7 +1,7 @@
 github.com/99designs/gqlgen v0.14.0/go.mod h1:S7z4boV+Nx4VvzMUpVrY/YuHjFX4n7rDyuTqvAkuoRE=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
-github.com/Karitham/corde v0.7.2 h1:Bb+GhPurPNukgh9LMEHIZa6a103ggG+Et0qH0+Oonro=
-github.com/Karitham/corde v0.7.2/go.mod h1:1cRTozr9uokpaunRXR5j9pa/A1P0I8oIcTZfnoRxCMg=
+github.com/Karitham/corde v0.7.3-0.20220310120101-aa954f91d1a6 h1:1AnZbN529EEj0jMf1EasEqT+srCZDdDvijUpAuXa5lE=
+github.com/Karitham/corde v0.7.3-0.20220310120101-aa954f91d1a6/go.mod h1:ydsWnFRXiLcq4LaelS9mZ2kiDqL6p9AfA2CEc+5S0jA=
 github.com/Khan/genqlient v0.4.0 h1:4XImbzhBtaIFmwGPwEKdnx3TuGOX0GZ0hcW/idTzwts=
 github.com/Khan/genqlient v0.4.0/go.mod h1:te6aw+Ronw1j+PRVKmVPEFA36IsLG2wK0Uy6jPZ55To=
 github.com/Masterminds/squirrel v1.5.2 h1:UiOEi2ZX4RCSkpiNDQN5kro/XIBpSRk9iTqdIRPzUXE=

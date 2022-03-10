@@ -13,6 +13,11 @@ func (b *Bot) RegisterCommands() error {
 			corde.NewUserOption("user", "user to list characters for", false),
 		),
 
+		corde.NewSlashCommand("verify", "assert a user owns a character",
+			corde.NewIntOption("id", "id of the character", true).CanAutocomplete(),
+			corde.NewUserOption("user", "user which is supposed to own that character", false),
+		),
+
 		corde.NewSlashCommand("roll", "roll a random character"),
 
 		corde.NewSlashCommand("search", "search for anything on anilist",

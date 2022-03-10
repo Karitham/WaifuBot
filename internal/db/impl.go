@@ -6,14 +6,14 @@ import (
 	"time"
 
 	"github.com/Karitham/WaifuBot/internal/discord"
-	"github.com/Karitham/corde"
+	"github.com/Karitham/corde/snowflake"
 	"github.com/Masterminds/squirrel"
 )
 
 var _ discord.Store = (*Queries)(nil)
 
 // PutChar a char in the database
-func (q *Queries) PutChar(ctx context.Context, userID corde.Snowflake, c discord.Character) error {
+func (q *Queries) PutChar(ctx context.Context, userID snowflake.Snowflake, c discord.Character) error {
 	if q.tx == nil {
 		return q.asTx(func(q *Queries) error {
 			return q.PutChar(ctx, userID, c)
@@ -42,7 +42,7 @@ func (q *Queries) PutChar(ctx context.Context, userID corde.Snowflake, c discord
 }
 
 // Chars returns the user's characters
-func (q *Queries) Chars(ctx context.Context, userID corde.Snowflake) ([]discord.Character, error) {
+func (q *Queries) Chars(ctx context.Context, userID snowflake.Snowflake) ([]discord.Character, error) {
 	dbchs, err := q.getChars(ctx, uint64(userID))
 	if err != nil {
 		return nil, err
@@ -55,7 +55,7 @@ func (q *Queries) Chars(ctx context.Context, userID corde.Snowflake) ([]discord.
 			Image:  c.Image,
 			Name:   c.Name,
 			Type:   c.Type,
-			UserID: corde.Snowflake(c.UserID),
+			UserID: snowflake.Snowflake(c.UserID),
 			ID:     c.ID,
 		})
 	}
@@ -64,12 +64,12 @@ func (q *Queries) Chars(ctx context.Context, userID corde.Snowflake) ([]discord.
 }
 
 // CharsIDs returns the user's character's ID
-func (q *Queries) CharsIDs(ctx context.Context, userID corde.Snowflake) ([]int64, error) {
+func (q *Queries) CharsIDs(ctx context.Context, userID snowflake.Snowflake) ([]int64, error) {
 	return q.getCharsID(ctx, uint64(userID))
 }
 
 // User returns a user
-func (q *Queries) User(ctx context.Context, userID corde.Snowflake) (discord.User, error) {
+func (q *Queries) User(ctx context.Context, userID snowflake.Snowflake) (discord.User, error) {
 	dbuser, err := q.getUser(ctx, uint64(userID))
 	if err != nil {
 		return discord.User{}, err
@@ -78,13 +78,13 @@ func (q *Queries) User(ctx context.Context, userID corde.Snowflake) (discord.Use
 	return discord.User{
 		Date:     dbuser.Date,
 		Quote:    dbuser.Quote,
-		UserID:   corde.Snowflake(dbuser.UserID),
+		UserID:   snowflake.Snowflake(dbuser.UserID),
 		Favorite: uint64(dbuser.Favorite.Int64),
 	}, nil
 }
 
 // updateUser updates a user's properties
-func (q *Queries) updateUser(ctx context.Context, userID corde.Snowflake, opts ...func(*squirrel.UpdateBuilder)) error {
+func (q *Queries) updateUser(ctx context.Context, userID snowflake.Snowflake, opts ...func(*squirrel.UpdateBuilder)) error {
 	builder := squirrel.Update("users").Where(squirrel.Eq{
 		"user_id": userID,
 	}).PlaceholderFormat(squirrel.Dollar)
@@ -134,27 +134,27 @@ func withToken(t string) func(*squirrel.UpdateBuilder) {
 }
 
 // SetUserDate sets the user's date
-func (q *Queries) SetUserDate(ctx context.Context, userID corde.Snowflake, d time.Time) error {
+func (q *Queries) SetUserDate(ctx context.Context, userID snowflake.Snowflake, d time.Time) error {
 	return q.updateUser(ctx, userID, withDate(d))
 }
 
 // SetUserToken sets the user's token
-func (q *Queries) SetUserToken(ctx context.Context, userID corde.Snowflake, token string) error {
+func (q *Queries) SetUserToken(ctx context.Context, userID snowflake.Snowflake, token string) error {
 	return q.updateUser(ctx, userID, withToken(token))
 }
 
 // SetUserFavorite sets the user's favorite
-func (q *Queries) SetUserFavorite(ctx context.Context, userID corde.Snowflake, c int64) error {
+func (q *Queries) SetUserFavorite(ctx context.Context, userID snowflake.Snowflake, c int64) error {
 	return q.updateUser(ctx, userID, withFav(c))
 }
 
 // SetUserQuote sets the user's quote
-func (q *Queries) SetUserQuote(ctx context.Context, userID corde.Snowflake, quote string) error {
+func (q *Queries) SetUserQuote(ctx context.Context, userID snowflake.Snowflake, quote string) error {
 	return q.updateUser(ctx, userID, withQuote(quote))
 }
 
 // CharsStartingWith returns characters starting with the given string
-func (q *Queries) CharsStartingWith(ctx context.Context, userID corde.Snowflake, s string) ([]discord.Character, error) {
+func (q *Queries) CharsStartingWith(ctx context.Context, userID snowflake.Snowflake, s string) ([]discord.Character, error) {
 	dbchs, err := q.getCharsWhoseIDStartWith(ctx, getCharsWhoseIDStartWithParams{
 		UserID:  uint64(userID),
 		Lim:     50,
@@ -172,7 +172,7 @@ func (q *Queries) CharsStartingWith(ctx context.Context, userID corde.Snowflake,
 			Image:  c.Image,
 			Name:   c.Name,
 			Type:   c.Type,
-			UserID: corde.Snowflake(c.UserID),
+			UserID: snowflake.Snowflake(c.UserID),
 			ID:     c.ID,
 		})
 	}
@@ -181,7 +181,7 @@ func (q *Queries) CharsStartingWith(ctx context.Context, userID corde.Snowflake,
 }
 
 // Profile returns the user's profile
-func (q *Queries) Profile(ctx context.Context, userID corde.Snowflake) (discord.Profile, error) {
+func (q *Queries) Profile(ctx context.Context, userID snowflake.Snowflake) (discord.Profile, error) {
 	p, err := q.getProfile(ctx, uint64(userID))
 	if err != nil {
 		return discord.Profile{}, err
@@ -191,7 +191,7 @@ func (q *Queries) Profile(ctx context.Context, userID corde.Snowflake) (discord.
 		User: discord.User{
 			Date:   p.UserDate,
 			Quote:  p.UserQuote,
-			UserID: corde.Snowflake(p.UserID),
+			UserID: snowflake.Snowflake(p.UserID),
 		},
 		CharacterCount: int(p.Count),
 		Favorite: discord.Character{
@@ -203,11 +203,30 @@ func (q *Queries) Profile(ctx context.Context, userID corde.Snowflake) (discord.
 	}, nil
 }
 
-func (q *Queries) GiveUserChar(ctx context.Context, dst corde.Snowflake, src corde.Snowflake, charID int64) error {
+func (q *Queries) GiveUserChar(ctx context.Context, dst snowflake.Snowflake, src snowflake.Snowflake, charID int64) error {
 	_, err := q.giveChar(ctx, giveCharParams{
 		Given: int64(dst),
 		ID:    charID,
 		Giver: int64(src),
 	})
 	return err
+}
+
+func (q *Queries) VerifyChar(ctx context.Context, userID snowflake.Snowflake, charID int64) (discord.Character, error) {
+	c, err := q.getChar(ctx, getCharParams{
+		ID:     charID,
+		UserID: uint64(userID),
+	})
+	if err != nil {
+		return discord.Character{}, err
+	}
+
+	return discord.Character{
+		Date:   c.Date,
+		Image:  c.Image,
+		Name:   c.Name,
+		Type:   c.Type,
+		UserID: snowflake.Snowflake(c.UserID),
+		ID:     c.ID,
+	}, nil
 }

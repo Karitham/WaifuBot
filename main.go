@@ -8,13 +8,13 @@ import (
 	"github.com/Karitham/WaifuBot/internal/anilist"
 	"github.com/Karitham/WaifuBot/internal/db"
 	"github.com/Karitham/WaifuBot/internal/discord"
-	"github.com/Karitham/corde"
+	"github.com/Karitham/corde/snowflake"
 	"github.com/joho/godotenv"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
 
-//go:generate sqlc generate -f ./internal/sqlc.yaml
+//go:generate sqlc generate -f sqlc.yml
 
 func main() {
 	//nolint:errcheck
@@ -27,8 +27,8 @@ func main() {
 
 	token := os.Getenv("BOT_TOKEN")
 	publicKey := os.Getenv("PUBLIC_KEY")
-	appID := corde.SnowflakeFromString(os.Getenv("APP_ID"))
-	guildID := corde.SnowflakeFromString(os.Getenv("GUILD_ID"))
+	appID := snowflake.SnowflakeFromString(os.Getenv("APP_ID"))
+	guildID := snowflake.SnowflakeFromString(os.Getenv("GUILD_ID"))
 
 	rollCD, _ := time.ParseDuration(os.Getenv("ROLL_TIMEOUT"))
 	if rollCD == 0 {

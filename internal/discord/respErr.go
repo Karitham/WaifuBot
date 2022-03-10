@@ -3,7 +3,7 @@ package discord
 import (
 	"fmt"
 
-	"github.com/Karitham/corde"
+	"github.com/Karitham/corde/components"
 )
 
 // rspErr is a response error sent to discord
@@ -11,8 +11,8 @@ import (
 type rspErr string
 
 // InteractionRespData implements the response data interface
-func (r rspErr) InteractionRespData() *corde.InteractionRespData {
-	return corde.NewResp().Ephemeral().Content(string(r)).InteractionRespData()
+func (r rspErr) InteractionRespData() *components.InteractionRespData {
+	return components.NewResp().Ephemeral().Content(string(r)).InteractionRespData()
 }
 
 // newErrf returns a new rspErr with the given format

@@ -4,9 +4,10 @@ import (
 	"fmt"
 
 	"github.com/Karitham/corde"
+	"github.com/Karitham/corde/components"
 )
 
-func (b *Bot) list(w corde.ResponseWriter, i *corde.InteractionRequest) {
+func (b *Bot) list(w corde.ResponseWriter, i *corde.Request[components.SlashCommandInteractionData]) {
 	user := i.Member.User
 	if len(i.Data.Resolved.Members) > 0 {
 		user = i.Data.Resolved.Users.First()
@@ -23,9 +24,9 @@ func (b *Bot) list(w corde.ResponseWriter, i *corde.InteractionRequest) {
 		return
 	}
 
-	embed := corde.NewEmbed().
+	embed := components.NewEmbed().
 		Titlef("%s's List", user.Username).
-		Thumbnail(corde.Image{URL: user.AvatarPNG()}).
+		Thumbnail(components.Image{URL: user.AvatarPNG()}).
 		URL(fmt.Sprintf("https://waifugui.kar.moe/#/list/%s", user.ID.String()))
 
 	if len(chars) > 18 {
@@ -36,11 +37,11 @@ func (b *Bot) list(w corde.ResponseWriter, i *corde.InteractionRequest) {
 		embed.FieldInline(c.Name, fmt.Sprintf("%d — %s", c.ID, c.Date.Format("02/01")))
 	}
 
-	w.Respond(corde.NewResp().Embeds(embed).Ephemeral())
+	w.Respond(components.NewResp().Embeds(embed).Ephemeral())
 }
 
-func list(chars []Character) []corde.Field {
-	f := make([]corde.Field, 0, len(chars))
+func list(chars []Character) []components.Field {
+	f := make([]components.Field, 0, len(chars))
 
 	return f
 }

@@ -4,14 +4,15 @@ import (
 	"context"
 
 	"github.com/Karitham/corde"
+	"github.com/Karitham/corde/components"
 	"github.com/rs/zerolog/log"
 )
 
 func (b *Bot) search(m *corde.Mux) {
-	m.Command("char", trace(b.SearchChar))
-	m.Command("user", trace(b.SearchUser))
-	m.Command("manga", trace(b.SearchManga))
-	m.Command("anime", trace(b.SearchAnime))
+	m.SlashCommand("char", trace(b.SearchChar))
+	m.SlashCommand("user", trace(b.SearchUser))
+	m.SlashCommand("manga", trace(b.SearchManga))
+	m.SlashCommand("anime", trace(b.SearchAnime))
 }
 
 type AnimeSearcher interface {
@@ -36,7 +37,7 @@ type TrackerUser struct {
 	About    string
 }
 
-func (b *Bot) SearchAnime(w corde.ResponseWriter, i *corde.InteractionRequest) {
+func (b *Bot) SearchAnime(w corde.ResponseWriter, i *corde.Request[components.SlashCommandInteractionData]) {
 	search, _ := i.Data.Options.String("name")
 
 	anime, err := b.AnimeService.Anime(i.Context, search)
@@ -53,7 +54,7 @@ type MangaSearcher interface {
 	Manga(context.Context, string) ([]Media, error)
 }
 
-func (b *Bot) SearchManga(w corde.ResponseWriter, i *corde.InteractionRequest) {
+func (b *Bot) SearchManga(w corde.ResponseWriter, i *corde.Request[components.SlashCommandInteractionData]) {
 	search, _ := i.Data.Options.String("name")
 
 	manga, err := b.AnimeService.Manga(i.Context, search)
@@ -70,7 +71,7 @@ type UserSearcher interface {
 	User(context.Context, string) ([]TrackerUser, error)
 }
 
-func (b *Bot) SearchUser(w corde.ResponseWriter, i *corde.InteractionRequest) {
+func (b *Bot) SearchUser(w corde.ResponseWriter, i *corde.Request[components.SlashCommandInteractionData]) {
 	search, _ := i.Data.Options.String("name")
 
 	user, err := b.AnimeService.User(i.Context, search)
@@ -87,7 +88,7 @@ type CharSearcher interface {
 	Character(context.Context, string) ([]MediaCharacter, error)
 }
 
-func (b *Bot) SearchChar(w corde.ResponseWriter, i *corde.InteractionRequest) {
+func (b *Bot) SearchChar(w corde.ResponseWriter, i *corde.Request[components.SlashCommandInteractionData]) {
 	search, _ := i.Data.Options.String("name")
 
 	char, err := b.AnimeService.Character(i.Context, search)
@@ -100,20 +101,20 @@ func (b *Bot) SearchChar(w corde.ResponseWriter, i *corde.InteractionRequest) {
 	w.Respond(charEmbed(char[0]))
 }
 
-func mediaEmbed(m Media) *corde.EmbedB {
-	return applyEmbedOpt(corde.NewEmbed().
+func mediaEmbed(m Media) *components.EmbedB {
+	return applyEmbedOpt(components.NewEmbed().
 		Title(m.Title).
 		URL(m.URL).
 		Color(m.CoverImageColor).
 		ImageURL(m.BannerImageURL).
-		Thumbnail(corde.Image{URL: m.CoverImageURL}).
+		Thumbnail(components.Image{URL: m.CoverImageURL}).
 		Description(m.Description),
 		anilistFooter,
 	)
 }
 
-func userEmbed(u TrackerUser) *corde.EmbedB {
-	return applyEmbedOpt(corde.NewEmbed().
+func userEmbed(u TrackerUser) *components.EmbedB {
+	return applyEmbedOpt(components.NewEmbed().
 		Title(u.Name).
 		URL(u.URL).
 		Color(AnilistColor).
@@ -123,25 +124,25 @@ func userEmbed(u TrackerUser) *corde.EmbedB {
 	)
 }
 
-func charEmbed(c MediaCharacter) *corde.EmbedB {
-	return applyEmbedOpt(corde.NewEmbed().
+func charEmbed(c MediaCharacter) *components.EmbedB {
+	return applyEmbedOpt(components.NewEmbed().
 		Title(c.Name).
 		Color(AnilistColor).
 		URL(c.URL).
-		Thumbnail(corde.Image{URL: c.ImageURL}).
+		Thumbnail(components.Image{URL: c.ImageURL}).
 		Description(c.Description),
 		anilistFooter,
 	)
 }
 
-func anilistFooter(b *corde.EmbedB) *corde.EmbedB {
-	return b.Footer(corde.Footer{
+func anilistFooter(b *components.EmbedB) *components.EmbedB {
+	return b.Footer(components.Footer{
 		Text:    "View on anilist",
 		IconURL: AnilistIconURL,
 	})
 }
 
-func applyEmbedOpt(b *corde.EmbedB, opts ...func(*corde.EmbedB) *corde.EmbedB) *corde.EmbedB {
+func applyEmbedOpt(b *components.EmbedB, opts ...func(*components.EmbedB) *components.EmbedB) *components.EmbedB {
 	for _, opt := range opts {
 		b = opt(b)
 	}

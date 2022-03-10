@@ -6,6 +6,8 @@ import (
 	"time"
 
 	"github.com/Karitham/corde"
+	"github.com/Karitham/corde/components"
+	"github.com/Karitham/corde/snowflake"
 	"github.com/rs/zerolog/log"
 )
 
@@ -23,23 +25,23 @@ type MediaCharacter struct {
 }
 
 type Character struct {
-	Date   time.Time       `json:"date"`
-	Image  string          `json:"image"`
-	Name   string          `json:"name"`
-	Type   string          `json:"type"`
-	UserID corde.Snowflake `json:"user_id"`
-	ID     int64           `json:"id"`
+	Date   time.Time           `json:"date"`
+	Image  string              `json:"image"`
+	Name   string              `json:"name"`
+	Type   string              `json:"type"`
+	UserID snowflake.Snowflake `json:"user_id"`
+	ID     int64               `json:"id"`
 }
 
 type User struct {
-	Date     time.Time       `json:"date"`
-	Quote    string          `json:"quote"`
-	Favorite uint64          `json:"favorite"`
-	UserID   corde.Snowflake `json:"user_id"`
-	Tokens   int32           `json:"tokens"`
+	Date     time.Time           `json:"date"`
+	Quote    string              `json:"quote"`
+	Favorite uint64              `json:"favorite"`
+	UserID   snowflake.Snowflake `json:"user_id"`
+	Tokens   int32               `json:"tokens"`
 }
 
-func (b *Bot) roll(w corde.ResponseWriter, i *corde.InteractionRequest) {
+func (b *Bot) roll(w corde.ResponseWriter, i *corde.Request[components.SlashCommandInteractionData]) {
 	var char MediaCharacter
 
 	if err := b.Store.Tx(func(s Store) error {
@@ -114,11 +116,11 @@ func (b *Bot) roll(w corde.ResponseWriter, i *corde.InteractionRequest) {
 		return
 	}
 
-	w.Respond(corde.NewEmbed().
+	w.Respond(components.NewEmbed().
 		Title(char.Name).
 		URL(char.URL).
-		Footer(corde.Footer{IconURL: AnilistIconURL, Text: "View them on anilist"}).
-		Thumbnail(corde.Image{URL: char.ImageURL}).
+		Footer(components.Footer{IconURL: AnilistIconURL, Text: "View them on anilist"}).
+		Thumbnail(components.Image{URL: char.ImageURL}).
 		Descriptionf("You rolled %s, id: %d\nIt appears in :\n- %s", char.Name, char.ID, char.MediaTitle),
 	)
 }
