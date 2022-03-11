@@ -18,6 +18,10 @@ func (b *Bot) RegisterCommands() error {
 			corde.NewUserOption("user", "user which is supposed to own that character", false),
 		),
 
+		corde.NewSlashCommand("exchange", "exchange a character against a token",
+			corde.NewIntOption("id", "id of the character", true).CanAutocomplete(),
+		),
+
 		corde.NewSlashCommand("roll", "roll a random character"),
 
 		corde.NewSlashCommand("search", "search for anything on anilist",

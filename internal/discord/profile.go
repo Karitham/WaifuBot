@@ -2,6 +2,7 @@ package discord
 
 import (
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/Karitham/corde"
@@ -34,7 +35,7 @@ func (b *Bot) profileView(w corde.ResponseWriter, i *corde.Request[components.Sl
 
 	data, err := b.Store.Profile(i.Context, user.ID)
 	if err != nil {
-		log.Err(err).Msg("Error getting user's profile")
+		log.Ctx(i.Context).Err(err).Msg("Error getting user's profile")
 		w.Respond(components.NewResp().Content("An error occurred dialing the database, please try again later").Ephemeral())
 		return
 	}
@@ -62,7 +63,7 @@ func (b *Bot) profileEditFavorite(w corde.ResponseWriter, i *corde.Request[compo
 	optID, _ := i.Data.Options.Int64("id")
 	err := b.Store.SetUserFavorite(i.Context, i.Member.User.ID, optID)
 	if err != nil {
-		log.Err(err).Stringer("user", i.Member.User.ID).Int64("character", optID).Msg("Error setting user's favorite character")
+		log.Ctx(i.Context).Err(err).Stringer("user", i.Member.User.ID).Int64("character", optID).Msg("Error setting user's favorite character")
 		w.Respond(components.NewResp().Content("An error occurred setting this character").Ephemeral())
 		return
 	}
@@ -71,7 +72,11 @@ func (b *Bot) profileEditFavorite(w corde.ResponseWriter, i *corde.Request[compo
 }
 
 func (b *Bot) profileEditFavoriteComplete(w corde.ResponseWriter, i *corde.Request[components.AutocompleteInteractionData]) {
-	id, _ := i.Data.Options.String("id")
+	id, err := i.Data.Options.String("id")
+	if err != nil {
+		i, _ := i.Data.Options.Int("id")
+		id = strconv.Itoa(i)
+	}
 
 	chars, err := b.Store.CharsStartingWith(i.Context, i.Member.User.ID, id)
 	if err != nil {
@@ -99,7 +104,7 @@ func (b *Bot) profileEditQuote(w corde.ResponseWriter, i *corde.Request[componen
 
 	err := b.Store.SetUserQuote(i.Context, i.Member.User.ID, quote)
 	if err != nil {
-		log.Err(err).Stringer("user", i.Member.User.ID).Str("quote", quote).Msg("Error setting user's favorite character")
+		log.Ctx(i.Context).Err(err).Stringer("user", i.Member.User.ID).Str("quote", quote).Msg("Error setting user's favorite character")
 		w.Respond(components.NewResp().Content("An error occurred setting this character").Ephemeral())
 		return
 	}

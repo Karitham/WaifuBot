@@ -22,8 +22,17 @@ func New(db DBTX) *Queries {
 func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	q := Queries{db: db}
 	var err error
+	if q.addDropTokenStmt, err = db.PrepareContext(ctx, addDropToken); err != nil {
+		return nil, fmt.Errorf("error preparing query addDropToken: %w", err)
+	}
+	if q.consumeDropTokensStmt, err = db.PrepareContext(ctx, consumeDropTokens); err != nil {
+		return nil, fmt.Errorf("error preparing query consumeDropTokens: %w", err)
+	}
 	if q.createUserStmt, err = db.PrepareContext(ctx, createUser); err != nil {
 		return nil, fmt.Errorf("error preparing query createUser: %w", err)
+	}
+	if q.deleteCharStmt, err = db.PrepareContext(ctx, deleteChar); err != nil {
+		return nil, fmt.Errorf("error preparing query deleteChar: %w", err)
 	}
 	if q.getCharStmt, err = db.PrepareContext(ctx, getChar); err != nil {
 		return nil, fmt.Errorf("error preparing query getChar: %w", err)
@@ -54,9 +63,24 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 
 func (q *Queries) Close() error {
 	var err error
+	if q.addDropTokenStmt != nil {
+		if cerr := q.addDropTokenStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing addDropTokenStmt: %w", cerr)
+		}
+	}
+	if q.consumeDropTokensStmt != nil {
+		if cerr := q.consumeDropTokensStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing consumeDropTokensStmt: %w", cerr)
+		}
+	}
 	if q.createUserStmt != nil {
 		if cerr := q.createUserStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing createUserStmt: %w", cerr)
+		}
+	}
+	if q.deleteCharStmt != nil {
+		if cerr := q.deleteCharStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing deleteCharStmt: %w", cerr)
 		}
 	}
 	if q.getCharStmt != nil {
@@ -138,7 +162,10 @@ func (q *Queries) queryRow(ctx context.Context, stmt *sql.Stmt, query string, ar
 type Queries struct {
 	db                           DBTX
 	tx                           *sql.Tx
+	addDropTokenStmt             *sql.Stmt
+	consumeDropTokensStmt        *sql.Stmt
 	createUserStmt               *sql.Stmt
+	deleteCharStmt               *sql.Stmt
 	getCharStmt                  *sql.Stmt
 	getCharsStmt                 *sql.Stmt
 	getCharsIDStmt               *sql.Stmt
@@ -153,7 +180,10 @@ func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 	return &Queries{
 		db:                           tx,
 		tx:                           tx,
+		addDropTokenStmt:             q.addDropTokenStmt,
+		consumeDropTokensStmt:        q.consumeDropTokensStmt,
 		createUserStmt:               q.createUserStmt,
+		deleteCharStmt:               q.deleteCharStmt,
 		getCharStmt:                  q.getCharStmt,
 		getCharsStmt:                 q.getCharsStmt,
 		getCharsIDStmt:               q.getCharsIDStmt,

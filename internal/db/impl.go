@@ -70,16 +70,17 @@ func (q *Queries) CharsIDs(ctx context.Context, userID snowflake.Snowflake) ([]i
 
 // User returns a user
 func (q *Queries) User(ctx context.Context, userID snowflake.Snowflake) (discord.User, error) {
-	dbuser, err := q.getUser(ctx, uint64(userID))
+	u, err := q.getUser(ctx, uint64(userID))
 	if err != nil {
 		return discord.User{}, err
 	}
 
 	return discord.User{
-		Date:     dbuser.Date,
-		Quote:    dbuser.Quote,
-		UserID:   snowflake.Snowflake(dbuser.UserID),
-		Favorite: uint64(dbuser.Favorite.Int64),
+		Date:     u.Date,
+		Quote:    u.Quote,
+		UserID:   snowflake.Snowflake(u.UserID),
+		Favorite: uint64(u.Favorite.Int64),
+		Tokens:   u.Tokens,
 	}, nil
 }
 
@@ -189,9 +190,11 @@ func (q *Queries) Profile(ctx context.Context, userID snowflake.Snowflake) (disc
 
 	return discord.Profile{
 		User: discord.User{
-			Date:   p.UserDate,
-			Quote:  p.UserQuote,
-			UserID: snowflake.Snowflake(p.UserID),
+			Date:     p.UserDate,
+			Quote:    p.UserQuote,
+			UserID:   snowflake.Snowflake(p.UserID),
+			Tokens:   p.UserTokens,
+			Favorite: uint64(p.FavoriteID.Int64),
 		},
 		CharacterCount: int(p.Count),
 		Favorite: discord.Character{
@@ -216,6 +219,46 @@ func (q *Queries) VerifyChar(ctx context.Context, userID snowflake.Snowflake, ch
 	c, err := q.getChar(ctx, getCharParams{
 		ID:     charID,
 		UserID: uint64(userID),
+	})
+	if err != nil {
+		return discord.Character{}, err
+	}
+
+	return discord.Character{
+		Date:   c.Date,
+		Image:  c.Image,
+		Name:   c.Name,
+		Type:   c.Type,
+		UserID: snowflake.Snowflake(c.UserID),
+		ID:     c.ID,
+	}, nil
+}
+
+func (q *Queries) ConsumeDropTokens(ctx context.Context, userID snowflake.Snowflake, count int32) (discord.User, error) {
+	u, err := q.consumeDropTokens(ctx, consumeDropTokensParams{
+		Tokens: count,
+		UserID: uint64(userID),
+	})
+	if err != nil {
+		return discord.User{}, err
+	}
+	return discord.User{
+		Date:     u.Date,
+		Quote:    u.Quote,
+		Favorite: uint64(u.Favorite.Int64),
+		UserID:   userID,
+		Tokens:   u.Tokens,
+	}, nil
+}
+
+func (q *Queries) AddDropToken(ctx context.Context, userID snowflake.Snowflake) error {
+	return q.addDropToken(ctx, uint64(userID))
+}
+
+func (q *Queries) DeleteChar(ctx context.Context, userID snowflake.Snowflake, charID int64) (discord.Character, error) {
+	c, err := q.deleteChar(ctx, deleteCharParams{
+		UserID: uint64(userID),
+		ID:     charID,
 	})
 	if err != nil {
 		return discord.Character{}, err

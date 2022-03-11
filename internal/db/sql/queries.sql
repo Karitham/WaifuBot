@@ -43,6 +43,7 @@ SELECT characters.image as favorite_image,
     users.date as user_date,
     users.quote as user_quote,
     users.user_id as user_id,
+    users.tokens as user_tokens,
     (
         SELECT count(id)
         FROM characters
@@ -51,3 +52,17 @@ SELECT characters.image as favorite_image,
 FROM users
     LEFT JOIN characters ON characters.id = users.favorite
 WHERE users.user_id = $1;
+-- name: addDropToken :exec
+UPDATE users
+SET tokens = tokens + 1
+WHERE user_id = $1;
+-- name: consumeDropTokens :one
+UPDATE users
+SET tokens = tokens - $1
+WHERE user_id = $2
+RETURNING *;
+-- name: deleteChar :one
+DELETE FROM characters
+WHERE user_id = $1
+    AND id = $2
+RETURNING *;

@@ -50,31 +50,45 @@ func (b *Bot) roll(w corde.ResponseWriter, i *corde.Request[components.SlashComm
 			return err
 		}
 
-		toUpdate := 0
+		var updateUser func() error
 		switch {
 		case time.Now().After(user.Date.Add(b.RollCooldown)):
-			toUpdate = 1 // Time
+			updateUser = func() error {
+				if err = s.SetUserDate(i.Context, i.Member.User.ID, time.Now()); err != nil {
+					log.Ctx(i.Context).Err(err).Msg("error with db service")
+					w.Respond(rspErr("An error occurred dialing the database, please try again later"))
+					return err
+				}
+				return nil
+			}
 		case user.Tokens >= b.TokensNeeded:
-			toUpdate = 2 // Tokens
+			updateUser = func() error {
+				if _, err = s.ConsumeDropTokens(i.Context, i.Member.User.ID, b.TokensNeeded); err != nil {
+					log.Ctx(i.Context).Err(err).Msg("error with db service")
+					w.Respond(rspErr("An error occurred dialing the database, please try again later"))
+					return err
+				}
+				return nil
+			}
 		default:
 			w.Respond(newErrf("Invalid roll.\nYou need %d tokens to roll, you have %d, or you can wait %s until next free roll.",
 				b.TokensNeeded,
 				user.Tokens,
 				time.Until(user.Date.Add(b.RollCooldown)).Round(time.Second),
 			))
-			return errors.New("not enough tokens")
+			return errors.New("not enough tokens or time")
 		}
 
 		charsIDs, err := s.CharsIDs(i.Context, i.Member.User.ID)
 		if err != nil {
-			log.Err(err).Msg("error with db service")
+			log.Ctx(i.Context).Err(err).Msg("error with db service")
 			w.Respond(rspErr("An error occurred dialing the database, please try again later"))
 			return err
 		}
 
 		c, err := b.AnimeService.RandomChar(i.Context, charsIDs...)
 		if err != nil {
-			log.Err(err).Msg("error with anime service")
+			log.Ctx(i.Context).Err(err).Msg("error with anime service")
 			w.Respond(rspErr("An error getting a random character occurred, please try again later"))
 			return err
 		}
@@ -91,27 +105,12 @@ func (b *Bot) roll(w corde.ResponseWriter, i *corde.Request[components.SlashComm
 				UserID: i.Member.User.ID,
 				ID:     int64(c.ID),
 			}); err != nil {
-			log.Err(err).Msg("error with db service")
+			log.Ctx(i.Context).Err(err).Msg("error with db service")
 			w.Respond(rspErr("An error occurred dialing the database, please try again later"))
 			return err
 		}
 
-		switch toUpdate {
-		case 1:
-			if err := s.SetUserDate(i.Context, i.Member.User.ID, time.Now()); err != nil {
-				log.Err(err).Msg("error with db service")
-				w.Respond(rspErr("An error occurred dialing the database, please try again later"))
-				return err
-			}
-		case 2: // TODO: doesn't exist yet
-			// if err := s.SetUserTokens(i.Context, i.Member.User.ID, user.Tokens-b.TokensNeeded); err != nil {
-			// 	log.Err(err).Msg("error with db service")
-			// 	w.Respond(newErr("An error occurred dialing the database, please try again later"))
-			// 	return err
-			// }
-		}
-
-		return nil
+		return updateUser()
 	}); err != nil {
 		return
 	}

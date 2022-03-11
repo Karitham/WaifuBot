@@ -42,7 +42,7 @@ func (b *Bot) SearchAnime(w corde.ResponseWriter, i *corde.Request[components.Sl
 
 	anime, err := b.AnimeService.Anime(i.Context, search)
 	if err != nil {
-		log.Err(err).Msg("error with anime service")
+		log.Ctx(i.Context).Err(err).Msg("error with anime service")
 		w.Respond(rspErr("Error searching for this anime, either it doesn't exist or something went wrong"))
 		return
 	}
@@ -59,7 +59,7 @@ func (b *Bot) SearchManga(w corde.ResponseWriter, i *corde.Request[components.Sl
 
 	manga, err := b.AnimeService.Manga(i.Context, search)
 	if err != nil || len(manga) < 1 {
-		log.Err(err).Msg("error with manga service")
+		log.Ctx(i.Context).Err(err).Msg("error with manga service")
 		w.Respond(rspErr("Error searching for this manga, either it doesn't exist or something went wrong"))
 		return
 	}
@@ -76,7 +76,7 @@ func (b *Bot) SearchUser(w corde.ResponseWriter, i *corde.Request[components.Sla
 
 	user, err := b.AnimeService.User(i.Context, search)
 	if err != nil || len(user) < 1 {
-		log.Err(err).Msg("error with user service")
+		log.Ctx(i.Context).Err(err).Msg("error with user service")
 		w.Respond(rspErr("Error searching for this user, either it doesn't exist or something went wrong"))
 		return
 	}
@@ -93,7 +93,7 @@ func (b *Bot) SearchChar(w corde.ResponseWriter, i *corde.Request[components.Sla
 
 	char, err := b.AnimeService.Character(i.Context, search)
 	if err != nil || len(char) < 1 {
-		log.Err(err).Msg("error with char service")
+		log.Ctx(i.Context).Err(err).Msg("error with char service")
 		w.Respond(rspErr("Error searching for this character, either it doesn't exist or something went wrong"))
 		return
 	}

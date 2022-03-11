@@ -9,6 +9,43 @@ import (
 	"time"
 )
 
+const addDropToken = `-- name: addDropToken :exec
+UPDATE users
+SET tokens = tokens + 1
+WHERE user_id = $1
+`
+
+func (q *Queries) addDropToken(ctx context.Context, userID uint64) error {
+	_, err := q.exec(ctx, q.addDropTokenStmt, addDropToken, userID)
+	return err
+}
+
+const consumeDropTokens = `-- name: consumeDropTokens :one
+UPDATE users
+SET tokens = tokens - $1
+WHERE user_id = $2
+RETURNING id, user_id, quote, date, favorite, tokens
+`
+
+type consumeDropTokensParams struct {
+	Tokens int32  `json:"tokens"`
+	UserID uint64 `json:"user_id"`
+}
+
+func (q *Queries) consumeDropTokens(ctx context.Context, arg consumeDropTokensParams) (User, error) {
+	row := q.queryRow(ctx, q.consumeDropTokensStmt, consumeDropTokens, arg.Tokens, arg.UserID)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.Quote,
+		&i.Date,
+		&i.Favorite,
+		&i.Tokens,
+	)
+	return i, err
+}
+
 const createUser = `-- name: createUser :exec
 INSERT INTO users (user_id)
 VALUES ($1)
@@ -17,6 +54,32 @@ VALUES ($1)
 func (q *Queries) createUser(ctx context.Context, userID uint64) error {
 	_, err := q.exec(ctx, q.createUserStmt, createUser, userID)
 	return err
+}
+
+const deleteChar = `-- name: deleteChar :one
+DELETE FROM characters
+WHERE user_id = $1
+    AND id = $2
+RETURNING user_id, id, image, name, date, type
+`
+
+type deleteCharParams struct {
+	UserID uint64 `json:"user_id"`
+	ID     int64  `json:"id"`
+}
+
+func (q *Queries) deleteChar(ctx context.Context, arg deleteCharParams) (Character, error) {
+	row := q.queryRow(ctx, q.deleteCharStmt, deleteChar, arg.UserID, arg.ID)
+	var i Character
+	err := row.Scan(
+		&i.UserID,
+		&i.ID,
+		&i.Image,
+		&i.Name,
+		&i.Date,
+		&i.Type,
+	)
+	return i, err
 }
 
 const getChar = `-- name: getChar :one
@@ -169,6 +232,7 @@ SELECT characters.image as favorite_image,
     users.date as user_date,
     users.quote as user_quote,
     users.user_id as user_id,
+    users.tokens as user_tokens,
     (
         SELECT count(id)
         FROM characters
@@ -186,6 +250,7 @@ type getProfileRow struct {
 	UserDate      time.Time      `json:"user_date"`
 	UserQuote     string         `json:"user_quote"`
 	UserID        uint64         `json:"user_id"`
+	UserTokens    int32          `json:"user_tokens"`
 	Count         int64          `json:"count"`
 }
 
@@ -199,13 +264,14 @@ func (q *Queries) getProfile(ctx context.Context, userID uint64) (getProfileRow,
 		&i.UserDate,
 		&i.UserQuote,
 		&i.UserID,
+		&i.UserTokens,
 		&i.Count,
 	)
 	return i, err
 }
 
 const getUser = `-- name: getUser :one
-SELECT id, user_id, quote, date, favorite
+SELECT id, user_id, quote, date, favorite, tokens
 FROM users
 WHERE user_id = $1
 `
@@ -219,6 +285,7 @@ func (q *Queries) getUser(ctx context.Context, userID uint64) (User, error) {
 		&i.Quote,
 		&i.Date,
 		&i.Favorite,
+		&i.Tokens,
 	)
 	return i, err
 }

@@ -22,7 +22,7 @@ func (b *Bot) giveCommand(w corde.ResponseWriter, i *corde.Request[components.Sl
 		w.Respond(rspErr("select a character to give"))
 		return
 	}
-	log.Trace().Stringer("src", i.Member.User.ID).Stringer("dst", user.ID).Int("charID", charID).Send()
+	log.Ctx(i.Context).Trace().Stringer("src", i.Member.User.ID).Stringer("dst", user.ID).Int("charID", charID).Send()
 
 	err := b.Store.GiveUserChar(i.Context, user.ID, i.Member.User.ID, int64(charID))
 	if err != nil {

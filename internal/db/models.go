@@ -22,4 +22,5 @@ type User struct {
 	Quote    string        `json:"quote"`
 	Date     time.Time     `json:"date"`
 	Favorite sql.NullInt64 `json:"favorite"`
+	Tokens   int32         `json:"tokens"`
 }

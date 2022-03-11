@@ -1,11 +1,12 @@
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     "id" SERIAL NOT NULL,
     "user_id" BIGINT NOT NULL PRIMARY KEY,
     "quote" TEXT NOT NULL DEFAULT '',
     "date" TIMESTAMP NOT NULL DEFAULT '1970-01-01 00:00:00-00',
-    "favorite" BIGINT -- "tokens" INT NOT NULL DEFAULT 0
+    "favorite" BIGINT,
+    "tokens" INT NOT NULL DEFAULT 0
 );
-CREATE TABLE characters (
+CREATE TABLE IF NOT EXISTS characters (
     "user_id" BIGINT NOT NULL,
     "id" BIGINT NOT NULL,
     "image" CHARACTER VARYING(256) NOT NULL DEFAULT '',
@@ -21,4 +22,5 @@ ADD CONSTRAINT "characters_users_fk" FOREIGN KEY (favorite, user_id) REFERENCES 
 -- index
 CREATE INDEX characters_id_user_id_idx ON characters (user_id, id);
 CREATE INDEX characters_user_id_idx ON characters (user_id);
-CREATE INDEX users_user_id_idx ON users (user_id);CREATE INDEX characters_id_user_id_date_idx ON characters (user_id, id, date);
+CREATE INDEX users_user_id_idx ON users (user_id);
+CREATE INDEX characters_id_user_id_date_idx ON characters (user_id, id, date);

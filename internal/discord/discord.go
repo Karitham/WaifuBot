@@ -21,6 +21,7 @@ type Store interface {
 	Chars(context.Context, snowflake.Snowflake) ([]Character, error)
 	VerifyChar(context.Context, snowflake.Snowflake, int64) (Character, error)
 	CharsIDs(ctx context.Context, userID snowflake.Snowflake) ([]int64, error)
+	DeleteChar(context.Context, snowflake.Snowflake, int64) (Character, error)
 	CharsStartingWith(context.Context, snowflake.Snowflake, string) ([]Character, error)
 	User(context.Context, snowflake.Snowflake) (User, error)
 	Profile(context.Context, snowflake.Snowflake) (Profile, error)
@@ -28,6 +29,8 @@ type Store interface {
 	SetUserFavorite(context.Context, snowflake.Snowflake, int64) error
 	SetUserQuote(context.Context, snowflake.Snowflake, string) error
 	GiveUserChar(ctx context.Context, dst snowflake.Snowflake, src snowflake.Snowflake, charID int64) error
+	AddDropToken(context.Context, snowflake.Snowflake) error
+	ConsumeDropTokens(context.Context, snowflake.Snowflake, int32) (User, error)
 	Tx(fn func(s Store) error) error
 }
 
@@ -62,6 +65,7 @@ func New(b *Bot) *corde.Mux {
 	b.mux.Route("search", b.search)
 	b.mux.Route("profile", b.profile)
 	b.mux.Route("verify", b.verify)
+	b.mux.Route("exchange", b.exchange)
 	b.mux.SlashCommand("list", trace(b.list))
 	b.mux.SlashCommand("roll", trace(b.roll))
 	b.mux.SlashCommand("info", trace(b.info))
