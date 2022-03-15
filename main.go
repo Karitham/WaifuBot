@@ -14,8 +14,6 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-//go:generate sqlc generate -f sqlc.yml
-
 func main() {
 	//nolint:errcheck
 	godotenv.Load()

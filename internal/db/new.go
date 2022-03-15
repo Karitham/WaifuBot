@@ -6,6 +6,8 @@ import (
 	_ "github.com/lib/pq"
 )
 
+//go:generate sqlc generate
+
 // NewDB initialises the connetion with the db
 func NewDB(connstr string) (*Queries, error) {
 	db, err := sql.Open("postgres", connstr)

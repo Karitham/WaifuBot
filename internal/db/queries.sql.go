@@ -28,8 +28,8 @@ RETURNING id, user_id, quote, date, favorite, tokens
 `
 
 type consumeDropTokensParams struct {
-	Tokens int32  `json:"tokens"`
-	UserID uint64 `json:"user_id"`
+	Tokens int32
+	UserID uint64
 }
 
 func (q *Queries) consumeDropTokens(ctx context.Context, arg consumeDropTokensParams) (User, error) {
@@ -64,8 +64,8 @@ RETURNING user_id, id, image, name, date, type
 `
 
 type deleteCharParams struct {
-	UserID uint64 `json:"user_id"`
-	ID     int64  `json:"id"`
+	UserID uint64
+	ID     int64
 }
 
 func (q *Queries) deleteChar(ctx context.Context, arg deleteCharParams) (Character, error) {
@@ -90,8 +90,8 @@ WHERE id = $1
 `
 
 type getCharParams struct {
-	ID     int64  `json:"id"`
-	UserID uint64 `json:"user_id"`
+	ID     int64
+	UserID uint64
 }
 
 func (q *Queries) getChar(ctx context.Context, arg getCharParams) (Character, error) {
@@ -184,10 +184,10 @@ LIMIT $4 OFFSET $3
 `
 
 type getCharsWhoseIDStartWithParams struct {
-	UserID  uint64 `json:"user_id"`
-	LikeStr string `json:"like_str"`
-	Off     int32  `json:"off"`
-	Lim     int32  `json:"lim"`
+	UserID  uint64
+	LikeStr string
+	Off     int32
+	Lim     int32
 }
 
 func (q *Queries) getCharsWhoseIDStartWith(ctx context.Context, arg getCharsWhoseIDStartWithParams) ([]Character, error) {
@@ -244,14 +244,14 @@ WHERE users.user_id = $1
 `
 
 type getProfileRow struct {
-	FavoriteImage sql.NullString `json:"favorite_image"`
-	FavoriteName  sql.NullString `json:"favorite_name"`
-	FavoriteID    sql.NullInt64  `json:"favorite_id"`
-	UserDate      time.Time      `json:"user_date"`
-	UserQuote     string         `json:"user_quote"`
-	UserID        uint64         `json:"user_id"`
-	UserTokens    int32          `json:"user_tokens"`
-	Count         int64          `json:"count"`
+	FavoriteImage sql.NullString
+	FavoriteName  sql.NullString
+	FavoriteID    sql.NullInt64
+	UserDate      time.Time
+	UserQuote     string
+	UserID        uint64
+	UserTokens    int32
+	Count         int64
 }
 
 func (q *Queries) getProfile(ctx context.Context, userID uint64) (getProfileRow, error) {
@@ -300,9 +300,9 @@ RETURNING user_id, id, image, name, date, type
 `
 
 type giveCharParams struct {
-	Given int64 `json:"given"`
-	ID    int64 `json:"id"`
-	Giver int64 `json:"giver"`
+	Given int64
+	ID    int64
+	Giver int64
 }
 
 func (q *Queries) giveChar(ctx context.Context, arg giveCharParams) (Character, error) {
@@ -325,11 +325,11 @@ VALUES ($1, $2, $3, $4, $5)
 `
 
 type insertCharParams struct {
-	ID     int64  `json:"id"`
-	UserID uint64 `json:"user_id"`
-	Image  string `json:"image"`
-	Name   string `json:"name"`
-	Type   string `json:"type"`
+	ID     int64
+	UserID uint64
+	Image  string
+	Name   string
+	Type   string
 }
 
 func (q *Queries) insertChar(ctx context.Context, arg insertCharParams) error {
