@@ -26,7 +26,11 @@ func main() {
 	token := os.Getenv("BOT_TOKEN")
 	publicKey := os.Getenv("PUBLIC_KEY")
 	appID := snowflake.SnowflakeFromString(os.Getenv("APP_ID"))
-	guildID := snowflake.SnowflakeFromString(os.Getenv("GUILD_ID"))
+	gid := snowflake.SnowflakeFromString(os.Getenv("GUILD_ID"))
+	var guildID *snowflake.Snowflake
+	if gid != 0 {
+		guildID = &gid
+	}
 
 	rollCD, _ := time.ParseDuration(os.Getenv("ROLL_TIMEOUT"))
 	if rollCD == 0 {

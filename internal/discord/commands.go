@@ -53,5 +53,10 @@ func (b *Bot) RegisterCommands() error {
 		corde.NewSlashCommand("info", "information about the bot"),
 	}
 
-	return corde.NewMux("", b.AppID, b.BotToken).BulkRegisterCommand(commands, corde.GuildOpt(b.GuildID))
+	var opt []func(*corde.CommandsOpt)
+	if b.GuildID != nil {
+		opt = append(opt, corde.GuildOpt(*b.GuildID))
+	}
+
+	return corde.NewMux("", b.AppID, b.BotToken).BulkRegisterCommand(commands, opt...)
 }

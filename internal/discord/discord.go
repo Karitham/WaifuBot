@@ -49,7 +49,7 @@ type Bot struct {
 	Store        Store
 	AnimeService TrackingService
 	AppID        snowflake.Snowflake
-	GuildID      snowflake.Snowflake
+	GuildID      *snowflake.Snowflake
 	BotToken     string
 	PublicKey    string
 	RollCooldown time.Duration
@@ -76,5 +76,11 @@ func New(b *Bot) *corde.Mux {
 func (b *Bot) RemoveUnknownCommands(r corde.ResponseWriter, i *corde.Request[components.JsonRaw]) {
 	log.Error().Str("command", i.Route).Int("type", int(i.Type)).Msg("Unknown command")
 	r.Respond(components.NewResp().Content("I don't know what that means, you shouldn't be able to do that").Ephemeral())
-	b.mux.DeleteCommand(i.ID, corde.GuildOpt(b.GuildID))
+
+	var opt []func(*corde.CommandsOpt)
+	if b.GuildID != nil {
+		opt = append(opt, corde.GuildOpt(*b.GuildID))
+	}
+
+	b.mux.DeleteCommand(i.ID, opt...)
 }
