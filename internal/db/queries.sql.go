@@ -9,6 +9,34 @@ import (
 	"time"
 )
 
+const setChar = `-- name: SetChar :one
+UPDATE characters
+SET "image" = $1,
+    "name" = $2
+WHERE id = $3
+RETURNING user_id, id, image, name, date, type
+`
+
+type SetCharParams struct {
+	Image string
+	Name  string
+	ID    int64
+}
+
+func (q *Queries) SetChar(ctx context.Context, arg SetCharParams) (Character, error) {
+	row := q.queryRow(ctx, q.setCharStmt, setChar, arg.Image, arg.Name, arg.ID)
+	var i Character
+	err := row.Scan(
+		&i.UserID,
+		&i.ID,
+		&i.Image,
+		&i.Name,
+		&i.Date,
+		&i.Type,
+	)
+	return i, err
+}
+
 const addDropToken = `-- name: addDropToken :exec
 UPDATE users
 SET tokens = tokens + 1

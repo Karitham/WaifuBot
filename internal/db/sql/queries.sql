@@ -66,3 +66,9 @@ DELETE FROM characters
 WHERE user_id = $1
     AND id = $2
 RETURNING *;
+-- name: SetChar :one
+UPDATE characters
+SET "image" = $1,
+    "name" = $2
+WHERE id = $3
+RETURNING *;

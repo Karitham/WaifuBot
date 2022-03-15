@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS characters (
 ALTER TABLE users
 ADD CONSTRAINT "characters_users_fk" FOREIGN KEY (favorite, user_id) REFERENCES characters (id, user_id);
 -- index
-CREATE INDEX characters_id_user_id_idx ON characters (user_id, id);
+CREATE INDEX characters_id_user_id_idx ON characters (id, user_id);
 CREATE INDEX characters_user_id_idx ON characters (user_id);
 CREATE INDEX users_user_id_idx ON users (user_id);
-CREATE INDEX characters_id_user_id_date_idx ON characters (user_id, id, date);
+CREATE INDEX characters_id_user_id_date_idx ON characters (id, user_id, date);

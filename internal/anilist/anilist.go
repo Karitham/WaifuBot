@@ -26,6 +26,7 @@ type Anilist struct {
 	seed          rand.Source64
 	MaxChars      int64
 	internalCache map[string]querier
+	cache         bool
 }
 
 // Check that anilist actually implements the interface
@@ -37,7 +38,7 @@ type querier struct {
 }
 
 // New returns a new anilist client
-func New() *Anilist {
+func New(opts ...func(*Anilist)) *Anilist {
 	const graphURL = "https://graphql.anilist.co"
 
 	a := &Anilist{
@@ -50,13 +51,29 @@ func New() *Anilist {
 				Mutex: &sync.Mutex{},
 			},
 		},
+		cache: true,
 	}
 
-	go a.randomCache(a.internalCache["random"])
+	for _, opt := range opts {
+		opt(a)
+	}
+
+	if a.cache {
+		go a.randomCache(a.internalCache["random"])
+	}
+
 	return a
 }
 
+func NoCache(a *Anilist) {
+	a.cache = false
+}
+
 func (a *Anilist) RandomChar(ctx context.Context, notIn ...int64) (discord.MediaCharacter, error) {
+	if !a.cache {
+		return a.randomChar(ctx, notIn...)
+	}
+
 	c := a.internalCache["random"]
 	c.Lock()
 	defer c.Unlock()
