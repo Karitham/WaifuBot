@@ -109,9 +109,10 @@ func main() {
 				Destination: &disc.port,
 			},
 			&cli.Int64Flag{
-				Name:    "ANILIST_MAX_CHARS",
-				Value:   30_000,
-				EnvVars: []string{"ANILIST_MAX_CHARS"},
+				Name:        "ANILIST_MAX_CHARS",
+				Value:       30_000,
+				Destination: &disc.anilistMaxChars,
+				EnvVars:     []string{"ANILIST_MAX_CHARS"},
 			},
 			&cli.BoolFlag{
 				Name:        "DEV",
@@ -168,18 +169,16 @@ func (r *discordCmd) run(c *cli.Context) error {
 		return fmt.Errorf("error connecting to db %v", err)
 	}
 
-	bot := &discord.Bot{
+	return discord.New(&discord.Bot{
 		Store:        db,
-		AnimeService: anilist.New(),
+		AnimeService: anilist.New(anilist.MaxChar(r.anilistMaxChars)),
 		AppID:        r.appID,
 		GuildID:      r.guildID,
 		BotToken:     r.botToken,
 		PublicKey:    r.publicKey,
 		RollCooldown: r.rollCooldown,
 		TokensNeeded: int32(r.tokensNeeded),
-	}
-
-	return discord.New(bot).ListenAndServe(":" + r.port)
+	}).ListenAndServe(":" + r.port)
 }
 
 type dbCmd struct {

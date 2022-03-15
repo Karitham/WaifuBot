@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"math/rand"
 	"net/http"
-	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -65,10 +64,19 @@ func New(opts ...func(*Anilist)) *Anilist {
 	return a
 }
 
+// NoCache disables the cache
 func NoCache(a *Anilist) {
 	a.cache = false
 }
 
+// MaxChar sets the maximum number of characters to return
+func MaxChar(n int64) func(*Anilist) {
+	return func(a *Anilist) {
+		a.MaxChars = n
+	}
+}
+
+// RandomChar returns a random char
 func (a *Anilist) RandomChar(ctx context.Context, notIn ...int64) (discord.MediaCharacter, error) {
 	if !a.cache {
 		return a.randomChar(ctx, notIn...)
@@ -141,6 +149,7 @@ func (a *Anilist) randomChar(ctx context.Context, notIn ...int64) (discord.Media
 	}, nil
 }
 
+// Anime returns an anime by title
 func (a *Anilist) Anime(ctx context.Context, title string) ([]discord.Media, error) {
 	return a.media(ctx, title, MediaTypeAnime)
 }
@@ -165,6 +174,7 @@ func (a *Anilist) media(ctx context.Context, title string, t MediaType) ([]disco
 	return resp, err
 }
 
+// User returns a user by name
 func (a *Anilist) User(ctx context.Context, name string) ([]discord.TrackerUser, error) {
 	users, err := user(ctx, a.c, name)
 	if err != nil {
@@ -184,6 +194,7 @@ func (a *Anilist) User(ctx context.Context, name string) ([]discord.TrackerUser,
 	return resp, nil
 }
 
+// Character returns a character by name
 func (a *Anilist) Character(ctx context.Context, name string) ([]discord.MediaCharacter, error) {
 	char, err := character(ctx, a.c, name)
 	if err != nil {
@@ -204,6 +215,7 @@ func (a *Anilist) Character(ctx context.Context, name string) ([]discord.MediaCh
 	return resp, nil
 }
 
+// Manga returns a manga by title
 func (a *Anilist) Manga(ctx context.Context, title string) ([]discord.Media, error) {
 	return a.media(ctx, title, MediaTypeManga)
 }
@@ -214,23 +226,6 @@ func ColorUint(s string) uint32 {
 	s = strings.Trim(s, "#")
 	u, _ := strconv.ParseUint(s, 16, 32)
 	return uint32(u)
-}
-
-// SanitizeHTML removes all HTML tags from the given string.
-// It also removes double newlines and double || characters.
-var SanitizeHTML = regexp.MustCompile(`<[^>]*>|\|\|[^|]*\|\||\s{2,}|img[\d\%]*\([^)]*\)|[#~*]{2,}|\n`)
-
-// Sanitize removes all HTML tags from the given string.
-// It also removes double newlines and double || characters.
-func Sanitize(s string) string {
-	return SanitizeHTML.ReplaceAllString(s, "")
-}
-
-// FixString removes eventual
-// double space or any whitespace possibly in a string
-// and replace it with a space.
-func FixString(s string) string {
-	return strings.Join(strings.Fields(s), " ")
 }
 
 func (a *Anilist) randomCache(c querier) {
