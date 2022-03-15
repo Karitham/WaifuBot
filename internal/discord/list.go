@@ -27,7 +27,7 @@ func (b *Bot) list(w corde.ResponseWriter, i *corde.Request[components.SlashComm
 	embed := components.NewEmbed().
 		Titlef("%s's List", user.Username).
 		Thumbnail(components.Image{URL: user.AvatarPNG()}).
-		URL(fmt.Sprintf("https://waifugui.kar.moe/#/list/%s", user.ID.String()))
+		URL(fmt.Sprintf("https://waifugui.karitham.dev/#/list/%s", user.ID.String()))
 
 	if len(chars) > 18 {
 		chars = chars[:18]
