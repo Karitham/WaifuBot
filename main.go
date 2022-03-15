@@ -8,7 +8,7 @@ import (
 	"github.com/Karitham/WaifuBot/internal/anilist"
 	"github.com/Karitham/WaifuBot/internal/db"
 	"github.com/Karitham/WaifuBot/internal/discord"
-	"github.com/Karitham/corde/snowflake"
+	"github.com/Karitham/corde"
 	"github.com/joho/godotenv"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -25,9 +25,9 @@ func main() {
 
 	token := os.Getenv("BOT_TOKEN")
 	publicKey := os.Getenv("PUBLIC_KEY")
-	appID := snowflake.SnowflakeFromString(os.Getenv("APP_ID"))
-	gid := snowflake.SnowflakeFromString(os.Getenv("GUILD_ID"))
-	var guildID *snowflake.Snowflake
+	appID := corde.SnowflakeFromString(os.Getenv("APP_ID"))
+	gid := corde.SnowflakeFromString(os.Getenv("GUILD_ID"))
+	var guildID *corde.Snowflake
 	if gid != 0 {
 		guildID = &gid
 	}

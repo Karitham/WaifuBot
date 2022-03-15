@@ -5,8 +5,6 @@ import (
 	"time"
 
 	"github.com/Karitham/corde"
-	"github.com/Karitham/corde/components"
-	"github.com/Karitham/corde/snowflake"
 	"github.com/rs/zerolog/log"
 )
 
@@ -17,20 +15,20 @@ const (
 
 // Store is the database
 type Store interface {
-	PutChar(context.Context, snowflake.Snowflake, Character) error
-	Chars(context.Context, snowflake.Snowflake) ([]Character, error)
-	VerifyChar(context.Context, snowflake.Snowflake, int64) (Character, error)
-	CharsIDs(ctx context.Context, userID snowflake.Snowflake) ([]int64, error)
-	DeleteChar(context.Context, snowflake.Snowflake, int64) (Character, error)
-	CharsStartingWith(context.Context, snowflake.Snowflake, string) ([]Character, error)
-	User(context.Context, snowflake.Snowflake) (User, error)
-	Profile(context.Context, snowflake.Snowflake) (Profile, error)
-	SetUserDate(context.Context, snowflake.Snowflake, time.Time) error
-	SetUserFavorite(context.Context, snowflake.Snowflake, int64) error
-	SetUserQuote(context.Context, snowflake.Snowflake, string) error
-	GiveUserChar(ctx context.Context, dst snowflake.Snowflake, src snowflake.Snowflake, charID int64) error
-	AddDropToken(context.Context, snowflake.Snowflake) error
-	ConsumeDropTokens(context.Context, snowflake.Snowflake, int32) (User, error)
+	PutChar(context.Context, corde.Snowflake, Character) error
+	Chars(context.Context, corde.Snowflake) ([]Character, error)
+	VerifyChar(context.Context, corde.Snowflake, int64) (Character, error)
+	CharsIDs(ctx context.Context, userID corde.Snowflake) ([]int64, error)
+	DeleteChar(context.Context, corde.Snowflake, int64) (Character, error)
+	CharsStartingWith(context.Context, corde.Snowflake, string) ([]Character, error)
+	User(context.Context, corde.Snowflake) (User, error)
+	Profile(context.Context, corde.Snowflake) (Profile, error)
+	SetUserDate(context.Context, corde.Snowflake, time.Time) error
+	SetUserFavorite(context.Context, corde.Snowflake, int64) error
+	SetUserQuote(context.Context, corde.Snowflake, string) error
+	GiveUserChar(ctx context.Context, dst corde.Snowflake, src corde.Snowflake, charID int64) error
+	AddDropToken(context.Context, corde.Snowflake) error
+	ConsumeDropTokens(context.Context, corde.Snowflake, int32) (User, error)
 	Tx(fn func(s Store) error) error
 }
 
@@ -48,8 +46,8 @@ type Bot struct {
 	mux          *corde.Mux
 	Store        Store
 	AnimeService TrackingService
-	AppID        snowflake.Snowflake
-	GuildID      *snowflake.Snowflake
+	AppID        corde.Snowflake
+	GuildID      *corde.Snowflake
 	BotToken     string
 	PublicKey    string
 	RollCooldown time.Duration
@@ -73,9 +71,9 @@ func New(b *Bot) *corde.Mux {
 	return b.mux
 }
 
-func (b *Bot) RemoveUnknownCommands(r corde.ResponseWriter, i *corde.Request[components.JsonRaw]) {
+func (b *Bot) RemoveUnknownCommands(r corde.ResponseWriter, i *corde.Request[corde.JsonRaw]) {
 	log.Error().Str("command", i.Route).Int("type", int(i.Type)).Msg("Unknown command")
-	r.Respond(components.NewResp().Content("I don't know what that means, you shouldn't be able to do that").Ephemeral())
+	r.Respond(corde.NewResp().Content("I don't know what that means, you shouldn't be able to do that").Ephemeral())
 
 	var opt []func(*corde.CommandsOpt)
 	if b.GuildID != nil {

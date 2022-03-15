@@ -4,11 +4,10 @@ import (
 	"time"
 
 	"github.com/Karitham/corde"
-	"github.com/Karitham/corde/components"
 	"github.com/rs/zerolog/log"
 )
 
-func trace[T components.InteractionDataConstraint](
+func trace[T corde.InteractionDataConstraint](
 	next func(w corde.ResponseWriter, i *corde.Request[T]),
 ) func(w corde.ResponseWriter, i *corde.Request[T]) {
 	return func(w corde.ResponseWriter, i *corde.Request[T]) {

@@ -2,9 +2,9 @@ package discord
 
 import (
 	"context"
+	"regexp"
 
 	"github.com/Karitham/corde"
-	"github.com/Karitham/corde/components"
 	"github.com/rs/zerolog/log"
 )
 
@@ -37,7 +37,7 @@ type TrackerUser struct {
 	About    string
 }
 
-func (b *Bot) SearchAnime(w corde.ResponseWriter, i *corde.Request[components.SlashCommandInteractionData]) {
+func (b *Bot) SearchAnime(w corde.ResponseWriter, i *corde.Request[corde.SlashCommandInteractionData]) {
 	search, _ := i.Data.Options.String("name")
 
 	anime, err := b.AnimeService.Anime(i.Context, search)
@@ -54,7 +54,7 @@ type MangaSearcher interface {
 	Manga(context.Context, string) ([]Media, error)
 }
 
-func (b *Bot) SearchManga(w corde.ResponseWriter, i *corde.Request[components.SlashCommandInteractionData]) {
+func (b *Bot) SearchManga(w corde.ResponseWriter, i *corde.Request[corde.SlashCommandInteractionData]) {
 	search, _ := i.Data.Options.String("name")
 
 	manga, err := b.AnimeService.Manga(i.Context, search)
@@ -71,7 +71,7 @@ type UserSearcher interface {
 	User(context.Context, string) ([]TrackerUser, error)
 }
 
-func (b *Bot) SearchUser(w corde.ResponseWriter, i *corde.Request[components.SlashCommandInteractionData]) {
+func (b *Bot) SearchUser(w corde.ResponseWriter, i *corde.Request[corde.SlashCommandInteractionData]) {
 	search, _ := i.Data.Options.String("name")
 
 	user, err := b.AnimeService.User(i.Context, search)
@@ -88,7 +88,7 @@ type CharSearcher interface {
 	Character(context.Context, string) ([]MediaCharacter, error)
 }
 
-func (b *Bot) SearchChar(w corde.ResponseWriter, i *corde.Request[components.SlashCommandInteractionData]) {
+func (b *Bot) SearchChar(w corde.ResponseWriter, i *corde.Request[corde.SlashCommandInteractionData]) {
 	search, _ := i.Data.Options.String("name")
 
 	char, err := b.AnimeService.Character(i.Context, search)
@@ -101,50 +101,63 @@ func (b *Bot) SearchChar(w corde.ResponseWriter, i *corde.Request[components.Sla
 	w.Respond(charEmbed(char[0]))
 }
 
-func mediaEmbed(m Media) *components.EmbedB {
-	return applyEmbedOpt(components.NewEmbed().
+func mediaEmbed(m Media) *corde.EmbedB {
+	return applyEmbedOpt(corde.NewEmbed().
 		Title(m.Title).
 		URL(m.URL).
 		Color(m.CoverImageColor).
 		ImageURL(m.BannerImageURL).
-		Thumbnail(components.Image{URL: m.CoverImageURL}).
+		Thumbnail(corde.Image{URL: m.CoverImageURL}).
 		Description(m.Description),
 		anilistFooter,
+		sanitizeDescOpt,
 	)
 }
 
-func userEmbed(u TrackerUser) *components.EmbedB {
-	return applyEmbedOpt(components.NewEmbed().
+func userEmbed(u TrackerUser) *corde.EmbedB {
+	return applyEmbedOpt(corde.NewEmbed().
 		Title(u.Name).
 		URL(u.URL).
 		Color(AnilistColor).
 		ImageURL(u.ImageURL).
 		Description(u.About),
 		anilistFooter,
+		sanitizeDescOpt,
 	)
 }
 
-func charEmbed(c MediaCharacter) *components.EmbedB {
-	return applyEmbedOpt(components.NewEmbed().
+func charEmbed(c MediaCharacter) *corde.EmbedB {
+	return applyEmbedOpt(corde.NewEmbed().
 		Title(c.Name).
 		Color(AnilistColor).
 		URL(c.URL).
-		Thumbnail(components.Image{URL: c.ImageURL}).
+		Thumbnail(corde.Image{URL: c.ImageURL}).
 		Description(c.Description),
 		anilistFooter,
+		sanitizeDescOpt,
 	)
 }
 
-func anilistFooter(b *components.EmbedB) *components.EmbedB {
-	return b.Footer(components.Footer{
+func anilistFooter(b *corde.EmbedB) *corde.EmbedB {
+	return b.Footer(corde.Footer{
 		Text:    "View on anilist",
 		IconURL: AnilistIconURL,
 	})
 }
 
-func applyEmbedOpt(b *components.EmbedB, opts ...func(*components.EmbedB) *components.EmbedB) *components.EmbedB {
+func applyEmbedOpt(b *corde.EmbedB, opts ...func(*corde.EmbedB) *corde.EmbedB) *corde.EmbedB {
 	for _, opt := range opts {
 		b = opt(b)
 	}
 	return b
+}
+
+func sanitizeDescOpt(b *corde.EmbedB) *corde.EmbedB {
+	return b.Description(sanitizeDesc(b.Embed().Description))
+}
+
+var descRegexp = regexp.MustCompile(`!~|~!`)
+
+func sanitizeDesc(desc string) string {
+	return descRegexp.ReplaceAllString(desc, "||")
 }

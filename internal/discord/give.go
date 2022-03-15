@@ -2,7 +2,6 @@ package discord
 
 import (
 	"github.com/Karitham/corde"
-	"github.com/Karitham/corde/components"
 	"github.com/rs/zerolog/log"
 )
 
@@ -11,7 +10,7 @@ func (b *Bot) give(m *corde.Mux) {
 	m.Autocomplete("id", b.profileEditFavoriteComplete)
 }
 
-func (b *Bot) giveCommand(w corde.ResponseWriter, i *corde.Request[components.SlashCommandInteractionData]) {
+func (b *Bot) giveCommand(w corde.ResponseWriter, i *corde.Request[corde.SlashCommandInteractionData]) {
 	user, errUserOK := i.Data.OptionsUser("user")
 	if errUserOK != nil {
 		w.Respond(rspErr("select a user to give to"))
@@ -30,5 +29,5 @@ func (b *Bot) giveCommand(w corde.ResponseWriter, i *corde.Request[components.Sl
 		return
 	}
 
-	w.Respond(components.NewResp().Contentf("You successfully gave %d to %s", charID, user.Username))
+	w.Respond(corde.NewResp().Contentf("You successfully gave %d to %s", charID, user.Username))
 }

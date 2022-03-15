@@ -2,7 +2,6 @@ package discord
 
 import (
 	"github.com/Karitham/corde"
-	"github.com/Karitham/corde/components"
 )
 
 func (b *Bot) verify(m *corde.Mux) {
@@ -10,7 +9,7 @@ func (b *Bot) verify(m *corde.Mux) {
 	m.Autocomplete("id", b.profileEditFavoriteComplete)
 }
 
-func (b *Bot) verifyCommand(w corde.ResponseWriter, i *corde.Request[components.SlashCommandInteractionData]) {
+func (b *Bot) verifyCommand(w corde.ResponseWriter, i *corde.Request[corde.SlashCommandInteractionData]) {
 	user := i.Member.User
 	if len(i.Data.Resolved.Members) > 0 {
 		user = i.Data.Resolved.Users.First()

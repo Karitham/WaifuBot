@@ -2,7 +2,6 @@ package discord
 
 import (
 	"github.com/Karitham/corde"
-	"github.com/Karitham/corde/components"
 )
 
 func (b *Bot) exchange(m *corde.Mux) {
@@ -10,7 +9,7 @@ func (b *Bot) exchange(m *corde.Mux) {
 	m.Autocomplete("id", b.profileEditFavoriteComplete)
 }
 
-func (b *Bot) exchangeCommand(w corde.ResponseWriter, i *corde.Request[components.SlashCommandInteractionData]) {
+func (b *Bot) exchangeCommand(w corde.ResponseWriter, i *corde.Request[corde.SlashCommandInteractionData]) {
 	user := i.Member.User
 	char, _ := i.Data.Options.Int64("id")
 	var c Character

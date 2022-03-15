@@ -3,7 +3,7 @@ module github.com/Karitham/WaifuBot
 go 1.18
 
 require (
-	github.com/Karitham/corde v0.7.3-0.20220310120101-aa954f91d1a6
+	github.com/Karitham/corde v0.7.3-0.20220315105618-3626e4198ba6
 	github.com/Khan/genqlient v0.4.0
 	github.com/Masterminds/squirrel v1.5.2
 	github.com/joho/godotenv v1.4.0
