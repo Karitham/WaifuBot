@@ -39,9 +39,8 @@ func main() {
 						Destination: &disc.botToken,
 					},
 					&cliSnowflake{
-						EnvVars:  []string{"DISCORD_GUILD_ID", "GUILD_ID"},
-						Dest:     disc.guildID,
-						Required: true,
+						EnvVars: []string{"DISCORD_GUILD_ID", "GUILD_ID"},
+						Dest:    disc.guildID,
 					},
 					&cliSnowflake{
 						EnvVars:  []string{"DISCORD_APP_ID", "APP_ID"},

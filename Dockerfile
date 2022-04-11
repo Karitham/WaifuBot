@@ -1,5 +1,7 @@
 # Builder
-FROM ghcr.io/karitham/gotip:latest as builder
+FROM golang:1.18-alpine as builder
+
+RUN apk add git
 
 WORKDIR /build
 
