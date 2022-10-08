@@ -72,18 +72,18 @@ func New(b *Bot) *corde.Mux {
 	b.mux = corde.NewMux(b.PublicKey, b.AppID, b.BotToken)
 	b.mux.OnNotFound = b.RemoveUnknownCommands
 
-	traceSlash := trace[corde.SlashCommandInteractionData]
-	interacterSlash := interact(b.Inter, onInteraction[corde.SlashCommandInteractionData](b))
+	t := trace[corde.SlashCommandInteractionData]
+	i := interact(b.Inter, onInteraction[corde.SlashCommandInteractionData](b))
 
 	b.mux.Route("give", b.give)
 	b.mux.Route("search", b.search)
 	b.mux.Route("profile", b.profile)
 	b.mux.Route("verify", b.verify)
 	b.mux.Route("exchange", b.exchange)
-	b.mux.SlashCommand("list", wrap(b.list, traceSlash, interacterSlash))
-	b.mux.SlashCommand("roll", wrap(b.roll, traceSlash, interacterSlash))
-	b.mux.SlashCommand("info", wrap(b.info, traceSlash))
-	b.mux.SlashCommand("claim", wrap(b.claim, traceSlash))
+	b.mux.SlashCommand("list", wrap(b.list, t, i))
+	b.mux.SlashCommand("roll", wrap(b.roll, t, i))
+	b.mux.SlashCommand("info", wrap(b.info, t))
+	b.mux.SlashCommand("claim", wrap(b.claim, t))
 
 	return b.mux
 }

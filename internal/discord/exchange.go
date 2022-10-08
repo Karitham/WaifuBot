@@ -5,7 +5,11 @@ import (
 )
 
 func (b *Bot) exchange(m *corde.Mux) {
-	m.SlashCommand("", trace(b.exchangeCommand))
+	m.SlashCommand("", wrap(
+		b.exchangeCommand,
+		trace[corde.SlashCommandInteractionData],
+		interact(b.Inter, onInteraction[corde.SlashCommandInteractionData](b)),
+	))
 	m.Autocomplete("id", b.profileEditFavoriteComplete)
 }
 

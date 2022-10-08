@@ -6,7 +6,11 @@ import (
 )
 
 func (b *Bot) give(m *corde.Mux) {
-	m.SlashCommand("", trace(b.giveCommand))
+	m.SlashCommand("", wrap(
+		b.giveCommand,
+		trace[corde.SlashCommandInteractionData],
+		interact(b.Inter, onInteraction[corde.SlashCommandInteractionData](b)),
+	))
 	m.Autocomplete("id", b.profileEditFavoriteComplete)
 }
 

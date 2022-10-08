@@ -9,10 +9,13 @@ import (
 )
 
 func (b *Bot) search(m *corde.Mux) {
-	m.SlashCommand("char", trace(b.SearchChar))
-	m.SlashCommand("user", trace(b.SearchUser))
-	m.SlashCommand("manga", trace(b.SearchManga))
-	m.SlashCommand("anime", trace(b.SearchAnime))
+	t := trace[corde.SlashCommandInteractionData]
+	i := interact(b.Inter, onInteraction[corde.SlashCommandInteractionData](b))
+
+	m.SlashCommand("char", wrap(b.SearchChar, t, i))
+	m.SlashCommand("user", wrap(b.SearchUser, t, i))
+	m.SlashCommand("manga", wrap(b.SearchManga, t, i))
+	m.SlashCommand("anime", wrap(b.SearchAnime, t, i))
 }
 
 type AnimeSearcher interface {
