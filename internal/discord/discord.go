@@ -32,6 +32,17 @@ type Store interface {
 	Tx(fn func(s Store) error) error
 }
 
+// Interacter
+type Interacter interface {
+	GetInteractionCount(ctx context.Context, channelID corde.Snowflake) (int64, error)
+	ResetInteractionCount(ctx context.Context, channelID corde.Snowflake) error
+	IncrementInteractionCount(ctx context.Context, channelID corde.Snowflake) error
+
+	SetChannelChar(ctx context.Context, channelID corde.Snowflake, char MediaCharacter) error
+	GetChannelChar(ctx context.Context, channelID corde.Snowflake) (MediaCharacter, error)
+	RemoveChannelChar(ctx context.Context, channelID corde.Snowflake) error
+}
+
 // TrackingService is the interface for the anilist service
 type TrackingService interface {
 	RandomCharer
@@ -43,15 +54,17 @@ type TrackingService interface {
 
 // Bot holds the bot state
 type Bot struct {
-	mux          *corde.Mux
-	Store        Store
-	AnimeService TrackingService
-	AppID        corde.Snowflake
-	GuildID      *corde.Snowflake
-	BotToken     string
-	PublicKey    string
-	RollCooldown time.Duration
-	TokensNeeded int32
+	mux               *corde.Mux
+	Store             Store
+	AnimeService      TrackingService
+	Inter             Interacter
+	AppID             corde.Snowflake
+	GuildID           *corde.Snowflake
+	BotToken          string
+	PublicKey         string
+	RollCooldown      time.Duration
+	InteractionNeeded int64
+	TokensNeeded      int32
 }
 
 // New runs the bot
@@ -59,16 +72,74 @@ func New(b *Bot) *corde.Mux {
 	b.mux = corde.NewMux(b.PublicKey, b.AppID, b.BotToken)
 	b.mux.OnNotFound = b.RemoveUnknownCommands
 
+	traceSlash := trace[corde.SlashCommandInteractionData]
+	interacterSlash := interact(b.Inter, onInteraction[corde.SlashCommandInteractionData](b))
+
 	b.mux.Route("give", b.give)
 	b.mux.Route("search", b.search)
 	b.mux.Route("profile", b.profile)
 	b.mux.Route("verify", b.verify)
 	b.mux.Route("exchange", b.exchange)
-	b.mux.SlashCommand("list", trace(b.list))
-	b.mux.SlashCommand("roll", trace(b.roll))
-	b.mux.SlashCommand("info", trace(b.info))
+	b.mux.SlashCommand("list", wrap(b.list, traceSlash, interacterSlash))
+	b.mux.SlashCommand("roll", wrap(b.roll, traceSlash, interacterSlash))
+	b.mux.SlashCommand("info", wrap(b.info, traceSlash))
+	b.mux.SlashCommand("claim", wrap(b.claim, traceSlash))
 
 	return b.mux
+}
+
+func onInteraction[T corde.InteractionDataConstraint](b *Bot) func(count int64, i *corde.Request[T]) {
+	return func(count int64, i *corde.Request[T]) {
+		if count < b.InteractionNeeded {
+			return
+		}
+
+		if b.GuildID != nil && *b.GuildID != i.GuildID {
+			return
+		}
+
+		b.Inter.ResetInteractionCount(context.Background(), i.ChannelID)
+		b.drop(i.Context, i.GuildID, i.ChannelID)
+	}
+}
+
+// interaction middleware
+func interact[T corde.InteractionDataConstraint](inter Interacter, interact func(count int64, i *corde.Request[T])) func(func(w corde.ResponseWriter, i *corde.Request[T])) func(w corde.ResponseWriter, i *corde.Request[T]) {
+	return func(next func(w corde.ResponseWriter, i *corde.Request[T])) func(w corde.ResponseWriter, i *corde.Request[T]) {
+		return func(w corde.ResponseWriter, i *corde.Request[T]) {
+			ok := make(chan struct{}, 1)
+			go func() {
+				defer func() { ok <- struct{}{} }()
+
+				err := inter.IncrementInteractionCount(i.Context, i.ChannelID)
+				if err != nil {
+					log.Debug().Err(err).Msg("failed to increment interaction count")
+				}
+
+				count, err := inter.GetInteractionCount(i.Context, i.ChannelID)
+				if err != nil {
+					log.Err(err).Msg("failed to get interaction count")
+					return
+				}
+
+				interact(count, i)
+			}()
+
+			next(w, i)
+			<-ok
+		}
+	}
+}
+
+func wrap[T corde.InteractionDataConstraint](
+	next func(w corde.ResponseWriter, i *corde.Request[T]),
+	fns ...func(func(w corde.ResponseWriter, i *corde.Request[T])) func(w corde.ResponseWriter, i *corde.Request[T]),
+) func(w corde.ResponseWriter, i *corde.Request[T]) {
+	// apply middleware in reverse order
+	for i := len(fns) - 1; i >= 0; i-- {
+		next = fns[i](next)
+	}
+	return next
 }
 
 func (b *Bot) RemoveUnknownCommands(r corde.ResponseWriter, i *corde.Request[corde.JsonRaw]) {

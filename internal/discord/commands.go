@@ -2,6 +2,7 @@ package discord
 
 import (
 	"github.com/Karitham/corde"
+	"github.com/rs/zerolog/log"
 )
 
 // This init is called when ran with the build tag.
@@ -50,6 +51,10 @@ func (b *Bot) RegisterCommands() error {
 			corde.NewIntOption("id", "id of the character", true).CanAutocomplete(),
 		),
 
+		corde.NewSlashCommand("claim", "claim a character",
+			corde.NewStringOption("name", "character's name", true),
+		),
+
 		corde.NewSlashCommand("info", "information about the bot"),
 	}
 
@@ -58,5 +63,6 @@ func (b *Bot) RegisterCommands() error {
 		opt = append(opt, corde.GuildOpt(*b.GuildID))
 	}
 
-	return corde.NewMux("", b.AppID, b.BotToken).BulkRegisterCommand(commands, opt...)
+	log.Info().Msgf("registering commands for app %d", b.AppID)
+	return corde.NewMux(b.PublicKey, b.AppID, b.BotToken).BulkRegisterCommand(commands, opt...)
 }
