@@ -8,7 +8,6 @@ import (
 	"github.com/Karitham/corde"
 	"github.com/fxamacker/cbor/v2"
 	"github.com/go-redis/redis/v8"
-	"github.com/rs/zerolog/log"
 )
 
 // Client is a cache client. It is currently implemented through redis.
@@ -30,13 +29,13 @@ func (c Client) Close() error {
 
 // SetChannelChar sets the currently dropped char in the channel
 func (c Client) SetChannelChar(ctx context.Context, channelID corde.Snowflake, char discord.MediaCharacter) error {
-	log.Trace().Stringer("channelID", channelID).Msg("setting channel char")
+	key := "channel:" + channelID.String() + ":char"
+
 	b, err := cbor.Marshal(char)
 	if err != nil {
 		return fmt.Errorf("failed to marshal char: %w", err)
 	}
 
-	key := "channel:" + channelID.String() + ":char"
 	return c.client.Set(ctx, key, string(b), 0).Err()
 }
 
@@ -44,7 +43,6 @@ func (c Client) SetChannelChar(ctx context.Context, channelID corde.Snowflake, c
 func (c Client) GetChannelChar(ctx context.Context, channelID corde.Snowflake) (discord.MediaCharacter, error) {
 	key := "channel:" + channelID.String() + ":char"
 
-	log.Trace().Stringer("channelID", channelID).Msg("getting channel char")
 	s, err := c.client.Get(ctx, key).Result()
 	if err != nil {
 		return discord.MediaCharacter{}, fmt.Errorf("failed to get channel char: %w", err)
@@ -60,5 +58,7 @@ func (c Client) GetChannelChar(ctx context.Context, channelID corde.Snowflake) (
 
 // RemoveChannelChar removes the currently dropped char in the channel
 func (c Client) RemoveChannelChar(ctx context.Context, channelID corde.Snowflake) error {
-	return c.client.Del(ctx, channelID.String()).Err()
+	key := "channel:" + channelID.String() + ":char"
+
+	return c.client.Del(ctx, key).Err()
 }

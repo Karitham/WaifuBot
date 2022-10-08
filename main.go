@@ -18,6 +18,8 @@ import (
 )
 
 func main() {
+	log.Logger = log.Level(zerolog.DebugLevel)
+
 	disc := &discordCmd{}
 	d := &dbCmd{}
 	dev := false
@@ -138,6 +140,7 @@ func main() {
 		Before: func(*cli.Context) error {
 			if dev {
 				log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+				log.Logger = log.Level(zerolog.TraceLevel)
 			}
 			return nil
 		},
@@ -178,8 +181,6 @@ func (dc *discordCmd) register(c *cli.Context) error {
 }
 
 func (dc *discordCmd) run(c *cli.Context) error {
-	log.Logger = log.Level(zerolog.TraceLevel)
-
 	db, err := db.NewDB(dc.dbURL)
 	if err != nil {
 		return fmt.Errorf("error connecting to db %v", err)

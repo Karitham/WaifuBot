@@ -15,11 +15,11 @@ func trace[T corde.InteractionDataConstraint](next func(w corde.ResponseWriter, 
 			Stringer("guild", i.GuildID).
 			Stringer("channel", i.ChannelID).
 			Stringer("user", i.Member.User.ID).
-			Int("type", int(i.Type)).Logger()
+			Logger()
 
 		i.Context = l.WithContext(i.Context)
 		next(w, i)
 
-		l.Trace().Str("took", time.Since(start).String()).Send()
+		l.Debug().Str("took", time.Since(start).String()).Send()
 	}
 }

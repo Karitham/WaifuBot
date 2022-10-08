@@ -88,45 +88,45 @@ func New(b *Bot) *corde.Mux {
 	return b.mux
 }
 
-func onInteraction[T corde.InteractionDataConstraint](b *Bot) func(count int64, i *corde.Request[T]) bool {
-	return func(count int64, i *corde.Request[T]) bool {
+func onInteraction[T corde.InteractionDataConstraint](b *Bot) func(count int64, i *corde.Request[T]) {
+	return func(count int64, i *corde.Request[T]) {
 		if count < b.InteractionNeeded {
-			return false
+			return
 		}
 
 		if b.GuildID != nil && *b.GuildID != i.GuildID {
-			return true
+			return
 		}
 
+		b.Inter.ResetInteractionCount(context.Background(), i.ChannelID)
 		b.drop(i.Context, i.GuildID, i.ChannelID)
-		return true
 	}
 }
 
 // interaction middleware
-func interact[T corde.InteractionDataConstraint](inter Interacter, resetCount func(count int64, i *corde.Request[T]) bool) func(func(w corde.ResponseWriter, i *corde.Request[T])) func(w corde.ResponseWriter, i *corde.Request[T]) {
+func interact[T corde.InteractionDataConstraint](inter Interacter, interact func(count int64, i *corde.Request[T])) func(func(w corde.ResponseWriter, i *corde.Request[T])) func(w corde.ResponseWriter, i *corde.Request[T]) {
 	return func(next func(w corde.ResponseWriter, i *corde.Request[T])) func(w corde.ResponseWriter, i *corde.Request[T]) {
 		return func(w corde.ResponseWriter, i *corde.Request[T]) {
-			defer next(w, i)
+			ok := make(chan struct{}, 1)
+			go func() {
+				defer func() { ok <- struct{}{} }()
 
-			err := inter.IncrementInteractionCount(i.Context, i.ChannelID)
-			if err != nil {
-				log.Debug().Err(err).Msg("failed to increment interaction count")
-			}
-
-			count, err := inter.GetInteractionCount(i.Context, i.ChannelID)
-			if err != nil {
-				log.Err(err).Msg("failed to get interaction count")
-				return
-			}
-
-			if resetCount(count, i) {
-				err = inter.ResetInteractionCount(i.Context, i.ChannelID)
+				err := inter.IncrementInteractionCount(i.Context, i.ChannelID)
 				if err != nil {
-					log.Err(err).Msg("failed to reset interaction count")
+					log.Debug().Err(err).Msg("failed to increment interaction count")
 				}
-				return
-			}
+
+				count, err := inter.GetInteractionCount(i.Context, i.ChannelID)
+				if err != nil {
+					log.Err(err).Msg("failed to get interaction count")
+					return
+				}
+
+				interact(count, i)
+			}()
+
+			next(w, i)
+			<-ok
 		}
 	}
 }

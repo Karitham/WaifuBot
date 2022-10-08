@@ -2,6 +2,7 @@ package discord
 
 import (
 	"context"
+	"net/http"
 	"strings"
 	"time"
 
@@ -10,8 +11,6 @@ import (
 )
 
 func (b *Bot) drop(ctx context.Context, guildID corde.Snowflake, channelID corde.Snowflake) {
-	log.Debug().Msgf("drop character to %d in %d", guildID, channelID)
-
 	char, err := b.AnimeService.RandomChar(ctx)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to get random character")
@@ -26,8 +25,13 @@ func (b *Bot) drop(ctx context.Context, guildID corde.Snowflake, channelID corde
 
 	log.Trace().Msgf("dropped %s", char.Name)
 
-	// FIXME: send message to channel.
-	// _, err = b.mux.SendEmbed(ctx, channelID, charEmbed(char))
+	msg, cleanup := DropEmbed(char)
+	defer cleanup()
+	_, err = b.mux.CreateMessage(channelID, msg)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to create message")
+		return
+	}
 }
 
 func (b *Bot) claim(w corde.ResponseWriter, i *corde.Request[corde.SlashCommandInteractionData]) {
@@ -59,11 +63,24 @@ func (b *Bot) claim(w corde.ResponseWriter, i *corde.Request[corde.SlashCommandI
 		ID:     char.ID,
 	})
 	if err != nil {
-		w.Respond(newErrf("you already have this character!"))
+		log.Debug().Err(err).Msg("failed to put character")
+		w.Respond(rspErr("you already have this character!"))
 		return
 	}
 
-	w.Respond(corde.NewResp().Contentf("Congrats %s! You claimed %s.", i.Member.Nick, char.Name))
+	err = b.Inter.RemoveChannelChar(i.Context, i.ChannelID)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to remove channel character")
+		return
+	}
+
+	w.Respond(corde.NewEmbed().
+		Title(char.Name).
+		URL(char.URL).
+		Footer(corde.Footer{IconURL: AnilistIconURL, Text: "View them on anilist"}).
+		Thumbnail(corde.Image{URL: char.ImageURL}).
+		Descriptionf("Congratulations!\nYou just claimed %s (%d)!\nIt appears in :\n- %s", char.Name, char.ID, char.MediaTitle),
+	)
 }
 
 func equalStrings(this, that string) bool {
@@ -72,4 +89,34 @@ func equalStrings(this, that string) bool {
 
 func sanitizeName(name string) string {
 	return strings.Join(strings.Fields(name), " ")
+}
+
+func DropEmbed(char MediaCharacter) (corde.Message, func()) {
+	resp, err := http.Get(char.ImageURL)
+	if err != nil {
+		return corde.Message{}, func() {}
+	}
+
+	parts := strings.Fields(char.Name)
+	initials := strings.Builder{}
+	for i, part := range parts {
+		if i != 0 {
+			initials.WriteRune('.')
+		}
+		initials.WriteRune([]rune(part)[0])
+	}
+
+	return corde.Message{
+			Embeds: []corde.Embed{{
+				Title:       "Character Drop!",
+				Description: "Can you guess which character this is?\nUse `/claim name` to claim the character.\n\n**Hint:** " + initials.String(),
+				Image:       corde.Image{URL: "attachment://image.png"},
+			}},
+			Attachments: []corde.Attachment{{
+				Filename: "image.png",
+				Body:     resp.Body,
+			}},
+		}, func() {
+			_ = resp.Body.Close()
+		}
 }
