@@ -9,15 +9,17 @@ import (
 	"github.com/Karitham/WaifuBot/internal/anilist"
 	"github.com/Karitham/WaifuBot/internal/db"
 	"github.com/Karitham/WaifuBot/internal/discord"
+	"github.com/Karitham/WaifuBot/internal/memstore"
 	"github.com/Karitham/corde"
+	"github.com/go-redis/redis/v8"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/urfave/cli/v2"
 )
 
 func main() {
-	disc := discordCmd{}
-	d := dbCmd{}
+	disc := &discordCmd{}
+	d := &dbCmd{}
 	dev := false
 
 	app := &cli.App{
@@ -35,17 +37,17 @@ func main() {
 					&cli.StringFlag{
 						Name:        "BOT_TOKEN",
 						EnvVars:     []string{"DISCORD_TOKEN", "BOT_TOKEN"},
-						Required:    true,
 						Destination: &disc.botToken,
+						Required:    true,
 					},
 					&cliSnowflake{
 						EnvVars: []string{"DISCORD_GUILD_ID", "GUILD_ID"},
 						Dest:    disc.guildID,
 					},
-					&cliSnowflake{
-						EnvVars:  []string{"DISCORD_APP_ID", "APP_ID"},
-						Dest:     &disc.appID,
-						Required: true,
+					&cli.StringFlag{
+						EnvVars:     []string{"DISCORD_APP_ID", "APP_ID"},
+						Destination: &disc.appID,
+						Required:    true,
 					},
 				},
 			},
@@ -75,9 +77,10 @@ func main() {
 				EnvVars: []string{"DISCORD_GUILD_ID", "GUILD_ID"},
 				Dest:    disc.guildID,
 			},
-			&cliSnowflake{
-				EnvVars: []string{"DISCORD_APP_ID", "APP_ID"},
-				Dest:    &disc.appID,
+			&cli.StringFlag{
+				EnvVars:     []string{"DISCORD_APP_ID", "APP_ID"},
+				Destination: &disc.appID,
+				Required:    true,
 			},
 			&cli.StringFlag{
 				Name:        "PUBLIC_KEY",
@@ -90,11 +93,17 @@ func main() {
 				Value:       time.Hour * 2,
 				Destination: &disc.rollCooldown,
 			},
-			&cli.IntFlag{
+			&cli.Int64Flag{
 				Name:        "TOKENS_NEEDED",
 				EnvVars:     []string{"TOKENS_NEEDED"},
 				Value:       3,
 				Destination: &disc.tokensNeeded,
+			},
+			&cli.Int64Flag{
+				Name:        "INTERACTION_NEEDED",
+				EnvVars:     []string{"INTERACTION_NEEDED"},
+				Value:       25,
+				Destination: &disc.interactionNeeded,
 			},
 			&cli.StringFlag{
 				Name:        "DB_URL",
@@ -118,6 +127,12 @@ func main() {
 				EnvVars:     []string{"DEV"},
 				Destination: &dev,
 			},
+			&cli.StringFlag{
+				Name:        "REDIS_URL",
+				EnvVars:     []string{"REDIS_URL"},
+				Required:    true,
+				Destination: &disc.redisURL,
+			},
 		},
 		Action: disc.run,
 		Before: func(*cli.Context) error {
@@ -134,24 +149,26 @@ func main() {
 }
 
 type discordCmd struct {
-	botToken        string
-	appID           corde.Snowflake
-	guildID         *corde.Snowflake
-	publicKey       string
-	anilistMaxChars int64
-	rollCooldown    time.Duration
-	tokensNeeded    int
-	dbURL           string
-	port            string
+	botToken          string
+	appID             string
+	guildID           *corde.Snowflake
+	publicKey         string
+	anilistMaxChars   int64
+	interactionNeeded int64
+	tokensNeeded      int64
+	rollCooldown      time.Duration
+	dbURL             string
+	port              string
+	redisURL          string
 }
 
-func (d *discordCmd) register(c *cli.Context) error {
+func (dc *discordCmd) register(c *cli.Context) error {
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 
 	bot := &discord.Bot{
-		AppID:    d.appID,
-		BotToken: d.botToken,
-		GuildID:  d.guildID,
+		AppID:    corde.SnowflakeFromString(dc.appID),
+		BotToken: dc.botToken,
+		GuildID:  dc.guildID,
 	}
 
 	if err := bot.RegisterCommands(); err != nil {
@@ -160,24 +177,37 @@ func (d *discordCmd) register(c *cli.Context) error {
 	return nil
 }
 
-func (r *discordCmd) run(c *cli.Context) error {
+func (dc *discordCmd) run(c *cli.Context) error {
 	log.Logger = log.Level(zerolog.TraceLevel)
 
-	db, err := db.NewDB(r.dbURL)
+	db, err := db.NewDB(dc.dbURL)
 	if err != nil {
 		return fmt.Errorf("error connecting to db %v", err)
 	}
+	defer db.Close()
 
-	return discord.New(&discord.Bot{
-		Store:        db,
-		AnimeService: anilist.New(anilist.MaxChar(r.anilistMaxChars)),
-		AppID:        r.appID,
-		GuildID:      r.guildID,
-		BotToken:     r.botToken,
-		PublicKey:    r.publicKey,
-		RollCooldown: r.rollCooldown,
-		TokensNeeded: int32(r.tokensNeeded),
-	}).ListenAndServe(":" + r.port)
+	opts, err := redis.ParseURL(dc.redisURL)
+	if err != nil {
+		return fmt.Errorf("error parsing redis url %v", err)
+	}
+
+	redis := memstore.New(opts)
+	defer redis.Close()
+
+	disc := discord.New(&discord.Bot{
+		Store:             db,
+		AnimeService:      anilist.New(anilist.MaxChar(dc.anilistMaxChars)),
+		AppID:             corde.SnowflakeFromString(dc.appID),
+		GuildID:           dc.guildID,
+		BotToken:          dc.botToken,
+		PublicKey:         dc.publicKey,
+		RollCooldown:      dc.rollCooldown,
+		TokensNeeded:      int32(dc.tokensNeeded),
+		InteractionNeeded: dc.interactionNeeded,
+		Inter:             redis,
+	})
+
+	return disc.ListenAndServe(":" + dc.port)
 }
 
 type dbCmd struct {

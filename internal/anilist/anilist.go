@@ -82,6 +82,10 @@ func (a *Anilist) RandomChar(ctx context.Context, notIn ...int64) (discord.Media
 		return a.randomChar(ctx, notIn...)
 	}
 
+	if notIn == nil {
+		notIn = []int64{0}
+	}
+
 	c := a.internalCache["random"]
 	c.Lock()
 	defer c.Unlock()

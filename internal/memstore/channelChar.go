@@ -8,6 +8,7 @@ import (
 	"github.com/Karitham/corde"
 	"github.com/fxamacker/cbor/v2"
 	"github.com/go-redis/redis/v8"
+	"github.com/rs/zerolog/log"
 )
 
 // Client is a cache client. It is currently implemented through redis.
@@ -29,19 +30,24 @@ func (c Client) Close() error {
 
 // SetChannelChar sets the currently dropped char in the channel
 func (c Client) SetChannelChar(ctx context.Context, channelID corde.Snowflake, char discord.MediaCharacter) error {
+	log.Trace().Stringer("channelID", channelID).Msg("setting channel char")
 	b, err := cbor.Marshal(char)
 	if err != nil {
 		return fmt.Errorf("failed to marshal char: %w", err)
 	}
 
-	return c.client.Set(ctx, channelID.String(), b, 0).Err()
+	key := "channel:" + channelID.String() + ":char"
+	return c.client.Set(ctx, key, string(b), 0).Err()
 }
 
 // GetChannelChar gets the currently dropped char in the channel
 func (c Client) GetChannelChar(ctx context.Context, channelID corde.Snowflake) (discord.MediaCharacter, error) {
-	s, err := c.client.Get(ctx, channelID.String()).Result()
+	key := "channel:" + channelID.String() + ":char"
+
+	log.Trace().Stringer("channelID", channelID).Msg("getting channel char")
+	s, err := c.client.Get(ctx, key).Result()
 	if err != nil {
-		return discord.MediaCharacter{}, err
+		return discord.MediaCharacter{}, fmt.Errorf("failed to get channel char: %w", err)
 	}
 
 	var char discord.MediaCharacter
