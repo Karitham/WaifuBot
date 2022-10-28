@@ -32,11 +32,12 @@ type Character struct {
 }
 
 type User struct {
-	Date     time.Time       `json:"date"`
-	Quote    string          `json:"quote"`
-	Favorite uint64          `json:"favorite"`
-	UserID   corde.Snowflake `json:"user_id"`
-	Tokens   int32           `json:"tokens"`
+	Date       time.Time       `json:"date"`
+	Quote      string          `json:"quote"`
+	Favorite   uint64          `json:"favorite"`
+	UserID     corde.Snowflake `json:"user_id"`
+	AnilistURL string          `json:"anilist_url,omitempty"`
+	Tokens     int32           `json:"tokens"`
 }
 
 func (b *Bot) roll(w corde.ResponseWriter, i *corde.Request[corde.SlashCommandInteractionData]) {

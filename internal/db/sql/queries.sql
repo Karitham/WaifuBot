@@ -44,6 +44,7 @@ SELECT characters.image as favorite_image,
     users.quote as user_quote,
     users.user_id as user_id,
     users.tokens as user_tokens,
+    users.anilist_url as user_anilist_url,
     (
         SELECT count(id)
         FROM characters

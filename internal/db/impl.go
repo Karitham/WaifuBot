@@ -41,6 +41,10 @@ func (q *Queries) PutChar(ctx context.Context, userID corde.Snowflake, c discord
 	return q.insertChar(ctx, p)
 }
 
+func (q *Queries) SetUserAnilistURL(ctx context.Context, userID corde.Snowflake, url string) error {
+	return q.updateUser(ctx, userID, withAnilistURL(url))
+}
+
 // Chars returns the user's characters
 func (q *Queries) Chars(ctx context.Context, userID corde.Snowflake) ([]discord.Character, error) {
 	dbchs, err := q.getChars(ctx, uint64(userID))
@@ -127,6 +131,13 @@ func withDate(d time.Time) func(*squirrel.UpdateBuilder) {
 	}
 }
 
+// withAnilistURL sets the anilist url
+func withAnilistURL(url string) func(*squirrel.UpdateBuilder) {
+	return func(s *squirrel.UpdateBuilder) {
+		*s = s.Set("anilist_url", url)
+	}
+}
+
 // withToken sets the token
 func withToken(t string) func(*squirrel.UpdateBuilder) {
 	return func(s *squirrel.UpdateBuilder) {
@@ -190,11 +201,12 @@ func (q *Queries) Profile(ctx context.Context, userID corde.Snowflake) (discord.
 
 	return discord.Profile{
 		User: discord.User{
-			Date:     p.UserDate,
-			Quote:    p.UserQuote,
-			UserID:   corde.Snowflake(p.UserID),
-			Tokens:   p.UserTokens,
-			Favorite: uint64(p.FavoriteID.Int64),
+			Date:       p.UserDate,
+			Quote:      p.UserQuote,
+			UserID:     corde.Snowflake(p.UserID),
+			Tokens:     p.UserTokens,
+			AnilistURL: p.UserAnilistUrl,
+			Favorite:   uint64(p.FavoriteID.Int64),
 		},
 		CharacterCount: int(p.Count),
 		Favorite: discord.Character{

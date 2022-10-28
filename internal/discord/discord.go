@@ -26,6 +26,7 @@ type Store interface {
 	SetUserDate(context.Context, corde.Snowflake, time.Time) error
 	SetUserFavorite(context.Context, corde.Snowflake, int64) error
 	SetUserQuote(context.Context, corde.Snowflake, string) error
+	SetUserAnilistURL(context.Context, corde.Snowflake, string) error
 	GiveUserChar(ctx context.Context, dst corde.Snowflake, src corde.Snowflake, charID int64) error
 	AddDropToken(context.Context, corde.Snowflake) error
 	ConsumeDropTokens(context.Context, corde.Snowflake, int32) (User, error)

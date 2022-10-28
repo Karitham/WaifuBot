@@ -43,6 +43,9 @@ func (b *Bot) RegisterCommands() error {
 				corde.NewSubcommand("quote", "set your quote",
 					corde.NewStringOption("value", "quote value to set", true),
 				),
+				corde.NewSubcommand("anilist", "set your anilist url",
+					corde.NewStringOption("url", "anilist url to set. In the form `https://anilist.co/user/{{User}}`", true),
+				),
 			),
 		),
 
