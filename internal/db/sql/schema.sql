@@ -4,7 +4,8 @@ CREATE TABLE IF NOT EXISTS users (
     "quote" TEXT NOT NULL DEFAULT '',
     "date" TIMESTAMP NOT NULL DEFAULT '1970-01-01 00:00:00-00',
     "favorite" BIGINT,
-    "tokens" INT NOT NULL DEFAULT 0
+    "tokens" INT NOT NULL DEFAULT 0,
+    "anilist_url" VARCHAR(255) NOT NULL DEFAULT ''
 );
 CREATE TABLE IF NOT EXISTS characters (
     "user_id" BIGINT NOT NULL,

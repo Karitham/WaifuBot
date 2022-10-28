@@ -1,5 +1,5 @@
-with (import (fetchTarball
-  "https://github.com/nixos/nixpkgs/archive/9e53905d6bb02134e86117d526ee62324047e863.tar.gz")
-  { });
+{ pkgs ? import (fetchTarball
+  "https://github.com/NixOS/nixpkgs/archive/4fce8949409b4eb6250edf612cf30ab9a94c0da6.tar.gz")
+  { } }:
 
-mkShell { buildInputs = [ go_1_19 docker usql ]; }
+pkgs.mkShell { buildInputs = with pkgs; [ go_1_19 docker usql dbmate sqlc ]; }

@@ -2,7 +2,9 @@ package discord
 
 import (
 	"fmt"
+	"net/url"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/Karitham/corde"
@@ -23,6 +25,7 @@ func (b *Bot) profile(m *corde.Mux) {
 			m.SlashCommand("", trace(b.profileEditFavorite))
 			m.Autocomplete("id", trace(b.profileEditFavoriteComplete))
 		})
+		m.SlashCommand("anilist", trace(b.profileEditAnilistURL))
 	})
 }
 
@@ -39,17 +42,23 @@ func (b *Bot) profileView(w corde.ResponseWriter, i *corde.Request[corde.SlashCo
 		return
 	}
 
+	anilistURLDesc := ""
+	if data.AnilistURL != "" {
+		anilistURLDesc = fmt.Sprintf("Find them on [Anilist](%s)", data.AnilistURL)
+	}
+
 	resp := corde.NewEmbed().
 		Title(user.Username).
 		URL(fmt.Sprintf("https://waifugui.karitham.dev/#/list/%s", user.ID.String())).
 		Descriptionf(
-			"%s\n%s last rolled %s ago and has %d tokens.\nThey have %d characters.\nTheir favorite character is %s",
+			"%s\n%s last rolled %s ago and has %d tokens.\nThey have %d characters.\nTheir favorite character is %s.\n%s",
 			data.Quote,
 			user.Username,
 			time.Since(data.Date.UTC()).Truncate(time.Second),
 			data.Tokens,
 			data.CharacterCount,
 			data.Favorite.Name,
+			anilistURLDesc,
 		)
 	if data.Favorite.Image != "" {
 		resp.Thumbnail(corde.Image{URL: data.Favorite.Image})
@@ -92,6 +101,34 @@ func (b *Bot) profileEditFavoriteComplete(w corde.ResponseWriter, i *corde.Reque
 	}
 
 	w.Autocomplete(resp)
+}
+
+func (b *Bot) profileEditAnilistURL(w corde.ResponseWriter, i *corde.Request[corde.SlashCommandInteractionData]) {
+	anilistURL, _ := i.Data.Options.String("url")
+	parsedURL, err := url.Parse(anilistURL)
+	if err != nil {
+		w.Respond(corde.NewResp().Content("Invalid URL").Ephemeral())
+		return
+	}
+
+	if parsedURL.Host != "anilist.co" {
+		w.Respond(corde.NewResp().Content("Invalid Anilist URL").Ephemeral())
+		return
+	}
+
+	if !strings.HasPrefix(parsedURL.Path, "/user/") {
+		w.Respond(corde.NewResp().Content("Invalid Anilist URL").Ephemeral())
+		return
+	}
+
+	err = b.Store.SetUserAnilistURL(i.Context, i.Member.User.ID, anilistURL)
+	if err != nil {
+		log.Ctx(i.Context).Err(err).Stringer("user", i.Member.User.ID).Msg("Error setting user's anilist url")
+		w.Respond(corde.NewResp().Content("An error occurred setting your anilist url").Ephemeral())
+		return
+	}
+
+	w.Respond(corde.NewResp().Contentf("Anilist URL set as %s", anilistURL).Ephemeral())
 }
 
 func (b *Bot) profileEditQuote(w corde.ResponseWriter, i *corde.Request[corde.SlashCommandInteractionData]) {
