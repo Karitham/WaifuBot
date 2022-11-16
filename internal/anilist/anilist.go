@@ -159,7 +159,7 @@ func (a *Anilist) Anime(ctx context.Context, title string) ([]discord.Media, err
 }
 
 func (a *Anilist) media(ctx context.Context, title string, t MediaType) ([]discord.Media, error) {
-	media, err := media(ctx, a.c, title, MediaTypeAnime)
+	media, err := media(ctx, a.c, title, t)
 	if err != nil {
 		return nil, err
 	}
