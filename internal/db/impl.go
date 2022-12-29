@@ -2,6 +2,8 @@ package db
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 	"strings"
 	"time"
 
@@ -20,6 +22,17 @@ func (q *Queries) PutChar(ctx context.Context, userID corde.Snowflake, c discord
 		})
 	}
 
+	_, err := q.getUser(ctx, uint64(userID))
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			if err := q.createUser(ctx, uint64(userID)); err != nil {
+				return err
+			}
+		} else {
+			return err
+		}
+	}
+
 	p := insertCharParams{
 		ID:     c.ID,
 		UserID: uint64(c.UserID),
@@ -28,16 +41,6 @@ func (q *Queries) PutChar(ctx context.Context, userID corde.Snowflake, c discord
 		Type:   c.Type,
 	}
 
-	// In case user doesn't exist, query will fail
-	if err := q.insertChar(ctx, p); err == nil {
-		return nil
-	}
-
-	if err := q.createUser(ctx, uint64(userID)); err != nil {
-		return err
-	}
-
-	// This is a dumb retry mechanism, but should cover our use case
 	return q.insertChar(ctx, p)
 }
 
@@ -76,7 +79,13 @@ func (q *Queries) CharsIDs(ctx context.Context, userID corde.Snowflake) ([]int64
 func (q *Queries) User(ctx context.Context, userID corde.Snowflake) (discord.User, error) {
 	u, err := q.getUser(ctx, uint64(userID))
 	if err != nil {
-		return discord.User{}, err
+		if errors.Is(err, sql.ErrNoRows) {
+			if err := q.createUser(ctx, uint64(userID)); err != nil {
+				return discord.User{}, err
+			}
+		} else {
+			return discord.User{}, err
+		}
 	}
 
 	return discord.User{
@@ -90,6 +99,23 @@ func (q *Queries) User(ctx context.Context, userID corde.Snowflake) (discord.Use
 
 // updateUser updates a user's properties
 func (q *Queries) updateUser(ctx context.Context, userID corde.Snowflake, opts ...func(*squirrel.UpdateBuilder)) error {
+	if q.tx == nil {
+		return q.asTx(func(q *Queries) error {
+			return q.updateUser(ctx, userID, opts...)
+		})
+	}
+
+	_, err := q.getUser(ctx, uint64(userID))
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			if err := q.createUser(ctx, uint64(userID)); err != nil {
+				return err
+			}
+		} else {
+			return err
+		}
+	}
+
 	builder := squirrel.Update("users").Where(squirrel.Eq{
 		"user_id": userID,
 	}).PlaceholderFormat(squirrel.Dollar)
@@ -167,6 +193,17 @@ func (q *Queries) SetUserQuote(ctx context.Context, userID corde.Snowflake, quot
 
 // CharsStartingWith returns characters starting with the given string
 func (q *Queries) CharsStartingWith(ctx context.Context, userID corde.Snowflake, s string) ([]discord.Character, error) {
+	_, err := q.getUser(ctx, uint64(userID))
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			if err := q.createUser(ctx, uint64(userID)); err != nil {
+				return nil, err
+			}
+		} else {
+			return nil, err
+		}
+	}
+
 	dbchs, err := q.getCharsWhoseIDStartWith(ctx, getCharsWhoseIDStartWithParams{
 		UserID:  uint64(userID),
 		Lim:     50,
@@ -194,6 +231,17 @@ func (q *Queries) CharsStartingWith(ctx context.Context, userID corde.Snowflake,
 
 // Profile returns the user's profile
 func (q *Queries) Profile(ctx context.Context, userID corde.Snowflake) (discord.Profile, error) {
+	_, err := q.getUser(ctx, uint64(userID))
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			if err := q.createUser(ctx, uint64(userID)); err != nil {
+				return discord.Profile{}, err
+			}
+		} else {
+			return discord.Profile{}, err
+		}
+	}
+
 	p, err := q.getProfile(ctx, uint64(userID))
 	if err != nil {
 		return discord.Profile{}, err
