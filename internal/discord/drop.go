@@ -25,7 +25,7 @@ func (b *Bot) drop(ctx context.Context, guildID corde.Snowflake, channelID corde
 
 	log.Trace().Msgf("dropped %s", char.Name)
 
-	msg, cleanup := DropEmbed(char)
+	msg, cleanup := DropEmbed(ctx, char)
 	defer cleanup()
 	_, err = b.mux.CreateMessage(channelID, msg)
 	if err != nil {
@@ -91,9 +91,16 @@ func sanitizeName(name string) string {
 	return strings.Join(strings.Fields(name), " ")
 }
 
-func DropEmbed(char MediaCharacter) (corde.Message, func()) {
-	resp, err := http.Get(char.ImageURL)
+func DropEmbed(ctx context.Context, char MediaCharacter) (corde.Message, func()) {
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, char.ImageURL, nil)
 	if err != nil {
+		log.Ctx(ctx).Err(err).Msg("failed to create request")
+		return corde.Message{}, func() {}
+	}
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		log.Ctx(ctx).Err(err).Msg("failed to get image")
 		return corde.Message{}, func() {}
 	}
 
