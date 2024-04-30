@@ -40,12 +40,12 @@ type TrackerUser struct {
 	About    string
 }
 
-func (b *Bot) SearchAnime(w corde.ResponseWriter, i *corde.Request[corde.SlashCommandInteractionData]) {
+func (b *Bot) SearchAnime(ctx context.Context, w corde.ResponseWriter, i *corde.Interaction[corde.SlashCommandInteractionData]) {
 	search, _ := i.Data.Options.String("name")
 
-	anime, err := b.AnimeService.Anime(i.Context, search)
+	anime, err := b.AnimeService.Anime(ctx, search)
 	if err != nil {
-		log.Ctx(i.Context).Err(err).Msg("error with anime service")
+		log.Ctx(ctx).Err(err).Msg("error with anime service")
 		w.Respond(rspErr("Error searching for this anime, either it doesn't exist or something went wrong"))
 		return
 	}
@@ -57,12 +57,12 @@ type MangaSearcher interface {
 	Manga(context.Context, string) ([]Media, error)
 }
 
-func (b *Bot) SearchManga(w corde.ResponseWriter, i *corde.Request[corde.SlashCommandInteractionData]) {
+func (b *Bot) SearchManga(ctx context.Context, w corde.ResponseWriter, i *corde.Interaction[corde.SlashCommandInteractionData]) {
 	search, _ := i.Data.Options.String("name")
 
-	manga, err := b.AnimeService.Manga(i.Context, search)
+	manga, err := b.AnimeService.Manga(ctx, search)
 	if err != nil || len(manga) < 1 {
-		log.Ctx(i.Context).Err(err).Msg("error with manga service")
+		log.Ctx(ctx).Err(err).Msg("error with manga service")
 		w.Respond(rspErr("Error searching for this manga, either it doesn't exist or something went wrong"))
 		return
 	}
@@ -74,12 +74,12 @@ type UserSearcher interface {
 	User(context.Context, string) ([]TrackerUser, error)
 }
 
-func (b *Bot) SearchUser(w corde.ResponseWriter, i *corde.Request[corde.SlashCommandInteractionData]) {
+func (b *Bot) SearchUser(ctx context.Context, w corde.ResponseWriter, i *corde.Interaction[corde.SlashCommandInteractionData]) {
 	search, _ := i.Data.Options.String("name")
 
-	user, err := b.AnimeService.User(i.Context, search)
+	user, err := b.AnimeService.User(ctx, search)
 	if err != nil || len(user) < 1 {
-		log.Ctx(i.Context).Err(err).Msg("error with user service")
+		log.Ctx(ctx).Err(err).Msg("error with user service")
 		w.Respond(rspErr("Error searching for this user, either it doesn't exist or something went wrong"))
 		return
 	}
@@ -91,12 +91,12 @@ type CharSearcher interface {
 	Character(context.Context, string) ([]MediaCharacter, error)
 }
 
-func (b *Bot) SearchChar(w corde.ResponseWriter, i *corde.Request[corde.SlashCommandInteractionData]) {
+func (b *Bot) SearchChar(ctx context.Context, w corde.ResponseWriter, i *corde.Interaction[corde.SlashCommandInteractionData]) {
 	search, _ := i.Data.Options.String("name")
 
-	char, err := b.AnimeService.Character(i.Context, search)
+	char, err := b.AnimeService.Character(ctx, search)
 	if err != nil || len(char) < 1 {
-		log.Ctx(i.Context).Err(err).Msg("error with char service")
+		log.Ctx(ctx).Err(err).Msg("error with char service")
 		w.Respond(rspErr("Error searching for this character, either it doesn't exist or something went wrong"))
 		return
 	}

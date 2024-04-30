@@ -34,7 +34,7 @@ func (b *Bot) drop(ctx context.Context, guildID corde.Snowflake, channelID corde
 	}
 }
 
-func (b *Bot) claim(w corde.ResponseWriter, i *corde.Request[corde.SlashCommandInteractionData]) {
+func (b *Bot) claim(ctx context.Context, w corde.ResponseWriter, i *corde.Interaction[corde.SlashCommandInteractionData]) {
 	name, err := i.Data.Options.String("name")
 	if err != nil || name == "" {
 		w.Respond(rspErr("enter a name to claim the character"))
@@ -42,7 +42,7 @@ func (b *Bot) claim(w corde.ResponseWriter, i *corde.Request[corde.SlashCommandI
 	}
 
 	// impl claim.
-	char, err := b.Inter.GetChannelChar(i.Context, i.ChannelID)
+	char, err := b.Inter.GetChannelChar(ctx, i.ChannelID)
 	if err != nil {
 		log.Trace().Err(err).Msg("failed to get channel character")
 		w.Respond(rspErr("No character to claim"))
@@ -54,7 +54,7 @@ func (b *Bot) claim(w corde.ResponseWriter, i *corde.Request[corde.SlashCommandI
 		return
 	}
 
-	err = b.Store.PutChar(i.Context, i.Member.User.ID, Character{
+	err = b.Store.PutChar(ctx, i.Member.User.ID, Character{
 		Date:   time.Now(),
 		Image:  char.ImageURL,
 		Name:   sanitizeName(char.Name),
@@ -68,7 +68,7 @@ func (b *Bot) claim(w corde.ResponseWriter, i *corde.Request[corde.SlashCommandI
 		return
 	}
 
-	err = b.Inter.RemoveChannelChar(i.Context, i.ChannelID)
+	err = b.Inter.RemoveChannelChar(ctx, i.ChannelID)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to remove channel character")
 		return

@@ -1,14 +1,15 @@
 package discord
 
 import (
+	"context"
 	"time"
 
 	"github.com/Karitham/corde"
 	"github.com/rs/zerolog/log"
 )
 
-func trace[T corde.InteractionDataConstraint](next func(w corde.ResponseWriter, i *corde.Request[T])) func(w corde.ResponseWriter, i *corde.Request[T]) {
-	return func(w corde.ResponseWriter, i *corde.Request[T]) {
+func trace[T corde.InteractionDataConstraint](next func(ctx context.Context, w corde.ResponseWriter, i *corde.Interaction[T])) func(ctx context.Context, w corde.ResponseWriter, i *corde.Interaction[T]) {
+	return func(ctx context.Context, w corde.ResponseWriter, i *corde.Interaction[T]) {
 		start := time.Now()
 		l := log.With().
 			Str("route", i.Route).
@@ -17,8 +18,8 @@ func trace[T corde.InteractionDataConstraint](next func(w corde.ResponseWriter, 
 			Stringer("user", i.Member.User.ID).
 			Logger()
 
-		i.Context = l.WithContext(i.Context)
-		next(w, i)
+		ctx = l.WithContext(ctx)
+		next(ctx, w, i)
 
 		l.Debug().Str("took", time.Since(start).String()).Send()
 	}

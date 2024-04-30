@@ -89,8 +89,8 @@ func New(b *Bot) *corde.Mux {
 	return b.mux
 }
 
-func onInteraction[T corde.InteractionDataConstraint](b *Bot) func(count int64, i *corde.Request[T]) {
-	return func(count int64, i *corde.Request[T]) {
+func onInteraction[T corde.InteractionDataConstraint](b *Bot) func(ctx context.Context, count int64, i *corde.Interaction[T]) {
+	return func(ctx context.Context, count int64, i *corde.Interaction[T]) {
 		if count < b.InteractionNeeded {
 			return
 		}
@@ -99,43 +99,43 @@ func onInteraction[T corde.InteractionDataConstraint](b *Bot) func(count int64, 
 			return
 		}
 
-		b.Inter.ResetInteractionCount(context.Background(), i.ChannelID)
-		b.drop(i.Context, i.GuildID, i.ChannelID)
+		b.Inter.ResetInteractionCount(ctx, i.ChannelID)
+		b.drop(ctx, i.GuildID, i.ChannelID)
 	}
 }
 
 // interaction middleware
-func interact[T corde.InteractionDataConstraint](inter Interacter, interact func(count int64, i *corde.Request[T])) func(func(w corde.ResponseWriter, i *corde.Request[T])) func(w corde.ResponseWriter, i *corde.Request[T]) {
-	return func(next func(w corde.ResponseWriter, i *corde.Request[T])) func(w corde.ResponseWriter, i *corde.Request[T]) {
-		return func(w corde.ResponseWriter, i *corde.Request[T]) {
+func interact[T corde.InteractionDataConstraint](inter Interacter, interact func(ctx context.Context, count int64, i *corde.Interaction[T])) func(func(ctx context.Context, w corde.ResponseWriter, i *corde.Interaction[T])) func(ctx context.Context, w corde.ResponseWriter, i *corde.Interaction[T]) {
+	return func(next func(ctx context.Context, w corde.ResponseWriter, i *corde.Interaction[T])) func(ctx context.Context, w corde.ResponseWriter, i *corde.Interaction[T]) {
+		return func(ctx context.Context, w corde.ResponseWriter, i *corde.Interaction[T]) {
 			ok := make(chan struct{}, 1)
 			go func() {
 				defer func() { ok <- struct{}{} }()
 
-				err := inter.IncrementInteractionCount(i.Context, i.ChannelID)
+				err := inter.IncrementInteractionCount(ctx, i.ChannelID)
 				if err != nil {
 					log.Debug().Err(err).Msg("failed to increment interaction count")
 				}
 
-				count, err := inter.GetInteractionCount(i.Context, i.ChannelID)
+				count, err := inter.GetInteractionCount(ctx, i.ChannelID)
 				if err != nil {
 					log.Err(err).Msg("failed to get interaction count")
 					return
 				}
 
-				interact(count, i)
+				interact(ctx, count, i)
 			}()
 
-			next(w, i)
+			next(ctx, w, i)
 			<-ok
 		}
 	}
 }
 
 func wrap[T corde.InteractionDataConstraint](
-	next func(w corde.ResponseWriter, i *corde.Request[T]),
-	fns ...func(func(w corde.ResponseWriter, i *corde.Request[T])) func(w corde.ResponseWriter, i *corde.Request[T]),
-) func(w corde.ResponseWriter, i *corde.Request[T]) {
+	next func(ctx context.Context, w corde.ResponseWriter, i *corde.Interaction[T]),
+	fns ...func(func(ctx context.Context, w corde.ResponseWriter, i *corde.Interaction[T])) func(ctx context.Context, w corde.ResponseWriter, i *corde.Interaction[T]),
+) func(ctx context.Context, w corde.ResponseWriter, i *corde.Interaction[T]) {
 	// apply middleware in reverse order
 	for i := len(fns) - 1; i >= 0; i-- {
 		next = fns[i](next)
@@ -143,7 +143,7 @@ func wrap[T corde.InteractionDataConstraint](
 	return next
 }
 
-func (b *Bot) RemoveUnknownCommands(r corde.ResponseWriter, i *corde.Request[corde.JsonRaw]) {
+func (b *Bot) RemoveUnknownCommands(ctx context.Context, r corde.ResponseWriter, i *corde.Interaction[corde.JsonRaw]) {
 	log.Error().Str("command", i.Route).Int("type", int(i.Type)).Msg("Unknown command")
 	r.Respond(corde.NewResp().Content("I don't know what that means, you shouldn't be able to do that").Ephemeral())
 

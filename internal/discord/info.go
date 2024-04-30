@@ -1,6 +1,7 @@
 package discord
 
 import (
+	"context"
 	"runtime"
 	"strconv"
 	"strings"
@@ -9,7 +10,7 @@ import (
 	"github.com/Karitham/corde"
 )
 
-func (b *Bot) info(w corde.ResponseWriter, i *corde.Request[corde.SlashCommandInteractionData]) {
+func (b *Bot) info(ctx context.Context, w corde.ResponseWriter, i *corde.Interaction[corde.SlashCommandInteractionData]) {
 	infob := strings.Builder{}
 	infob.WriteString("Version: ")
 	infob.WriteString(runtime.Version())

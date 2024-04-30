@@ -40,11 +40,11 @@ type User struct {
 	Tokens     int32           `json:"tokens"`
 }
 
-func (b *Bot) roll(w corde.ResponseWriter, i *corde.Request[corde.SlashCommandInteractionData]) {
+func (b *Bot) roll(ctx context.Context, w corde.ResponseWriter, i *corde.Interaction[corde.SlashCommandInteractionData]) {
 	var char MediaCharacter
 
 	if err := b.Store.Tx(func(s Store) error {
-		user, err := s.User(i.Context, i.Member.User.ID)
+		user, err := s.User(ctx, i.Member.User.ID)
 		if err != nil {
 			return err
 		}
@@ -53,8 +53,8 @@ func (b *Bot) roll(w corde.ResponseWriter, i *corde.Request[corde.SlashCommandIn
 		switch {
 		case time.Now().After(user.Date.Add(b.RollCooldown)):
 			updateUser = func() error {
-				if err = s.SetUserDate(i.Context, i.Member.User.ID, time.Now()); err != nil {
-					log.Ctx(i.Context).Err(err).Msg("error with db service")
+				if err = s.SetUserDate(ctx, i.Member.User.ID, time.Now()); err != nil {
+					log.Ctx(ctx).Err(err).Msg("error with db service")
 					w.Respond(rspErr("An error occurred dialing the database, please try again later"))
 					return err
 				}
@@ -62,8 +62,8 @@ func (b *Bot) roll(w corde.ResponseWriter, i *corde.Request[corde.SlashCommandIn
 			}
 		case user.Tokens >= b.TokensNeeded:
 			updateUser = func() error {
-				if _, err = s.ConsumeDropTokens(i.Context, i.Member.User.ID, b.TokensNeeded); err != nil {
-					log.Ctx(i.Context).Err(err).Msg("error with db service")
+				if _, err = s.ConsumeDropTokens(ctx, i.Member.User.ID, b.TokensNeeded); err != nil {
+					log.Ctx(ctx).Err(err).Msg("error with db service")
 					w.Respond(rspErr("An error occurred dialing the database, please try again later"))
 					return err
 				}
@@ -78,23 +78,23 @@ func (b *Bot) roll(w corde.ResponseWriter, i *corde.Request[corde.SlashCommandIn
 			return errors.New("not enough tokens or time")
 		}
 
-		charsIDs, err := s.CharsIDs(i.Context, i.Member.User.ID)
+		charsIDs, err := s.CharsIDs(ctx, i.Member.User.ID)
 		if err != nil {
-			log.Ctx(i.Context).Err(err).Msg("error with db service")
+			log.Ctx(ctx).Err(err).Msg("error with db service")
 			w.Respond(rspErr("An error occurred dialing the database, please try again later"))
 			return err
 		}
 
-		c, err := b.AnimeService.RandomChar(i.Context, charsIDs...)
+		c, err := b.AnimeService.RandomChar(ctx, charsIDs...)
 		if err != nil {
-			log.Ctx(i.Context).Err(err).Msg("error with anime service")
+			log.Ctx(ctx).Err(err).Msg("error with anime service")
 			w.Respond(rspErr("An error getting a random character occurred, please try again later"))
 			return err
 		}
 		char = c
 
 		if err := s.PutChar(
-			i.Context,
+			ctx,
 			i.Member.User.ID,
 			Character{
 				Date:   time.Now(),
@@ -104,7 +104,7 @@ func (b *Bot) roll(w corde.ResponseWriter, i *corde.Request[corde.SlashCommandIn
 				UserID: i.Member.User.ID,
 				ID:     int64(c.ID),
 			}); err != nil {
-			log.Ctx(i.Context).Err(err).Msg("error with db service")
+			log.Ctx(ctx).Err(err).Msg("error with db service")
 			w.Respond(rspErr("An error occurred dialing the database, please try again later"))
 			return err
 		}

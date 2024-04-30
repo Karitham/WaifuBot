@@ -1,6 +1,8 @@
 package discord
 
 import (
+	"context"
+
 	"github.com/Karitham/corde"
 	"github.com/rs/zerolog/log"
 )
@@ -14,7 +16,7 @@ func (b *Bot) give(m *corde.Mux) {
 	m.Autocomplete("id", b.profileEditFavoriteComplete)
 }
 
-func (b *Bot) giveCommand(w corde.ResponseWriter, i *corde.Request[corde.SlashCommandInteractionData]) {
+func (b *Bot) giveCommand(ctx context.Context, w corde.ResponseWriter, i *corde.Interaction[corde.SlashCommandInteractionData]) {
 	user, errUserOK := i.Data.OptionsUser("user")
 	if errUserOK != nil {
 		w.Respond(rspErr("select a user to give to"))
@@ -25,9 +27,9 @@ func (b *Bot) giveCommand(w corde.ResponseWriter, i *corde.Request[corde.SlashCo
 		w.Respond(rspErr("select a character to give"))
 		return
 	}
-	log.Ctx(i.Context).Trace().Stringer("src", i.Member.User.ID).Stringer("dst", user.ID).Int("charID", charID).Send()
+	log.Ctx(ctx).Trace().Stringer("src", i.Member.User.ID).Stringer("dst", user.ID).Int("charID", charID).Send()
 
-	err := b.Store.GiveUserChar(i.Context, user.ID, i.Member.User.ID, int64(charID))
+	err := b.Store.GiveUserChar(ctx, user.ID, i.Member.User.ID, int64(charID))
 	if err != nil {
 		w.Respond(newErrf("error giving character %d to user %s", charID, user.Username))
 		return

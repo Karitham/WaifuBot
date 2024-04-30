@@ -1,18 +1,19 @@
 package discord
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/Karitham/corde"
 )
 
-func (b *Bot) list(w corde.ResponseWriter, i *corde.Request[corde.SlashCommandInteractionData]) {
+func (b *Bot) list(ctx context.Context, w corde.ResponseWriter, i *corde.Interaction[corde.SlashCommandInteractionData]) {
 	user := i.Member.User
 	if len(i.Data.Resolved.Members) > 0 {
 		user = i.Data.Resolved.Users.First()
 	}
 
-	chars, err := b.Store.Chars(i.Context, user.ID)
+	chars, err := b.Store.Chars(ctx, user.ID)
 	if err != nil {
 		w.Respond(rspErr("An error occurred dialing the database, please try again later"))
 		return

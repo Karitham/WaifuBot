@@ -1,6 +1,8 @@
 package discord
 
 import (
+	"context"
+
 	"github.com/Karitham/corde"
 )
 
@@ -13,14 +15,14 @@ func (b *Bot) verify(m *corde.Mux) {
 	m.Autocomplete("id", b.profileEditFavoriteComplete)
 }
 
-func (b *Bot) verifyCommand(w corde.ResponseWriter, i *corde.Request[corde.SlashCommandInteractionData]) {
+func (b *Bot) verifyCommand(ctx context.Context, w corde.ResponseWriter, i *corde.Interaction[corde.SlashCommandInteractionData]) {
 	user := i.Member.User
 	if len(i.Data.Resolved.Members) > 0 {
 		user = i.Data.Resolved.Users.First()
 	}
 	charOpt, _ := i.Data.Options.Int64("id")
 
-	char, _ := b.Store.VerifyChar(i.Context, user.ID, charOpt)
+	char, _ := b.Store.VerifyChar(ctx, user.ID, charOpt)
 	if char.ID == charOpt {
 		w.Respond(newErrf("%s owns %s", user.Username, char.Name))
 		return
