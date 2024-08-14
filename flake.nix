@@ -7,12 +7,11 @@
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs { inherit system; };
-      in
-      rec {
+      in {
         devShell = pkgs.mkShell {
           name = "waifubot";
           packages = with pkgs; [
-            go_1_21
+            go_1_23
             usql
             dbmate
             sqlc
