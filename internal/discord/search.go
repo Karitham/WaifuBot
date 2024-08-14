@@ -50,6 +50,11 @@ func (b *Bot) SearchAnime(ctx context.Context, w corde.ResponseWriter, i *corde.
 		return
 	}
 
+	if len(anime) == 0 {
+		w.Respond(rspErr("No anime found with that name"))
+		return
+	}
+
 	w.Respond(mediaEmbed(anime[0]))
 }
 
@@ -61,9 +66,14 @@ func (b *Bot) SearchManga(ctx context.Context, w corde.ResponseWriter, i *corde.
 	search, _ := i.Data.Options.String("name")
 
 	manga, err := b.AnimeService.Manga(ctx, search)
-	if err != nil || len(manga) < 1 {
+	if err != nil {
 		log.Ctx(ctx).Err(err).Msg("error with manga service")
 		w.Respond(rspErr("Error searching for this manga, either it doesn't exist or something went wrong"))
+		return
+	}
+
+	if len(manga) == 0 {
+		w.Respond(rspErr("No manga found with that name"))
 		return
 	}
 
@@ -78,9 +88,14 @@ func (b *Bot) SearchUser(ctx context.Context, w corde.ResponseWriter, i *corde.I
 	search, _ := i.Data.Options.String("name")
 
 	user, err := b.AnimeService.User(ctx, search)
-	if err != nil || len(user) < 1 {
+	if err != nil {
 		log.Ctx(ctx).Err(err).Msg("error with user service")
 		w.Respond(rspErr("Error searching for this user, either it doesn't exist or something went wrong"))
+		return
+	}
+
+	if len(user) == 0 {
+		w.Respond(rspErr("No user found with that name"))
 		return
 	}
 
@@ -95,9 +110,14 @@ func (b *Bot) SearchChar(ctx context.Context, w corde.ResponseWriter, i *corde.I
 	search, _ := i.Data.Options.String("name")
 
 	char, err := b.AnimeService.Character(ctx, search)
-	if err != nil || len(char) < 1 {
+	if err != nil {
 		log.Ctx(ctx).Err(err).Msg("error with char service")
 		w.Respond(rspErr("Error searching for this character, either it doesn't exist or something went wrong"))
+		return
+	}
+
+	if len(char) == 0 {
+		w.Respond(rspErr("No character found with that name"))
 		return
 	}
 

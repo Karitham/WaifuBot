@@ -1,6 +1,6 @@
 module github.com/Karitham/WaifuBot
 
-go 1.18
+go 1.23.0
 
 require (
 	github.com/Karitham/corde v0.9.1-0.20240430230702-ace7ba925f06

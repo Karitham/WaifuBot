@@ -1,5 +1,4 @@
-# Builder
-FROM golang:1.22-alpine as builder
+FROM golang:1.23-alpine AS builder
 
 RUN apk add git
 
@@ -11,7 +10,6 @@ COPY . .
 
 RUN CGO_ENABLED=0 go build -ldflags="-w -s" -o /build/bot
 
-# Runner
-FROM alpine:3.15
+FROM alpine:3.20
 COPY --from=builder /build/bot /bot
 ENTRYPOINT ["/bot"]

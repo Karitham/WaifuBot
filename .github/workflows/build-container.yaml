@@ -2,36 +2,35 @@ name: Build Image
 
 on:
   push:
-    branches:
-      - corde
-
+    tags:
+      - "*"
 jobs:
   build-containers:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
+        uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v3
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v1
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: karitham
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v6
         with:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
           builder: ${{ steps.buildx.outputs.name }}
-          tags: ghcr.io/karitham/waifubot:corde
-          cache-from: type=registry,ref=karitham/waifuBot:corde
-          cache-to: type=inline
+          tags: ghcr.io/karitham/waifubot:${{ github.ref_name }}
+          cache-from: type=registry,ref=ghcr.io/karitham/waifubot:buildcache
+          cache-to: type=registry,ref=ghcr.io/karitham/waifubot:buildcache,mode=max
