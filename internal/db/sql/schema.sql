@@ -25,3 +25,4 @@ CREATE INDEX characters_id_user_id_idx ON characters (id, user_id);
 CREATE INDEX characters_user_id_idx ON characters (user_id);
 CREATE INDEX users_user_id_idx ON users (user_id);
 CREATE INDEX characters_id_user_id_date_idx ON characters (id, user_id, date);
+CREATE INDEX ON characters (user_id) STORING (image, name, date, type);
