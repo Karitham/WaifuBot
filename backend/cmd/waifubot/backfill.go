@@ -31,7 +31,7 @@ full character set over time.`,
 			return fmt.Errorf("error connecting to db: %w", err)
 		}
 
-		anilistClient := anilist.New()
+		anilistClient := anilist.New(version)
 
 		catalogStore := newCatalogStore(store)
 		svc := sync.NewService(catalogStore, anilistClient, anilistClient)

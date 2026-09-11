@@ -50,15 +50,38 @@ var (
 	_ discord.TrackingService = (*Anilist)(nil)
 )
 
-// New returns a new anilist client
-func New() *Anilist {
+// New returns a new anilist client, identifying itself as
+// waifubot/<version> (https://github.com/karitham/waifubot).
+func New(version string) *Anilist {
 	const graphURL = "https://graphql.anilist.co"
+	if version == "" {
+		version = "dev"
+	}
 
 	a := &Anilist{
-		c: graphql.NewClient(graphURL, &http.Client{Timeout: 5 * time.Second}),
+		c: graphql.NewClient(graphURL, &http.Client{
+			Timeout: 5 * time.Second,
+			Transport: &userAgentTransport{
+				userAgent: "waifubot/" + version + " (https://github.com/karitham/waifubot)",
+				base:      http.DefaultTransport,
+			},
+		}),
 	}
 
 	return a
+}
+
+// userAgentTransport sets a User-Agent header on every request so AniList
+// can attribute our traffic to waifubot.
+type userAgentTransport struct {
+	userAgent string
+	base      http.RoundTripper
+}
+
+func (t *userAgentTransport) RoundTrip(r *http.Request) (*http.Response, error) {
+	r2 := r.Clone(r.Context())
+	r2.Header.Set("User-Agent", t.userAgent)
+	return t.base.RoundTrip(r2)
 }
 
 // Anime returns an anime by title

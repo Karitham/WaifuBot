@@ -20,7 +20,7 @@ var SearchAnimeCommand = &cli.Command{
 		name := c.String(nameFlag.Name)
 
 		ctx := c.Context
-		animeService := anilist.New()
+		animeService := anilist.New(version)
 		media, err := animeService.Anime(ctx, name)
 		if err != nil {
 			return fmt.Errorf("error searching anime: %w", err)

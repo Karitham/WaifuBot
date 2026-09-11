@@ -37,12 +37,22 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Resolve version
+        id: version
+        run: |
+          if [ "${{ github.ref_type }}" = "tag" ]; then
+            echo "value=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "value=${{ github.ref_name }}-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Build and push by digest
         id: build
         uses: docker/build-push-action@v7
         with:
           context: ./backend
           platforms: ${{ matrix.platform }}
+          build-args: VERSION=${{ steps.version.outputs.value }}
           outputs: type=image,name=ghcr.io/${{ github.repository }},push-by-digest=true,name-canonical=true,push=${{ github.event_name != 'pull_request' }},oci-mediatypes=true
           cache-from: type=registry,ref=ghcr.io/${{ github.repository }}:buildcache-${{ matrix.suffix }}
           cache-to: type=registry,ref=ghcr.io/${{ github.repository }}:buildcache-${{ matrix.suffix }}

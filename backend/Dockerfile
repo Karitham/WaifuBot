@@ -12,9 +12,11 @@ RUN --mount=type=cache,target=/go/pkg/mod \
 
 COPY . .
 
+ARG VERSION=dev
+
 RUN --mount=type=cache,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/go-build \
-    go build -ldflags="-w -s" -o /go/bin/waifubot ./cmd/waifubot
+    go build -ldflags="-w -s -X main.version=${VERSION}" -o /go/bin/waifubot ./cmd/waifubot
 
 FROM alpine:latest
 

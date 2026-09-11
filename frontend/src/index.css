@@ -53,31 +53,31 @@
  */
 
 :root {
-	--text-display: clamp(2.5rem, 5vw, 4rem);
-	--text-h1: clamp(2rem, 4vw, 3rem);
-	--text-h2: clamp(1.5rem, 3vw, 2rem);
-	--text-h3: clamp(1.25rem, 2vw, 1.5rem);
-	--text-body: 1rem;
-	--text-sm: 0.875rem;
+  --text-display: clamp(2.5rem, 5vw, 4rem);
+  --text-h1: clamp(2rem, 4vw, 3rem);
+  --text-h2: clamp(1.5rem, 3vw, 2rem);
+  --text-h3: clamp(1.25rem, 2vw, 1.5rem);
+  --text-body: 1rem;
+  --text-sm: 0.875rem;
 
-	--space-xs: 0.5rem;
-	--space-sm: 1rem;
-	--space-md: 1.5rem;
-	--space-lg: 2rem;
-	--space-xl: 3rem;
-	--space-2xl: 4rem;
-	--space-3xl: 6rem;
+  --space-xs: 0.5rem;
+  --space-sm: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 2rem;
+  --space-xl: 3rem;
+  --space-2xl: 4rem;
+  --space-3xl: 6rem;
 }
 
 body {
-	margin: 0;
-	padding: 0;
-	font-family: "Inter", sans-serif;
-	font-size: var(--text-body);
-	line-height: 1.6;
-	background: #1e1e2e;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  padding: 0;
+  font-family: "Inter", sans-serif;
+  font-size: var(--text-body);
+  line-height: 1.6;
+  background: #1e1e2e;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 h1,
@@ -86,10 +86,10 @@ h3,
 h4,
 h5,
 h6 {
-	font-family: "Fredoka", sans-serif;
-	line-height: 1.15;
-	font-weight: 600;
-	text-wrap: balance;
+  font-family: "Fredoka", sans-serif;
+  line-height: 1.15;
+  font-weight: 600;
+  text-wrap: balance;
 }
 
 /*
@@ -99,18 +99,18 @@ h6 {
  * Padding: 16px on mobile, 24px from 640px up
  */
 .content-width {
-	max-width: clamp(320px, 90vw, 1536px);
-	width: 100%;
-	margin: 0 auto;
-	padding-left: var(--space-sm);
-	padding-right: var(--space-sm);
+  max-width: clamp(320px, 90vw, 1536px);
+  width: 100%;
+  margin: 0 auto;
+  padding-left: var(--space-sm);
+  padding-right: var(--space-sm);
 }
 
 @media (min-width: 640px) {
-	.content-width {
-		padding-left: var(--space-md);
-		padding-right: var(--space-md);
-	}
+  .content-width {
+    padding-left: var(--space-md);
+    padding-right: var(--space-md);
+  }
 }
 
 /**
@@ -122,70 +122,70 @@ h6 {
 
 /* Float animation for background orbs */
 @keyframes float-slow {
-	0%,
-	100% {
-		transform: translateY(0) translateX(0);
-	}
-	50% {
-		transform: translateY(-20px) translateX(10px);
-	}
+  0%,
+  100% {
+    transform: translateY(0) translateX(0);
+  }
+  50% {
+    transform: translateY(-20px) translateX(10px);
+  }
 }
 
 /* Subtle pulse for glow effects */
 @keyframes pulse-subtle {
-	0%,
-	100% {
-		opacity: 0.6;
-		transform: scale(1);
-	}
-	50% {
-		opacity: 0.8;
-		transform: scale(1.05);
-	}
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
 }
 
 /* Entrance animation for staggered reveals */
 @keyframes fade-in-up {
-	from {
-		opacity: 0;
-		transform: translateY(20px);
-	}
-	to {
-		opacity: 1;
-		transform: translateY(0);
-	}
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Dropdown / popover entrance */
 @keyframes pop-in {
-	from {
-		opacity: 0;
-		transform: translateY(4px) scale(0.98);
-	}
-	to {
-		opacity: 1;
-		transform: translateY(0) scale(1);
-	}
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 /* Animation utilities */
 .animate-float-slow {
-	animation: float-slow 8s ease-in-out infinite;
+  animation: float-slow 8s ease-in-out infinite;
 }
 
 .animate-pulse-subtle {
-	animation: pulse-subtle 4s ease-in-out infinite;
+  animation: pulse-subtle 4s ease-in-out infinite;
 }
 
 /* Respect prefers-reduced-motion */
 @media (prefers-reduced-motion: reduce) {
-	.animate-float-slow,
-	.animate-pulse-subtle {
-		animation: none;
-	}
+  .animate-float-slow,
+  .animate-pulse-subtle {
+    animation: none;
+  }
 
-	* {
-		transition-duration: 0.01ms !important;
-		animation-duration: 0.01ms !important;
-	}
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
 }

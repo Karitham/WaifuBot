@@ -1,31 +1,31 @@
 const url = "https://graphql.anilist.co";
 
 type getCharactersResponse = {
-	data: {
-		Media: {
-			characters: {
-				nodes: CharacterNode[];
-				pageInfo: {
-					hasNextPage: boolean;
-				};
-			};
-		};
-	};
+  data: {
+    Media: {
+      characters: {
+        nodes: CharacterNode[];
+        pageInfo: {
+          hasNextPage: boolean;
+        };
+      };
+    };
+  };
 };
 
 type CharacterNode = {
-	id: string;
-	name: {
-		full: string;
-	};
-	image: {
-		large: string;
-	};
-	favourites?: number;
+  id: string;
+  name: {
+    full: string;
+  };
+  image: {
+    large: string;
+  };
+  favourites?: number;
 };
 
 export async function getMediaCharacters(mediaId: string) {
-	const query = `query ($id: Int, $page: Int) {
+  const query = `query ($id: Int, $page: Int) {
     Media(id: $id) {
       characters(perPage: 25, page: $page) {
         nodes {
@@ -45,61 +45,64 @@ export async function getMediaCharacters(mediaId: string) {
     }
   }`;
 
-	const chars: CharacterNode[] = [];
+  const chars: CharacterNode[] = [];
 
-	let hasNextPage = true;
-	let page = 1;
-	while (hasNextPage) {
-		const response: getCharactersResponse = await fetchGraphQL(query, {
-			id: mediaId,
-			page: page,
-		});
+  // Cap pagination (25 * 8 = 200 characters max) so a
+  // character-heavy media can't trigger an unbounded request loop.
+  const maxPages = 8;
+  let hasNextPage = true;
+  let page = 1;
+  while (hasNextPage && page <= maxPages) {
+    const response: getCharactersResponse = await fetchGraphQL(query, {
+      id: mediaId,
+      page: page,
+    });
 
-		hasNextPage = response.data.Media.characters.pageInfo.hasNextPage;
-		page++;
-		chars.push(...response.data.Media.characters.nodes);
-	}
+    hasNextPage = response.data.Media.characters.pageInfo.hasNextPage;
+    page++;
+    chars.push(...response.data.Media.characters.nodes);
+  }
 
-	return chars;
+  return chars;
 }
 
 async function fetchGraphQL<T>(query: string, variables: T) {
-	const response = await fetch(url, {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-			Accept: "application/json",
-		},
-		body: JSON.stringify({
-			variables,
-			query,
-		}),
-	});
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify({
+      variables,
+      query,
+    }),
+  });
 
-	return await response.json();
+  return await response.json();
 }
 
 export type Media = {
-	id: string;
-	title: {
-		romaji: string;
-	};
-	coverImage: {
-		large: string;
-	};
+  id: string;
+  title: {
+    romaji: string;
+  };
+  coverImage: {
+    large: string;
+  };
 };
 
 export type SearchMediaResponse = {
-	data: {
-		Page: {
-			media: Media[];
-		};
-	};
+  data: {
+    Page: {
+      media: Media[];
+    };
+  };
 };
 
 export async function searchMedia(anime: string, count: number) {
-	const query = `query ($search: String) {
-        Page (perPage: ${count}) {
+  const query = `query ($search: String, $perPage: Int) {
+        Page (perPage: $perPage) {
             media (search: $search) {
                 id
                 title {
@@ -112,9 +115,10 @@ export async function searchMedia(anime: string, count: number) {
         }
     }`;
 
-	const response = await fetchGraphQL(query, {
-		search: anime,
-	});
+  const response = await fetchGraphQL(query, {
+    search: anime,
+    perPage: count,
+  });
 
-	return response as SearchMediaResponse;
+  return response as SearchMediaResponse;
 }

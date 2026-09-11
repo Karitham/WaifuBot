@@ -97,7 +97,7 @@ var RunCommand = &cli.Command{
 		wishStore := wishlist.New(store.WishlistStore())
 		catalogStore := newCatalogStore(store)
 
-		anilistClient := anilist.New()
+		anilistClient := anilist.New(version)
 
 		slog.Info("Starting WaifuBot", "port", c.String("port"), "app_id", c.String("app-id"), "api_enabled", c.Bool(apiFlag.Name))
 		router := discord.New(&discord.Router{

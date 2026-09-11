@@ -26,8 +26,12 @@ excludes = [
   "backend/**/mocks/*.go",           # mockgen
 ]
 
+[formatter.md]
+command = "oxfmt"
+includes = ["*.md"]
+
 [formatter.frontend]
-command = "biome"
+command = "oxfmt"
 options = ["format", "--write"]
 includes = ["*.ts", "*.tsx", "*.mts", "*.js", "*.jsx", "*.json", "*.css"]
 
