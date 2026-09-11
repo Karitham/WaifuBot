@@ -45,7 +45,7 @@
         pkgs.writeShellApplication {
           name = "treefmt";
           runtimeInputs = with pkgs; [
-            biome
+            oxfmt
             gofumpt
             nixfmt
             treefmt
@@ -62,7 +62,7 @@
         {
           default = pkgs.mkShell {
             packages = with pkgs; [
-              go_1_26
+              go
               gofumpt
               mockgen
               golangci-lint
@@ -72,7 +72,7 @@
               nodejs
               nodePackages.npm
               ogen
-              biome
+              oxfmt
               nixfmt
               treefmt
               self.packages.${system}.genqlient
